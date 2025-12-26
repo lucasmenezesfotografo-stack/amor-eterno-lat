@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Calendar, Upload, Music, FileText, QrCode, Check } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Calendar, Upload, Music, FileText, QrCode, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { QRCodeSVG } from "qrcode.react";
 
 const steps = [
   { id: 1, title: "Nombres", icon: Heart, description: "¿Cómo se llaman?" },
@@ -26,7 +27,18 @@ const CrearPage = () => {
     spotifyUrl: "",
     loveLetter: "",
   });
+  const [qrGenerated, setQrGenerated] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Generate a unique ID for the regalo page
+  const generateRegaloId = () => {
+    const names = `${formData.person1}-${formData.person2}`.toLowerCase().replace(/\s+/g, '-');
+    const timestamp = Date.now().toString(36);
+    return `${names}-${timestamp}`;
+  };
+
+  const regaloUrl = `${window.location.origin}/regalo/${generateRegaloId()}`;
 
   const handleNext = () => {
     if (currentStep < steps.length) {
@@ -41,10 +53,54 @@ const CrearPage = () => {
   };
 
   const handleGenerate = () => {
+    setQrGenerated(true);
     toast({
       title: "¡Regalo creado!",
-      description: "Tu página de aniversario está lista para compartir.",
+      description: "Tu código QR está listo para descargar.",
     });
+  };
+
+  const handleDownloadQR = () => {
+    if (!qrRef.current) return;
+    
+    const svg = qrRef.current.querySelector("svg");
+    if (!svg) return;
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+
+    img.onload = () => {
+      canvas.width = 400;
+      canvas.height = 400;
+      if (ctx) {
+        // Draw rounded background
+        ctx.fillStyle = "#FDF8F4";
+        ctx.beginPath();
+        ctx.roundRect(0, 0, 400, 400, 20);
+        ctx.fill();
+        
+        // Draw QR code centered
+        ctx.drawImage(img, 50, 50, 300, 300);
+        
+        // Add decorative text
+        ctx.fillStyle = "#C17A5E";
+        ctx.font = "bold 18px 'Playfair Display', serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${formData.person1} ❤ ${formData.person2}`, 200, 385);
+      }
+
+      const pngUrl = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      downloadLink.download = `tu-amor-lat-${formData.person1}-${formData.person2}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    };
+
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
   };
 
   const renderStepContent = () => {
@@ -180,23 +236,72 @@ const CrearPage = () => {
         return (
           <div className="text-center">
             <motion.div
-              className="w-48 h-48 mx-auto bg-card border-2 border-border rounded-2xl flex items-center justify-center mb-6"
+              ref={qrRef}
+              className="w-64 h-64 mx-auto bg-cream-warm border-2 border-primary/20 rounded-2xl flex items-center justify-center mb-6 p-4 shadow-romantic"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="text-center">
-                <QrCode className="w-20 h-20 mx-auto text-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">Tu código QR</p>
-              </div>
+              {qrGenerated ? (
+                <QRCodeSVG
+                  value={regaloUrl}
+                  size={200}
+                  level="H"
+                  includeMargin={false}
+                  fgColor="#C17A5E"
+                  bgColor="transparent"
+                  imageSettings={{
+                    src: "",
+                    height: 40,
+                    width: 40,
+                    excavate: true,
+                  }}
+                />
+              ) : (
+                <div className="text-center">
+                  <QrCode className="w-20 h-20 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">Tu código QR</p>
+                </div>
+              )}
             </motion.div>
+            
+            {qrGenerated && (
+              <motion.p
+                className="text-sm text-muted-foreground mb-4 break-all px-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                {regaloUrl}
+              </motion.p>
+            )}
+            
             <p className="text-muted-foreground mb-6">
-              ¡Tu regalo está listo! Genera el código QR para compartirlo.
+              {qrGenerated 
+                ? `¡El regalo de ${formData.person1} y ${formData.person2} está listo!`
+                : "¡Tu regalo está listo! Genera el código QR para compartirlo."
+              }
             </p>
-            <Button variant="romantic" size="xl" onClick={handleGenerate}>
-              <QrCode className="w-5 h-5" />
-              Generar Código QR
-            </Button>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {!qrGenerated ? (
+                <Button variant="romantic" size="xl" onClick={handleGenerate}>
+                  <QrCode className="w-5 h-5" />
+                  Generar Código QR
+                </Button>
+              ) : (
+                <>
+                  <Button variant="gold" size="lg" onClick={handleDownloadQR}>
+                    <Download className="w-5 h-5" />
+                    Descargar QR
+                  </Button>
+                  <Link to={`/regalo/demo`}>
+                    <Button variant="glass" size="lg">
+                      Ver página de regalo
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         );
 
