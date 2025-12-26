@@ -2,95 +2,151 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Tu Amor Lat - Premium Latin Romantic Design System */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm Latin Romantic Palette */
+    --background: 40 30% 97%;
+    --foreground: 20 25% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 25% 98%;
+    --card-foreground: 20 25% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 25% 98%;
+    --popover-foreground: 20 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Terracotta Primary */
+    --primary: 15 55% 52%;
+    --primary-foreground: 40 30% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Soft Cream Secondary */
+    --secondary: 35 30% 92%;
+    --secondary-foreground: 20 25% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Deep Rose Accent */
+    --accent: 350 50% 58%;
+    --accent-foreground: 40 30% 97%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: 35 20% 90%;
+    --muted-foreground: 20 15% 45%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 30% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 35 25% 85%;
+    --input: 35 25% 85%;
+    --ring: 15 55% 52%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom Design Tokens */
+    --terracotta: 15 55% 52%;
+    --terracotta-light: 15 50% 65%;
+    --terracotta-dark: 15 60% 40%;
+    
+    --cream: 40 30% 97%;
+    --cream-warm: 35 35% 93%;
+    
+    --rose: 350 50% 58%;
+    --rose-light: 350 45% 70%;
+    --rose-dark: 350 55% 45%;
+    
+    --gold: 38 70% 50%;
+    --gold-light: 38 65% 65%;
+    
+    /* Glassmorphism */
+    --glass-bg: 40 30% 98% / 0.7;
+    --glass-border: 40 30% 100% / 0.3;
+    --glass-shadow: 20 25% 15% / 0.1;
+    
+    /* Gradients */
+    --gradient-romantic: linear-gradient(135deg, hsl(15 55% 52%), hsl(350 50% 58%));
+    --gradient-warm: linear-gradient(180deg, hsl(40 30% 97%), hsl(35 35% 93%));
+    --gradient-hero: linear-gradient(135deg, hsl(40 30% 97%) 0%, hsl(35 30% 92%) 50%, hsl(350 50% 58% / 0.1) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(38 70% 50%), hsl(38 65% 65%));
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 30px hsl(20 25% 15% / 0.08);
+    --shadow-romantic: 0 8px 40px hsl(350 50% 58% / 0.15);
+    --shadow-elevated: 0 20px 60px hsl(20 25% 15% / 0.12);
+    --shadow-glass: 0 8px 32px hsl(20 25% 15% / 0.1);
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 40 30% 97%;
+    --sidebar-foreground: 20 25% 15%;
+    --sidebar-primary: 15 55% 52%;
+    --sidebar-primary-foreground: 40 30% 97%;
+    --sidebar-accent: 350 50% 58%;
+    --sidebar-accent-foreground: 40 30% 97%;
+    --sidebar-border: 35 25% 85%;
+    --sidebar-ring: 15 55% 52%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 20 25% 8%;
+    --foreground: 40 30% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 20 20% 12%;
+    --card-foreground: 40 30% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 20 20% 12%;
+    --popover-foreground: 40 30% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 15 50% 55%;
+    --primary-foreground: 20 25% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 20 15% 18%;
+    --secondary-foreground: 40 30% 90%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 350 45% 55%;
+    --accent-foreground: 40 30% 95%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 20 15% 20%;
+    --muted-foreground: 40 20% 60%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 40 30% 95%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 20 15% 22%;
+    --input: 20 15% 22%;
+    --ring: 15 50% 55%;
+
+    --terracotta: 15 50% 55%;
+    --terracotta-light: 15 45% 65%;
+    --terracotta-dark: 15 55% 42%;
+    
+    --cream: 20 25% 8%;
+    --cream-warm: 20 20% 12%;
+    
+    --rose: 350 45% 55%;
+    --rose-light: 350 40% 65%;
+    --rose-dark: 350 50% 42%;
+    
+    --gold: 38 65% 55%;
+    --gold-light: 38 60% 65%;
+    
+    --glass-bg: 20 20% 12% / 0.8;
+    --glass-border: 40 30% 100% / 0.1;
+    --glass-shadow: 0 0% 0% / 0.3;
+    
+    --gradient-romantic: linear-gradient(135deg, hsl(15 50% 55%), hsl(350 45% 55%));
+    --gradient-warm: linear-gradient(180deg, hsl(20 25% 8%), hsl(20 20% 12%));
+    --gradient-hero: linear-gradient(135deg, hsl(20 25% 8%) 0%, hsl(20 20% 12%) 50%, hsl(350 45% 55% / 0.1) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(38 65% 55%), hsl(38 60% 65%));
+    
+    --shadow-soft: 0 4px 30px hsl(0 0% 0% / 0.3);
+    --shadow-romantic: 0 8px 40px hsl(350 45% 55% / 0.2);
+    --shadow-elevated: 0 20px 60px hsl(0 0% 0% / 0.4);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.3);
+
+    --sidebar-background: 20 25% 8%;
+    --sidebar-foreground: 40 30% 95%;
+    --sidebar-primary: 15 50% 55%;
+    --sidebar-primary-foreground: 20 25% 8%;
+    --sidebar-accent: 350 45% 55%;
+    --sidebar-accent-foreground: 40 30% 95%;
+    --sidebar-border: 20 15% 22%;
+    --sidebar-ring: 15 50% 55%;
   }
 }
 
@@ -100,6 +156,147 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Card */
+  .glass-card {
+    @apply bg-card/70 backdrop-blur-xl border border-border/30 rounded-2xl;
+    box-shadow: var(--shadow-glass);
+  }
+
+  /* Romantic Button */
+  .btn-romantic {
+    @apply bg-gradient-to-r from-primary to-accent text-primary-foreground font-medium px-8 py-4 rounded-full transition-all duration-300 hover:scale-105;
+    box-shadow: var(--shadow-romantic);
+  }
+
+  .btn-romantic:hover {
+    box-shadow: 0 12px 50px hsl(var(--accent) / 0.25);
+  }
+
+  /* Gold accent button */
+  .btn-gold {
+    background: var(--gradient-gold);
+    @apply text-foreground font-medium px-6 py-3 rounded-full transition-all duration-300 hover:scale-105;
+    box-shadow: 0 4px 20px hsl(var(--gold) / 0.3);
+  }
+
+  /* Ghibli Filter Effect */
+  .ghibli-filter {
+    filter: saturate(1.3) contrast(0.95) brightness(1.05);
+    @apply transition-all duration-500;
+  }
+
+  .ghibli-filter::after {
+    content: '';
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(
+      135deg,
+      hsl(350 50% 58% / 0.08) 0%,
+      hsl(38 70% 50% / 0.05) 50%,
+      hsl(180 40% 60% / 0.08) 100%
+    );
+  }
+
+  /* Floating animation */
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Text gradient */
+  .text-gradient-romantic {
+    background: var(--gradient-romantic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Decorative heart */
+  .heart-decoration::before {
+    content: '♥';
+    @apply text-accent opacity-50;
+  }
+
+  /* Love letter styling */
+  .love-letter {
+    @apply font-serif italic text-lg leading-relaxed;
+    text-indent: 2rem;
+  }
+
+  /* Counter card */
+  .counter-unit {
+    @apply glass-card px-4 py-6 md:px-6 md:py-8 text-center min-w-[70px] md:min-w-[90px];
+  }
+
+  .counter-number {
+    @apply text-3xl md:text-5xl font-serif font-bold text-gradient-romantic;
+  }
+
+  .counter-label {
+    @apply text-xs md:text-sm uppercase tracking-wider text-muted-foreground mt-2;
+  }
+}
+
+@layer utilities {
+  /* Scroll reveal animation helper */
+  .reveal-on-scroll {
+    @apply opacity-0 translate-y-8 transition-all duration-700 ease-out;
+  }
+
+  .reveal-on-scroll.revealed {
+    @apply opacity-100 translate-y-0;
+  }
+}
+
+/* Keyframes */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
 }
