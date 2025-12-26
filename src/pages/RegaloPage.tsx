@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { Heart, Calendar, MapPin } from "lucide-react";
+import { Heart, Calendar, Music } from "lucide-react";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import PhotoGallery from "@/components/PhotoGallery";
 import LoveLetter from "@/components/LoveLetter";
-import MusicPlayer from "@/components/MusicPlayer";
+import SpotifyEmbed from "@/components/SpotifyEmbed";
 
 // Demo data for the gift page
 const demoData = {
@@ -44,15 +44,12 @@ Gracias por elegirme cada día, por soñar conmigo y por construir este hermoso 
 
 Prometo seguir amándote con la misma intensidad que el primer día, celebrar cada pequeño momento y crear juntos mil recuerdos más.`,
   author: "María",
-  songTitle: "Perfect",
-  artist: "Ed Sheeran",
+  spotifyUrl: "https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v",
 };
 
 const RegaloPage = () => {
   return (
     <main className="min-h-screen bg-background">
-      {/* Music Player */}
-      <MusicPlayer songTitle={demoData.songTitle} artist={demoData.artist} />
 
       {/* Hero Section with Names */}
       <section className="relative min-h-[70vh] md:min-h-[80vh] flex items-center justify-center px-4 overflow-hidden">
@@ -187,6 +184,26 @@ const RegaloPage = () => {
           </motion.div>
 
           <PhotoGallery photos={demoData.photos} />
+        </div>
+      </section>
+
+      {/* Spotify Player */}
+      <section className="py-16 md:py-24 px-4 bg-cream-warm/30">
+        <div className="container mx-auto max-w-xl">
+          <motion.div
+            className="text-center mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-foreground mb-2">
+              Nuestra Canción
+            </h2>
+            <p className="text-muted-foreground">La música de nuestro amor</p>
+          </motion.div>
+
+          <SpotifyEmbed spotifyUrl={demoData.spotifyUrl} />
         </div>
       </section>
 
