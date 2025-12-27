@@ -1,12 +1,36 @@
-import { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Calendar, Upload, Music, FileText, QrCode, Check, Download } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Calendar, Upload, Music, FileText, QrCode, Check, Download, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
+import { cn } from "@/lib/utils";
+import SpotifyEmbed from "@/components/SpotifyEmbed";
+
+// Validate Spotify URL and extract type/id
+const validateSpotifyUrl = (url: string): { isValid: boolean; type?: string; id?: string } => {
+  if (!url || url.trim() === "") {
+    return { isValid: false };
+  }
+  
+  const patterns = [
+    /spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/,
+    /spotify\.com\/embed\/(track|album|playlist)\/([a-zA-Z0-9]+)/,
+    /spotify:(track|album|playlist):([a-zA-Z0-9]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) {
+      return { isValid: true, type: match[1], id: match[2] };
+    }
+  }
+
+  return { isValid: false };
+};
 
 const steps = [
   { id: 1, title: "Nombres", icon: Heart, description: "¿Cómo se llaman?" },
@@ -30,6 +54,11 @@ const CrearPage = () => {
   const [qrGenerated, setQrGenerated] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Validate Spotify URL in real-time
+  const spotifyValidation = useMemo(() => {
+    return validateSpotifyUrl(formData.spotifyUrl);
+  }, [formData.spotifyUrl]);
 
   // Generate a unique ID for the regalo page
   const generateRegaloId = () => {
@@ -198,19 +227,90 @@ const CrearPage = () => {
 
       case 4:
         return (
-          <div>
+          <div className="space-y-4">
             <label className="block text-sm font-medium text-foreground mb-2">
               Enlace de Spotify o URL de la canción
             </label>
-            <Input
-              placeholder="https://open.spotify.com/track/..."
-              value={formData.spotifyUrl}
-              onChange={(e) => setFormData({ ...formData, spotifyUrl: e.target.value })}
-              className="text-lg h-14"
-            />
-            <p className="mt-4 text-sm text-muted-foreground">
-              Pega el enlace de Spotify de la canción que representa su amor
+            <div className="relative">
+              <Input
+                placeholder="https://open.spotify.com/track/..."
+                value={formData.spotifyUrl}
+                onChange={(e) => setFormData({ ...formData, spotifyUrl: e.target.value })}
+                className={cn(
+                  "text-lg h-14 pr-12 transition-all duration-200",
+                  formData.spotifyUrl && spotifyValidation.isValid && "border-green-500 focus-visible:ring-green-500/20",
+                  formData.spotifyUrl && !spotifyValidation.isValid && "border-destructive focus-visible:ring-destructive/20"
+                )}
+              />
+              {formData.spotifyUrl && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  {spotifyValidation.isValid ? (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
+                    >
+                      <Check className="w-4 h-4 text-white" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
+                    >
+                      <AlertCircle className="w-4 h-4 text-white" />
+                    </motion.div>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* Validation feedback message */}
+            <AnimatePresence mode="wait">
+              {formData.spotifyUrl && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className={cn(
+                    "flex items-center gap-2 text-sm px-4 py-3 rounded-xl",
+                    spotifyValidation.isValid 
+                      ? "bg-green-500/10 text-green-600 border border-green-500/20" 
+                      : "bg-destructive/10 text-destructive border border-destructive/20"
+                  )}
+                >
+                  {spotifyValidation.isValid ? (
+                    <>
+                      <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                      <span>
+                        ¡Enlace válido! Tipo: <span className="font-semibold capitalize">{spotifyValidation.type === 'track' ? 'Canción' : spotifyValidation.type === 'album' ? 'Álbum' : 'Playlist'}</span>
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      <span>Enlace no válido. Usa un enlace de Spotify de canción, álbum o playlist.</span>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            <p className="text-sm text-muted-foreground">
+              Abre Spotify, busca la canción, haz clic en "Compartir" y copia el enlace
             </p>
+
+            {/* Preview del reproductor si el enlace es válido */}
+            {spotifyValidation.isValid && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 pt-6 border-t border-border"
+              >
+                <p className="text-sm font-medium text-foreground mb-3">Vista previa:</p>
+                <SpotifyEmbed spotifyUrl={formData.spotifyUrl} compact />
+              </motion.div>
+            )}
           </div>
         );
 
