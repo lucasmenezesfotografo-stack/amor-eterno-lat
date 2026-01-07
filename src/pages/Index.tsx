@@ -1,91 +1,93 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, Sparkles, Gift, Calendar, Music } from "lucide-react";
+import { Heart, Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-romantic.jpg";
 
 const Index = () => {
-  const features = [
-    {
-      icon: Calendar,
-      title: "Contador del Amor",
-      description: "Mide cada segundo, minuto y día de su historia juntos",
-    },
-    {
-      icon: Sparkles,
-      title: "Efecto Mágico",
-      description: "Transforma tus fotos con un filtro artístico inspirado en Ghibli",
-    },
-    {
-      icon: Music,
-      title: "Tu Canción",
-      description: "Añade la banda sonora de su amor con música de fondo",
-    },
-    {
-      icon: Gift,
-      title: "Carta de Amor",
-      description: "Escribe palabras eternas con tipografía elegante",
-    },
+  const benefits = [
+    "Página individual personalizada",
+    "Música ambiente integrada",
+    "Contador em tempo real",
+    "Carta gerada com IA",
+    "QR Code exclusivo",
+    "Atualizações gratuitas",
   ];
 
   return (
     <main className="min-h-screen bg-background overflow-hidden">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <Heart className="w-6 h-6 text-primary fill-primary" />
+            <span className="text-lg font-semibold">Forever Love</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/regalo/demo">
+              <Button variant="ghost" size="sm">
+                Ver Demo
+              </Button>
+            </Link>
+            <Link to="/criar">
+              <Button variant="default" size="sm">
+                Começar
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src={heroImage}
-            alt="Pareja romántica"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
+      <section className="relative min-h-screen flex items-center justify-center px-4 pt-16">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 container mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            {/* Floating Heart */}
+        <div className="relative z-10 container mx-auto">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
-              className="inline-block mb-6"
-              animate={{ y: [-10, 10, -10] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <Heart className="w-12 h-12 md:w-16 md:h-16 text-accent fill-accent/30" />
+              {/* Badge */}
+              <motion.div
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                <Sparkles className="w-4 h-4" />
+                Eternize seu amor digitalmente
+              </motion.div>
+
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold mb-6 tracking-tight">
+                Sua história de amor,{" "}
+                <span className="text-gradient-cherry">eternizada digitalmente</span>
+              </h1>
+
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+                Crie uma página única para celebrar cada momento especial com seu amor. 
+                Contador em tempo real, música, fotos e muito mais.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Link to="/criar">
+                  <Button variant="default" size="xl" className="group">
+                    Criar nossa página por $5/ano
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <Link to="/regalo/demo">
+                  <Button variant="outline" size="xl">
+                    Ver demonstração
+                  </Button>
+                </Link>
+              </div>
             </motion.div>
-
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold mb-6">
-              <span className="text-gradient-romantic">Tu Amor Lat</span>
-            </h1>
-
-            <p className="text-xl md:text-2xl lg:text-3xl font-serif italic text-foreground/80 mb-8 max-w-2xl mx-auto">
-              Inmortaliza tu historia de amor
-            </p>
-
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Crea una página de aniversario única y hermosa para celebrar cada momento 
-              especial junto a tu persona favorita.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/crear">
-                <Button variant="romantic" size="xl">
-                  <Gift className="w-5 h-5" />
-                  Crear Mi Regalo
-                </Button>
-              </Link>
-              <Link to="/regalo/demo">
-                <Button variant="glass" size="xl">
-                  <Sparkles className="w-5 h-5" />
-                  Ver Ejemplo
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Scroll Indicator */}
@@ -98,14 +100,79 @@ const Index = () => {
             y: { delay: 1.5, duration: 1.5, repeat: Infinity }
           }}
         >
-          <div className="w-6 h-10 border-2 border-foreground/30 rounded-full flex justify-center">
-            <div className="w-1.5 h-3 bg-foreground/50 rounded-full mt-2" />
+          <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center">
+            <div className="w-1.5 h-3 bg-muted-foreground/50 rounded-full mt-2" />
           </div>
         </motion.div>
       </section>
 
+      {/* Demo Section - Phone Mockup */}
+      <section className="py-24 px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-card/50 to-background" />
+        
+        <div className="container mx-auto relative z-10">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
+              Veja como ficará
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Uma página elegante e moderna para celebrar seu amor
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* Phone Mockup */}
+            <div className="phone-mockup w-[300px] md:w-[340px]">
+              <div className="phone-mockup-screen aspect-[9/19.5] relative">
+                {/* Screen Content */}
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-background p-6 flex flex-col items-center justify-center">
+                  {/* Mini Counter */}
+                  <div className="mb-6">
+                    <Heart className="w-10 h-10 text-primary fill-primary mx-auto mb-4 animate-heartbeat" />
+                    <p className="text-sm text-muted-foreground mb-2">Maria & João</p>
+                    <p className="text-2xl font-semibold text-gradient-cherry">2 Anos, 5 Meses</p>
+                  </div>
+
+                  {/* Mini Photo */}
+                  <div className="w-32 h-32 rounded-2xl bg-card border border-border mb-6 overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=400&auto=format&fit=crop"
+                      alt="Couple"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Mini Music Player */}
+                  <div className="w-full bg-card/80 rounded-xl p-3 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Music className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-foreground font-medium">Perfect</p>
+                      <p className="text-xs text-muted-foreground">Ed Sheeran</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section className="py-20 md:py-32 px-4 bg-gradient-to-b from-background to-cream-warm">
+      <section className="py-24 px-4">
         <div className="container mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -114,74 +181,92 @@ const Index = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-              Todo lo que necesitas
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
+              Tudo que você precisa
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Herramientas diseñadas para crear el regalo digital perfecto
+              Ferramentas premium para criar o presente digital perfeito
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {features.map((feature, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: Clock, title: "Contador em Tempo Real", description: "Anos, meses, dias, horas e minutos desde o início" },
+              { icon: Music, title: "Música Ambiente", description: "Escolha a trilha sonora do seu amor" },
+              { icon: FileText, title: "Carta com IA", description: "Gere uma carta única e personalizada" },
+              { icon: QrCode, title: "QR Code Exclusivo", description: "Compartilhe facilmente o presente" },
+            ].map((feature, index) => (
               <motion.div
                 key={feature.title}
-                className="glass-card p-6 md:p-8 text-center group hover:scale-105 transition-transform duration-300"
+                className="feature-card"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
               >
-                <div className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <feature.icon className="w-7 h-7 md:w-8 md:h-8 text-primary-foreground" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                  <feature.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-lg md:text-xl font-serif font-semibold text-foreground mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-sm md:text-base text-muted-foreground">
-                  {feature.description}
-                </p>
+                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm">{feature.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 md:py-32 px-4">
-        <div className="container mx-auto">
+      {/* Pricing Section */}
+      <section className="py-24 px-4">
+        <div className="container mx-auto max-w-lg">
           <motion.div
-            className="glass-card p-8 md:p-16 text-center relative overflow-hidden"
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
+              Preço simples
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Um presente que dura o ano inteiro
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="pricing-card"
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            {/* Background Decoration */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-gradient-to-br from-accent to-primary blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-gradient-to-tr from-primary to-gold blur-3xl" />
-            </div>
-
             <div className="relative z-10">
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-              >
-                <Heart className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-6 text-accent fill-accent/20" />
-              </motion.div>
+              {/* Price */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-baseline gap-1">
+                  <span className="text-5xl md:text-6xl font-bold text-gradient-cherry">$5</span>
+                  <span className="text-muted-foreground">/ano</span>
+                </div>
+                <p className="text-muted-foreground mt-2">Menos de R$0,50 por mês</p>
+              </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-                ¿Listo para sorprender?
-              </h2>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-8">
-                Crea una página de aniversario única que tu pareja nunca olvidará
-              </p>
+              {/* Benefits */}
+              <div className="space-y-4 mb-8">
+                {benefits.map((benefit) => (
+                  <div key={benefit} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-primary" />
+                    </div>
+                    <span className="text-foreground">{benefit}</span>
+                  </div>
+                ))}
+              </div>
 
-              <Link to="/crear">
-                <Button variant="romantic" size="xl">
-                  <Gift className="w-5 h-5" />
-                  Comenzar Ahora
+              {/* CTA */}
+              <Link to="/criar" className="block">
+                <Button variant="default" size="xl" className="w-full">
+                  Criar nossa página agora
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
@@ -190,11 +275,17 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border">
-        <div className="container mx-auto text-center">
-          <p className="text-muted-foreground flex items-center justify-center gap-2">
-            Hecho con <Heart className="w-4 h-4 text-accent fill-accent animate-heartbeat" /> Tu Amor Lat
-          </p>
+      <footer className="py-12 px-4 border-t border-border">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-primary fill-primary" />
+              <span className="font-semibold">Forever Love</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              © 2024 Forever Love. Feito com ❤️ para casais apaixonados.
+            </p>
+          </div>
         </div>
       </footer>
     </main>
