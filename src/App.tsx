@@ -21,6 +21,7 @@ const App = () => (
           <Route path="/regalo/:id" element={<RegaloPage />} />
           <Route path="/regalo/demo" element={<RegaloPage />} />
           <Route path="/crear" element={<CrearPage />} />
+          <Route path="/criar" element={<CrearPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

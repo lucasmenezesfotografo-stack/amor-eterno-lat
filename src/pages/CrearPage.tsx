@@ -36,9 +36,9 @@ const validateSpotifyUrl = (url: string): { isValid: boolean; type?: string; id?
 };
 
 const steps = [
-  { id: 1, title: "Nomes", icon: Heart, description: "Quem são vocês?" },
-  { id: 2, title: "Foto & Música", icon: Upload, description: "Escolha uma foto e uma música" },
-  { id: 3, title: "Carta", icon: FileText, description: "Escreva ou gere com IA" },
+  { id: 1, title: "Nombres", icon: Heart, description: "¿Quiénes son ustedes?" },
+  { id: 2, title: "Foto y Música", icon: Upload, description: "Elige una foto y una canción" },
+  { id: 3, title: "Carta", icon: FileText, description: "Escribe o genera con IA" },
 ];
 
 const CrearPage = () => {
@@ -83,8 +83,8 @@ const CrearPage = () => {
   const handleGenerate = () => {
     setQrGenerated(true);
     toast({
-      title: "Página criada!",
-      description: "Seu QR Code está pronto para download.",
+      title: "¡Página creada!",
+      description: "Tu QR Code está listo para descargar.",
     });
   };
 
@@ -127,8 +127,8 @@ const CrearPage = () => {
   const handleGenerateAILetter = () => {
     setIsGeneratingLetter(true);
     const letterTemplates = [
-      `Meu amor ${formData.person2},\n\nDesde o dia ${formData.startDate ? new Date(formData.startDate).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" }) : "em que nos conhecemos"}, minha vida ganhou um novo significado.\n\nCada momento ao seu lado é um presente que guardo no coração. Você me faz querer ser uma pessoa melhor a cada dia, e com você descobri o verdadeiro significado do amor.\n\nObrigado(a) por escolher construir essa história comigo. Prometo continuar te amando com a mesma intensidade de sempre.\n\nCom todo meu amor,\n${formData.person1}`,
-      `${formData.person2}, meu grande amor,\n\nAs palavras parecem pequenas para descrever o que sinto por você. Desde ${formData.startDate ? new Date(formData.startDate).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" }) : "que você entrou na minha vida"}, cada dia é uma nova aventura.\n\nVocê é minha paz em meio ao caos, meu sorriso nas manhãs difíceis, e minha certeza de que o amor verdadeiro existe.\n\nQue possamos construir mil memórias mais juntos.\n\nTe amo infinitamente,\n${formData.person1}`,
+      `Mi amor ${formData.person2},\n\nDesde el día ${formData.startDate ? new Date(formData.startDate).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "en que nos conocimos"}, mi vida cobró un nuevo significado.\n\nCada momento a tu lado es un regalo que guardo en el corazón. Tú me haces querer ser una mejor persona cada día, y contigo descubrí el verdadero significado del amor.\n\nGracias por elegir construir esta historia conmigo. Prometo seguir amándote con la misma intensidad de siempre.\n\nCon todo mi amor,\n${formData.person1}`,
+      `${formData.person2}, mi gran amor,\n\nLas palabras parecen pequeñas para describir lo que siento por ti. Desde ${formData.startDate ? new Date(formData.startDate).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "que entraste en mi vida"}, cada día es una nueva aventura.\n\nEres mi paz en medio del caos, mi sonrisa en las mañanas difíciles, y mi certeza de que el amor verdadero existe.\n\nQue podamos construir mil memorias más juntos.\n\nTe amo infinitamente,\n${formData.person1}`,
     ];
 
     const randomLetter = letterTemplates[Math.floor(Math.random() * letterTemplates.length)];
@@ -153,10 +153,10 @@ const CrearPage = () => {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Primeiro nome
+                Primer nombre
               </label>
               <Input
-                placeholder="Ex: Maria"
+                placeholder="Ej: María"
                 value={formData.person1}
                 onChange={(e) => setFormData({ ...formData, person1: e.target.value })}
                 className="input-premium"
@@ -164,10 +164,10 @@ const CrearPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Segundo nome
+                Segundo nombre
               </label>
               <Input
-                placeholder="Ex: João"
+                placeholder="Ej: Juan"
                 value={formData.person2}
                 onChange={(e) => setFormData({ ...formData, person2: e.target.value })}
                 className="input-premium"
@@ -175,7 +175,7 @@ const CrearPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Data de início do relacionamento
+                Fecha de inicio de la relación
               </label>
               <Input
                 type="date"
@@ -189,7 +189,7 @@ const CrearPage = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  📅 {new Date(formData.startDate).toLocaleDateString("pt-BR", {
+                  📅 {new Date(formData.startDate).toLocaleDateString("es-ES", {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
@@ -207,12 +207,12 @@ const CrearPage = () => {
             {/* Photo Upload */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-3">
-                Foto de capa
+                Foto de portada
               </label>
               <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer bg-secondary/30">
                 <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
                 <p className="text-foreground font-medium mb-1">
-                  Arraste uma foto ou clique para selecionar
+                  Arrastra una foto o haz clic para seleccionar
                 </p>
                 <p className="text-sm text-muted-foreground">
                   JPG, PNG (máx. 5MB)
@@ -228,7 +228,7 @@ const CrearPage = () => {
             {/* Music Selection */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-3">
-                Escolha uma música romântica
+                Elige una canción romántica
               </label>
               <div className="space-y-2">
                 {freeSongs.map((song) => (
@@ -263,7 +263,7 @@ const CrearPage = () => {
               {/* Or Spotify Link */}
               <div className="mt-6 pt-6 border-t border-border">
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Ou cole um link do Spotify
+                  O pega un link de Spotify
                 </label>
                 <div className="relative">
                   <Input
@@ -327,12 +327,12 @@ const CrearPage = () => {
                 {isGeneratingLetter ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Gerando carta mágica...
+                    Generando carta mágica...
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    Gerar carta mágica com IA
+                    Generar carta mágica con IA
                   </>
                 )}
               </Button>
@@ -340,10 +340,10 @@ const CrearPage = () => {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Sua carta de amor
+                Tu carta de amor
               </label>
               <Textarea
-                placeholder="Escreva sua carta aqui ou use a IA para gerar..."
+                placeholder="Escribe tu carta aquí o usa la IA para generar..."
                 value={isGeneratingLetter ? generatedText : formData.loveLetter}
                 onChange={(e) => setFormData({ ...formData, loveLetter: e.target.value })}
                 className="min-h-[300px] text-base bg-secondary border-border rounded-xl resize-none"
@@ -368,7 +368,7 @@ const CrearPage = () => {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                   >
-                    {qrGenerated ? (
+                  {qrGenerated ? (
                       <QRCodeSVG
                         value={regaloUrl}
                         size={180}
@@ -380,7 +380,7 @@ const CrearPage = () => {
                     ) : (
                       <div className="text-center">
                         <QrCode className="w-16 h-16 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Seu QR Code</p>
+                        <p className="text-sm text-muted-foreground">Tu QR Code</p>
                       </div>
                     )}
                   </motion.div>
@@ -399,13 +399,13 @@ const CrearPage = () => {
                     {!qrGenerated ? (
                       <Button variant="default" size="lg" onClick={handleGenerate}>
                         <QrCode className="w-5 h-5" />
-                        Gerar QR Code
+                        Generar QR Code
                       </Button>
                     ) : (
                       <>
                         <Button variant="default" size="lg" onClick={handleDownloadQR}>
                           <Download className="w-5 h-5" />
-                          Baixar QR Code
+                          Descargar QR Code
                         </Button>
                         <Link to={`/regalo/demo`}>
                           <Button variant="outline" size="lg">
