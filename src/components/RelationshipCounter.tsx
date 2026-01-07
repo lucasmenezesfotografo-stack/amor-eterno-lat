@@ -27,12 +27,11 @@ const RelationshipCounter = ({ startDate, className = "" }: RelationshipCounterP
       const years = Math.floor(days / 365.25);
 
       setTimeUnits([
-        { value: years, label: "Años" },
+        { value: years, label: "Anos" },
         { value: months % 12, label: "Meses" },
-        { value: days % 30, label: "Días" },
+        { value: days % 30, label: "Dias" },
         { value: hours % 24, label: "Horas" },
-        { value: minutes % 60, label: "Minutos" },
-        { value: seconds % 60, label: "Segundos" },
+        { value: minutes % 60, label: "Min" },
       ]);
     };
 
@@ -66,21 +65,21 @@ const RelationshipCounter = ({ startDate, className = "" }: RelationshipCounterP
 
   return (
     <motion.div
-      className={`flex flex-wrap justify-center gap-3 md:gap-4 ${className}`}
+      className={`flex flex-wrap justify-center gap-4 ${className}`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {timeUnits.map((unit, index) => (
+      {timeUnits.map((unit) => (
         <motion.div
           key={unit.label}
-          className="counter-unit"
+          className="counter-unit min-w-[80px] md:min-w-[100px]"
           variants={itemVariants}
         >
           <motion.span
             className="counter-number block"
             key={`${unit.label}-${unit.value}`}
-            initial={{ scale: 1.2, opacity: 0 }}
+            initial={{ scale: 1.1, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.2 }}
           >

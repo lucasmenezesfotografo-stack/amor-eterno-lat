@@ -19,7 +19,6 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        serif: ["Playfair Display", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -55,24 +54,20 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom romantic palette
-        terracotta: {
-          DEFAULT: "hsl(var(--terracotta))",
-          light: "hsl(var(--terracotta-light))",
-          dark: "hsl(var(--terracotta-dark))",
+        // Custom palette
+        cherry: {
+          DEFAULT: "hsl(var(--cherry))",
+          light: "hsl(var(--cherry-light))",
+          dark: "hsl(var(--cherry-dark))",
         },
-        cream: {
-          DEFAULT: "hsl(var(--cream))",
-          warm: "hsl(var(--cream-warm))",
+        midnight: {
+          DEFAULT: "hsl(var(--midnight))",
+          card: "hsl(var(--midnight-card))",
+          elevated: "hsl(var(--midnight-elevated))",
         },
-        rose: {
-          DEFAULT: "hsl(var(--rose))",
-          light: "hsl(var(--rose-light))",
-          dark: "hsl(var(--rose-dark))",
-        },
-        gold: {
-          DEFAULT: "hsl(var(--gold))",
-          light: "hsl(var(--gold-light))",
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -89,14 +84,15 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        "2xl": "1.5rem",
-        "3xl": "2rem",
+        "2xl": "1rem",
+        "3xl": "1.5rem",
       },
       boxShadow: {
         soft: "var(--shadow-soft)",
-        romantic: "var(--shadow-romantic)",
+        cherry: "var(--shadow-cherry)",
         elevated: "var(--shadow-elevated)",
         glass: "var(--shadow-glass)",
+        glow: "var(--shadow-glow)",
       },
       keyframes: {
         "accordion-down": {
@@ -125,7 +121,7 @@ export default {
         },
         heartbeat: {
           "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(1.1)" },
+          "50%": { transform: "scale(1.15)" },
         },
         shimmer: {
           "0%": { backgroundPosition: "-200% 0" },
