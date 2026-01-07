@@ -7,10 +7,10 @@ const Index = () => {
   const benefits = [
     "Página individual personalizada",
     "Música ambiente integrada",
-    "Contador em tempo real",
-    "Carta gerada com IA",
+    "Contador en tiempo real",
+    "Carta generada con IA",
     "QR Code exclusivo",
-    "Atualizações gratuitas",
+    "Actualizaciones gratuitas",
   ];
 
   return (
@@ -28,9 +28,9 @@ const Index = () => {
                 Ver Demo
               </Button>
             </Link>
-            <Link to="/criar">
+            <Link to="/crear">
               <Button variant="default" size="sm">
-                Começar
+                Comenzar
               </Button>
             </Link>
           </div>
@@ -60,29 +60,29 @@ const Index = () => {
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
                 <Sparkles className="w-4 h-4" />
-                Eternize seu amor digitalmente
+                Eterniza tu amor digitalmente
               </motion.div>
 
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold mb-6 tracking-tight">
-                Sua história de amor,{" "}
+                Tu historia de amor,{" "}
                 <span className="text-gradient-cherry">eternizada digitalmente</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-                Crie uma página única para celebrar cada momento especial com seu amor. 
-                Contador em tempo real, música, fotos e muito mais.
+                Crea una página única para celebrar cada momento especial con tu amor. 
+                Contador en tiempo real, música, fotos y mucho más.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link to="/criar">
+                <Link to="/crear">
                   <Button variant="default" size="xl" className="group">
-                    Criar nossa página por $5/ano
+                    Crear nuestra página por $5/año
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
                 <Link to="/regalo/demo">
                   <Button variant="outline" size="xl">
-                    Ver demonstração
+                    Ver demostración
                   </Button>
                 </Link>
               </div>
@@ -119,10 +119,10 @@ const Index = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
-              Veja como ficará
+              Mira cómo quedará
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Uma página elegante e moderna para celebrar seu amor
+              Una página elegante y moderna para celebrar tu amor
             </p>
           </motion.div>
 
@@ -182,19 +182,19 @@ const Index = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
-              Tudo que você precisa
+              Todo lo que necesitas
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Ferramentas premium para criar o presente digital perfeito
+              Herramientas premium para crear el regalo digital perfecto
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Clock, title: "Contador em Tempo Real", description: "Anos, meses, dias, horas e minutos desde o início" },
-              { icon: Music, title: "Música Ambiente", description: "Escolha a trilha sonora do seu amor" },
-              { icon: FileText, title: "Carta com IA", description: "Gere uma carta única e personalizada" },
-              { icon: QrCode, title: "QR Code Exclusivo", description: "Compartilhe facilmente o presente" },
+              { icon: Clock, title: "Contador en Tiempo Real", description: "Años, meses, días, horas y minutos desde el inicio" },
+              { icon: Music, title: "Música Ambiente", description: "Elige la banda sonora de tu amor" },
+              { icon: FileText, title: "Carta con IA", description: "Genera una carta única y personalizada" },
+              { icon: QrCode, title: "QR Code Exclusivo", description: "Comparte fácilmente el regalo" },
             ].map((feature, index) => (
               <motion.div
                 key={feature.title}
@@ -226,10 +226,10 @@ const Index = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
-              Preço simples
+              Precio simple
             </h2>
             <p className="text-lg text-muted-foreground">
-              Um presente que dura o ano inteiro
+              Un regalo que dura todo el año
             </p>
           </motion.div>
 
@@ -245,9 +245,9 @@ const Index = () => {
               <div className="text-center mb-8">
                 <div className="inline-flex items-baseline gap-1">
                   <span className="text-5xl md:text-6xl font-bold text-gradient-cherry">$5</span>
-                  <span className="text-muted-foreground">/ano</span>
+                  <span className="text-muted-foreground">/año</span>
                 </div>
-                <p className="text-muted-foreground mt-2">Menos de R$0,50 por mês</p>
+                <p className="text-muted-foreground mt-2">Menos de $0.50 por mes</p>
               </div>
 
               {/* Benefits */}
@@ -263,9 +263,9 @@ const Index = () => {
               </div>
 
               {/* CTA */}
-              <Link to="/criar" className="block">
+              <Link to="/crear" className="block">
                 <Button variant="default" size="xl" className="w-full">
-                  Criar nossa página agora
+                  Crear nuestra página ahora
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
@@ -283,7 +283,7 @@ const Index = () => {
               <span className="font-semibold">Forever Love</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 Forever Love. Feito com ❤️ para casais apaixonados.
+              © 2024 Forever Love. Hecho con ❤️ para parejas enamoradas.
             </p>
           </div>
         </div>
