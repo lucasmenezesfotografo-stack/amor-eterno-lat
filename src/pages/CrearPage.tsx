@@ -1,7 +1,7 @@
-import { useState, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, CalendarIcon, ImagePlus, X } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,19 +11,11 @@ import { cn } from "@/lib/utils";
 import SpotifyEmbed from "@/components/SpotifyEmbed";
 import SoundtrackSelector, { soundtracks } from "@/components/SoundtrackSelector";
 import DatePickerWithYearMonth from "@/components/DatePickerWithYearMonth";
+import QuickRegister from "@/components/QuickRegister";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
-
-// Free romantic songs list
-const freeSongs = [
-  { id: 1, title: "Perfect", artist: "Ed Sheeran", duration: "4:23" },
-  { id: 2, title: "All of Me", artist: "John Legend", duration: "4:29" },
-  { id: 3, title: "Thinking Out Loud", artist: "Ed Sheeran", duration: "4:41" },
-  { id: 4, title: "A Thousand Years", artist: "Christina Perri", duration: "4:45" },
-  { id: 5, title: "Can't Help Falling in Love", artist: "Elvis Presley", duration: "3:00" },
-  { id: 6, title: "At Last", artist: "Etta James", duration: "3:02" },
-];
+import type { User, Session } from "@supabase/supabase-js";
 
 // Validate Spotify URL
 const validateSpotifyUrl = (url: string): { isValid: boolean; type?: string; id?: string } => {
@@ -59,6 +51,10 @@ const steps = [
 
 const CrearPage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     person1: "",
@@ -81,9 +77,47 @@ const CrearPage = () => {
   const qrRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  // Check authentication status
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsCheckingAuth(false);
+        
+        // Pre-fill person1 with user's name if available
+        if (session?.user?.user_metadata?.display_name && !formData.person1) {
+          setFormData(prev => ({
+            ...prev,
+            person1: session.user.user_metadata.display_name,
+          }));
+        }
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsCheckingAuth(false);
+      
+      if (session?.user?.user_metadata?.display_name && !formData.person1) {
+        setFormData(prev => ({
+          ...prev,
+          person1: session.user.user_metadata.display_name,
+        }));
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const spotifyValidation = useMemo(() => validateSpotifyUrl(formData.spotifyUrl), [formData.spotifyUrl]);
 
   const regaloUrl = savedSlug ? `${window.location.origin}/regalo/${savedSlug}` : "";
+
+  const handleAuthSuccess = () => {
+    // User just registered, auth state change will update the user
+  };
 
   const handleNext = () => {
     if (currentStep < steps.length) {
@@ -125,6 +159,7 @@ const CrearPage = () => {
         soundtrack_name: selectedTrack?.name || null,
         soundtrack_url: selectedTrack?.url || null,
         spotify_link: formData.spotifyUrl || null,
+        user_id: user?.id || null,
       });
 
       if (error) throw error;
@@ -290,6 +325,36 @@ const CrearPage = () => {
     }, 20);
   };
 
+  // Loading state
+  if (isCheckingAuth) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </main>
+    );
+  }
+
+  // Show registration if not authenticated
+  if (!user) {
+    return (
+      <main className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+          <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-primary fill-primary" />
+              <span className="font-semibold">Forever Love</span>
+            </Link>
+          </div>
+        </header>
+
+        <section className="py-12 px-4">
+          <QuickRegister onSuccess={handleAuthSuccess} />
+        </section>
+      </main>
+    );
+  }
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -297,7 +362,7 @@ const CrearPage = () => {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Primer nombre
+                Tu nombre
               </label>
               <Input
                 placeholder="Ej: María"
@@ -308,7 +373,7 @@ const CrearPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Segundo nombre
+                Nombre de tu amor
               </label>
               <Input
                 placeholder="Ej: Juan"
@@ -432,7 +497,7 @@ const CrearPage = () => {
               />
             </div>
 
-            {/* Soundtrack Selection - NEW */}
+            {/* Soundtrack Selection */}
             <div className="pt-4 border-t border-border">
               <SoundtrackSelector
                 selectedTrack={formData.selectedSoundtrack}
