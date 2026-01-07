@@ -10,8 +10,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
 import SpotifyEmbed from "@/components/SpotifyEmbed";
 import SoundtrackSelector, { soundtracks } from "@/components/SoundtrackSelector";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import DatePickerWithYearMonth from "@/components/DatePickerWithYearMonth";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
@@ -272,37 +271,14 @@ const CrearPage = () => {
               <label className="block text-sm font-medium text-foreground mb-3">
                 Fecha de inicio de la relación
               </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal h-14 rounded-xl bg-secondary border-border hover:bg-secondary/80",
-                      !formData.startDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-3 h-5 w-5 text-primary" />
-                    {formData.startDate ? (
-                      <span className="text-foreground">
-                        {format(formData.startDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
-                      </span>
-                    ) : (
-                      <span>Selecciona la fecha especial...</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={formData.startDate}
-                    onSelect={(date) => setFormData({ ...formData, startDate: date })}
-                    disabled={(date) => date > new Date()}
-                    initialFocus
-                    locale={es}
-                    className="rounded-xl"
-                  />
-                </PopoverContent>
-              </Popover>
+              <DatePickerWithYearMonth
+                date={formData.startDate}
+                onDateChange={(date) => setFormData({ ...formData, startDate: date })}
+                placeholder="Selecciona la fecha especial..."
+                disabled={(date) => date > new Date()}
+                fromYear={1970}
+                toYear={new Date().getFullYear()}
+              />
               
               {formData.startDate && (
                 <motion.div
