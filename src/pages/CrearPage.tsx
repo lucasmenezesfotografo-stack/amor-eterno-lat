@@ -1,7 +1,7 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Calendar, Upload, Music, FileText, QrCode, Check, Download, CheckCircle, AlertCircle, Sparkles, Play, Loader2 } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, CalendarIcon, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,11 @@ import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
 import SpotifyEmbed from "@/components/SpotifyEmbed";
 import SoundtrackSelector, { soundtracks } from "@/components/SoundtrackSelector";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client";
 
 // Free romantic songs list
 const freeSongs = [
@@ -47,13 +52,16 @@ const CrearPage = () => {
   const [formData, setFormData] = useState({
     person1: "",
     person2: "",
-    startDate: "",
+    startDate: undefined as Date | undefined,
     photoUrl: "",
+    photoFile: null as File | null,
     selectedSong: null as number | null,
     spotifyUrl: "",
     loveLetter: "",
     selectedSoundtrack: null as string | null,
   });
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [qrGenerated, setQrGenerated] = useState(false);
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
   const [generatedText, setGeneratedText] = useState("");
@@ -88,6 +96,87 @@ const CrearPage = () => {
       title: "¡Página creada!",
       description: "Tu QR Code está listo para descargar.",
     });
+  };
+
+  // Handle photo upload
+  const handlePhotoSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Error",
+        description: "Por favor selecciona un archivo de imagen válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "La imagen debe ser menor a 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+
+    try {
+      // Generate unique filename
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from("gift-photos")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("gift-photos")
+        .getPublicUrl(filePath);
+
+      setFormData((prev) => ({
+        ...prev,
+        photoUrl: urlData.publicUrl,
+        photoFile: file,
+      }));
+
+      toast({
+        title: "¡Foto subida!",
+        description: "Tu foto de portada está lista.",
+      });
+    } catch (error) {
+      console.error("Error uploading photo:", error);
+      toast({
+        title: "Error al subir",
+        description: "No se pudo subir la foto. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  }, [toast]);
+
+  const handleRemovePhoto = () => {
+    setFormData((prev) => ({
+      ...prev,
+      photoUrl: "",
+      photoFile: null,
+    }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleDownloadQR = () => {
@@ -128,9 +217,13 @@ const CrearPage = () => {
 
   const handleGenerateAILetter = () => {
     setIsGeneratingLetter(true);
+    const formattedDate = formData.startDate 
+      ? format(formData.startDate, "d 'de' MMMM 'de' yyyy", { locale: es })
+      : "en que nos conocimos";
+    
     const letterTemplates = [
-      `Mi amor ${formData.person2},\n\nDesde el día ${formData.startDate ? new Date(formData.startDate).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "en que nos conocimos"}, mi vida cobró un nuevo significado.\n\nCada momento a tu lado es un regalo que guardo en el corazón. Tú me haces querer ser una mejor persona cada día, y contigo descubrí el verdadero significado del amor.\n\nGracias por elegir construir esta historia conmigo. Prometo seguir amándote con la misma intensidad de siempre.\n\nCon todo mi amor,\n${formData.person1}`,
-      `${formData.person2}, mi gran amor,\n\nLas palabras parecen pequeñas para describir lo que siento por ti. Desde ${formData.startDate ? new Date(formData.startDate).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "que entraste en mi vida"}, cada día es una nueva aventura.\n\nEres mi paz en medio del caos, mi sonrisa en las mañanas difíciles, y mi certeza de que el amor verdadero existe.\n\nQue podamos construir mil memorias más juntos.\n\nTe amo infinitamente,\n${formData.person1}`,
+      `Mi amor ${formData.person2},\n\nDesde el día ${formattedDate}, mi vida cobró un nuevo significado.\n\nCada momento a tu lado es un regalo que guardo en el corazón. Tú me haces querer ser una mejor persona cada día, y contigo descubrí el verdadero significado del amor.\n\nGracias por elegir construir esta historia conmigo. Prometo seguir amándote con la misma intensidad de siempre.\n\nCon todo mi amor,\n${formData.person1}`,
+      `${formData.person2}, mi gran amor,\n\nLas palabras parecen pequeñas para describir lo que siento por ti. Desde ${formattedDate}, cada día es una nueva aventura.\n\nEres mi paz en medio del caos, mi sonrisa en las mañanas difíciles, y mi certeza de que el amor verdadero existe.\n\nQue podamos construir mil memorias más juntos.\n\nTe amo infinitamente,\n${formData.person1}`,
     ];
 
     const randomLetter = letterTemplates[Math.floor(Math.random() * letterTemplates.length)];
@@ -176,28 +269,59 @@ const CrearPage = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label className="block text-sm font-medium text-foreground mb-3">
                 Fecha de inicio de la relación
               </label>
-              <Input
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="input-premium"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal h-14 rounded-xl bg-secondary border-border hover:bg-secondary/80",
+                      !formData.startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-3 h-5 w-5 text-primary" />
+                    {formData.startDate ? (
+                      <span className="text-foreground">
+                        {format(formData.startDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
+                      </span>
+                    ) : (
+                      <span>Selecciona la fecha especial...</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.startDate}
+                    onSelect={(date) => setFormData({ ...formData, startDate: date })}
+                    disabled={(date) => date > new Date()}
+                    initialFocus
+                    locale={es}
+                    className="rounded-xl"
+                  />
+                </PopoverContent>
+              </Popover>
+              
               {formData.startDate && (
-                <motion.p
-                  className="mt-3 text-sm text-muted-foreground"
+                <motion.div
+                  className="mt-4 p-4 rounded-xl bg-primary/10 border border-primary/20"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  📅 {new Date(formData.startDate).toLocaleDateString("es-ES", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </motion.p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <Heart className="w-6 h-6 text-primary fill-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Su historia de amor comenzó</p>
+                      <p className="text-lg font-semibold text-foreground">
+                        {format(formData.startDate, "d 'de' MMMM, yyyy", { locale: es })}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
               )}
             </div>
           </div>
@@ -211,20 +335,75 @@ const CrearPage = () => {
               <label className="block text-sm font-medium text-foreground mb-3">
                 Foto de portada
               </label>
-              <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer bg-secondary/30">
-                <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-foreground font-medium mb-1">
-                  Arrastra una foto o haz clic para seleccionar
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  JPG, PNG (máx. 5MB)
-                </p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                />
-              </div>
+              
+              {formData.photoUrl ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="relative rounded-2xl overflow-hidden aspect-video bg-secondary"
+                >
+                  <img
+                    src={formData.photoUrl}
+                    alt="Foto de portada"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground">Foto subida</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRemovePhoto}
+                      className="bg-background/80 hover:bg-background"
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Cambiar
+                    </Button>
+                  </div>
+                </motion.div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className={cn(
+                    "border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
+                    isUploadingPhoto
+                      ? "border-primary/50 bg-primary/5"
+                      : "border-border bg-secondary/30 hover:border-primary/50 hover:bg-secondary/50"
+                  )}
+                >
+                  {isUploadingPhoto ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                      <p className="text-foreground font-medium">Subiendo foto...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+                        <ImagePlus className="w-8 h-8 text-primary" />
+                      </div>
+                      <p className="text-foreground font-medium mb-1">
+                        Haz clic para subir tu foto
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        JPG, PNG o WEBP (máx. 5MB)
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoSelect}
+                className="hidden"
+              />
             </div>
 
             {/* Soundtrack Selection - NEW */}
