@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, CalendarIcon, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,17 @@ const validateSpotifyUrl = (url: string): { isValid: boolean; type?: string; id?
   return { isValid: false };
 };
 
+// Generate unique slug
+const generateSlug = (person1: string, person2: string) => {
+  const names = `${person1}-${person2}`.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-");
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 6);
+  return `${names}-${timestamp}-${random}`;
+};
+
 const steps = [
   { id: 1, title: "Nombres", icon: Heart, description: "¿Quiénes son ustedes?" },
   { id: 2, title: "Foto y Música", icon: Upload, description: "Elige una foto y una canción" },
@@ -47,6 +58,7 @@ const steps = [
 ];
 
 const CrearPage = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     person1: "",
@@ -60,6 +72,8 @@ const CrearPage = () => {
     selectedSoundtrack: null as string | null,
   });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [qrGenerated, setQrGenerated] = useState(false);
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
@@ -69,13 +83,7 @@ const CrearPage = () => {
 
   const spotifyValidation = useMemo(() => validateSpotifyUrl(formData.spotifyUrl), [formData.spotifyUrl]);
 
-  const generateRegaloId = () => {
-    const names = `${formData.person1}-${formData.person2}`.toLowerCase().replace(/\s+/g, '-');
-    const timestamp = Date.now().toString(36);
-    return `${names}-${timestamp}`;
-  };
-
-  const regaloUrl = `${window.location.origin}/regalo/${generateRegaloId()}`;
+  const regaloUrl = savedSlug ? `${window.location.origin}/regalo/${savedSlug}` : "";
 
   const handleNext = () => {
     if (currentStep < steps.length) {
@@ -89,12 +97,54 @@ const CrearPage = () => {
     }
   };
 
-  const handleGenerate = () => {
-    setQrGenerated(true);
-    toast({
-      title: "¡Página creada!",
-      description: "Tu QR Code está listo para descargar.",
-    });
+  const handleGenerate = async () => {
+    if (!formData.person1 || !formData.person2 || !formData.startDate) {
+      toast({
+        title: "Campos incompletos",
+        description: "Por favor completa los nombres y la fecha.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    
+    try {
+      const slug = generateSlug(formData.person1, formData.person2);
+      const selectedTrack = formData.selectedSoundtrack 
+        ? soundtracks.find(t => t.id === formData.selectedSoundtrack) 
+        : null;
+
+      const { error } = await supabase.from("gift_pages").insert({
+        slug,
+        your_name: formData.person1,
+        partner_name: formData.person2,
+        start_date: format(formData.startDate, "yyyy-MM-dd"),
+        cover_photo_url: formData.photoUrl || null,
+        love_letter: formData.loveLetter || null,
+        soundtrack_name: selectedTrack?.name || null,
+        soundtrack_url: selectedTrack?.url || null,
+        spotify_link: formData.spotifyUrl || null,
+      });
+
+      if (error) throw error;
+
+      setSavedSlug(slug);
+      setQrGenerated(true);
+      toast({
+        title: "¡Página creada!",
+        description: "Tu QR Code está listo para descargar.",
+      });
+    } catch (error) {
+      console.error("Error saving gift page:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo crear la página. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Handle photo upload
@@ -526,9 +576,18 @@ const CrearPage = () => {
                   
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     {!qrGenerated ? (
-                      <Button variant="default" size="lg" onClick={handleGenerate}>
-                        <QrCode className="w-5 h-5" />
-                        Generar QR Code
+                      <Button variant="default" size="lg" onClick={handleGenerate} disabled={isSaving}>
+                        {isSaving ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Creando página...
+                          </>
+                        ) : (
+                          <>
+                            <QrCode className="w-5 h-5" />
+                            Generar QR Code
+                          </>
+                        )}
                       </Button>
                     ) : (
                       <>
@@ -536,7 +595,7 @@ const CrearPage = () => {
                           <Download className="w-5 h-5" />
                           Descargar QR Code
                         </Button>
-                        <Link to={`/regalo/demo`}>
+                        <Link to={`/regalo/${savedSlug}`}>
                           <Button variant="outline" size="lg">
                             Ver página
                           </Button>

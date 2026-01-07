@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      gift_pages: {
+        Row: {
+          cover_photo_url: string | null
+          created_at: string
+          id: string
+          love_letter: string | null
+          partner_name: string
+          slug: string
+          soundtrack_name: string | null
+          soundtrack_url: string | null
+          spotify_link: string | null
+          start_date: string
+          your_name: string
+        }
+        Insert: {
+          cover_photo_url?: string | null
+          created_at?: string
+          id?: string
+          love_letter?: string | null
+          partner_name: string
+          slug: string
+          soundtrack_name?: string | null
+          soundtrack_url?: string | null
+          spotify_link?: string | null
+          start_date: string
+          your_name: string
+        }
+        Update: {
+          cover_photo_url?: string | null
+          created_at?: string
+          id?: string
+          love_letter?: string | null
+          partner_name?: string
+          slug?: string
+          soundtrack_name?: string | null
+          soundtrack_url?: string | null
+          spotify_link?: string | null
+          start_date?: string
+          your_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
