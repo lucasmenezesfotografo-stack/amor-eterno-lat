@@ -26,6 +26,7 @@ export type Database = {
           soundtrack_url: string | null
           spotify_link: string | null
           start_date: string
+          user_id: string | null
           your_name: string
         }
         Insert: {
@@ -39,6 +40,7 @@ export type Database = {
           soundtrack_url?: string | null
           spotify_link?: string | null
           start_date: string
+          user_id?: string | null
           your_name: string
         }
         Update: {
@@ -52,6 +54,7 @@ export type Database = {
           soundtrack_url?: string | null
           spotify_link?: string | null
           start_date?: string
+          user_id?: string | null
           your_name?: string
         }
         Relationships: []
