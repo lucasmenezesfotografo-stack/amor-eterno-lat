@@ -1,29 +1,32 @@
 import { motion } from "framer-motion";
-import { Heart, Download, QrCode } from "lucide-react";
+import { Heart, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
-import SpotifyEmbed from "@/components/SpotifyEmbed";
+import FloatingMusicPlayer from "@/components/FloatingMusicPlayer";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef } from "react";
 
 // Demo data
 const demoData = {
-  names: { person1: "Maria", person2: "João" },
+  names: { person1: "María", person2: "Juan" },
   startDate: new Date("2022-02-14"),
   coverPhoto: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&auto=format&fit=crop",
-  spotifyUrl: "https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v",
-  loveLetter: `Meu amor João,
+  soundtrack: {
+    name: "Romantic Piano",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  },
+  loveLetter: `Mi amor Juan,
 
-Desde o dia 14 de fevereiro de 2022, minha vida ganhou um novo significado. Cada momento ao seu lado é um presente que guardo no coração.
+Desde el día 14 de febrero de 2022, mi vida cobró un nuevo significado. Cada momento a tu lado es un regalo que guardo en el corazón.
 
-Você me faz querer ser uma pessoa melhor a cada dia, e com você descobri o verdadeiro significado do amor.
+Tú me haces querer ser una mejor persona cada día, y contigo descubrí el verdadero significado del amor.
 
-Obrigada por escolher construir essa história comigo. Prometo continuar te amando com a mesma intensidade de sempre.
+Gracias por elegir construir esta historia conmigo. Prometo seguir amándote con la misma intensidad de siempre.
 
-Com todo meu amor,
-Maria`,
-  author: "Maria",
+Con todo mi amor,
+María`,
+  author: "María",
 };
 
 const RegaloPage = () => {
@@ -67,6 +70,13 @@ const RegaloPage = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      {/* Floating Music Player with Autoplay */}
+      <FloatingMusicPlayer 
+        audioUrl={demoData.soundtrack.url}
+        trackName={demoData.soundtrack.name}
+        autoPlay={true}
+      />
+
       {/* Hero Section with Cover Photo */}
       <section className="relative h-[70vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
         {/* Cover Photo */}
@@ -126,7 +136,7 @@ const RegaloPage = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-              Juntos desde {demoData.startDate.toLocaleDateString("pt-BR", {
+              Juntos desde {demoData.startDate.toLocaleDateString("es-ES", {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -147,26 +157,12 @@ const RegaloPage = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl md:text-3xl font-semibold mb-2">
-              Tempo juntos
+              Tiempo juntos
             </h2>
-            <p className="text-muted-foreground">Cada segundo conta</p>
+            <p className="text-muted-foreground">Cada segundo cuenta</p>
           </motion.div>
 
           <RelationshipCounter startDate={demoData.startDate} />
-        </div>
-      </section>
-
-      {/* Music Player - Floating */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto max-w-md">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="glass-card p-4"
-          >
-            <SpotifyEmbed spotifyUrl={demoData.spotifyUrl} compact />
-          </motion.div>
         </div>
       </section>
 
@@ -182,7 +178,7 @@ const RegaloPage = () => {
             <h2 className="text-2xl md:text-3xl font-semibold mb-2">
               Carta de Amor
             </h2>
-            <p className="text-muted-foreground">Palavras do coração</p>
+            <p className="text-muted-foreground">Palabras del corazón</p>
           </motion.div>
 
           <LoveLetter content={demoData.loveLetter} author={demoData.author} />
@@ -198,10 +194,10 @@ const RegaloPage = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-semibold mb-2">
-              Baixe o QR Code
+              Descarga el QR Code
             </h2>
             <p className="text-muted-foreground mb-8">
-              Compartilhe este presente especial
+              Comparte este regalo especial
             </p>
 
             <div
@@ -219,7 +215,7 @@ const RegaloPage = () => {
 
             <Button variant="default" size="lg" onClick={handleDownloadQR}>
               <Download className="w-5 h-5" />
-              Baixar meu QR Code de presente
+              Descargar mi QR Code de regalo
             </Button>
           </motion.div>
         </div>
@@ -229,7 +225,7 @@ const RegaloPage = () => {
       <footer className="py-8 px-4 border-t border-border">
         <div className="container mx-auto text-center">
           <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-            Feito com <Heart className="w-4 h-4 text-primary fill-primary" /> Forever Love
+            Hecho con <Heart className="w-4 h-4 text-primary fill-primary" /> Forever Love
           </p>
         </div>
       </footer>

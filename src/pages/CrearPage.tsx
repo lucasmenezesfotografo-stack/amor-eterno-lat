@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
 import SpotifyEmbed from "@/components/SpotifyEmbed";
+import SoundtrackSelector, { soundtracks } from "@/components/SoundtrackSelector";
 
 // Free romantic songs list
 const freeSongs = [
@@ -51,6 +52,7 @@ const CrearPage = () => {
     selectedSong: null as number | null,
     spotifyUrl: "",
     loveLetter: "",
+    selectedSoundtrack: null as string | null,
   });
   const [qrGenerated, setQrGenerated] = useState(false);
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
@@ -225,90 +227,62 @@ const CrearPage = () => {
               </div>
             </div>
 
-            {/* Music Selection */}
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-3">
-                Elige una canción romántica
-              </label>
-              <div className="space-y-2">
-                {freeSongs.map((song) => (
-                  <motion.div
-                    key={song.id}
-                    className={cn(
-                      "flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all",
-                      formData.selectedSong === song.id
-                        ? "bg-primary/20 border border-primary/50"
-                        : "bg-secondary/50 border border-transparent hover:bg-secondary"
-                    )}
-                    onClick={() => setFormData({ ...formData, selectedSong: song.id })}
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                      {formData.selectedSong === song.id ? (
-                        <Check className="w-5 h-5 text-primary" />
-                      ) : (
-                        <Play className="w-4 h-4 text-primary ml-0.5" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-foreground">{song.title}</p>
-                      <p className="text-sm text-muted-foreground">{song.artist}</p>
-                    </div>
-                    <span className="text-sm text-muted-foreground">{song.duration}</span>
-                  </motion.div>
-                ))}
-              </div>
+            {/* Soundtrack Selection - NEW */}
+            <div className="pt-4 border-t border-border">
+              <SoundtrackSelector
+                selectedTrack={formData.selectedSoundtrack}
+                onSelect={(trackId) => setFormData({ ...formData, selectedSoundtrack: trackId, spotifyUrl: "", selectedSong: null })}
+              />
+            </div>
 
-              {/* Or Spotify Link */}
-              <div className="mt-6 pt-6 border-t border-border">
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  O pega un link de Spotify
-                </label>
-                <div className="relative">
-                  <Input
-                    placeholder="https://open.spotify.com/track/..."
-                    value={formData.spotifyUrl}
-                    onChange={(e) => setFormData({ ...formData, spotifyUrl: e.target.value, selectedSong: null })}
-                    className={cn(
-                      "input-premium pr-12",
-                      formData.spotifyUrl && spotifyValidation.isValid && "border-green-500 focus:ring-green-500/20",
-                      formData.spotifyUrl && !spotifyValidation.isValid && "border-destructive focus:ring-destructive/20"
-                    )}
-                  />
-                  {formData.spotifyUrl && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                      {spotifyValidation.isValid ? (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
-                        >
-                          <Check className="w-4 h-4 text-white" />
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
-                        >
-                          <AlertCircle className="w-4 h-4 text-white" />
-                        </motion.div>
-                      )}
-                    </div>
+            {/* Or Spotify Link - Alternative */}
+            <div className="pt-6 border-t border-border">
+              <label className="block text-sm font-medium text-foreground mb-2">
+                O pega un link de Spotify (alternativo)
+              </label>
+              <div className="relative">
+                <Input
+                  placeholder="https://open.spotify.com/track/..."
+                  value={formData.spotifyUrl}
+                  onChange={(e) => setFormData({ ...formData, spotifyUrl: e.target.value, selectedSong: null, selectedSoundtrack: null })}
+                  className={cn(
+                    "input-premium pr-12",
+                    formData.spotifyUrl && spotifyValidation.isValid && "border-green-500 focus:ring-green-500/20",
+                    formData.spotifyUrl && !spotifyValidation.isValid && "border-destructive focus:ring-destructive/20"
                   )}
-                </div>
-                
-                {spotifyValidation.isValid && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-4"
-                  >
-                    <SpotifyEmbed spotifyUrl={formData.spotifyUrl} compact />
-                  </motion.div>
+                />
+                {formData.spotifyUrl && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    {spotifyValidation.isValid ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
+                      >
+                        <Check className="w-4 h-4 text-white" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
+                      >
+                        <AlertCircle className="w-4 h-4 text-white" />
+                      </motion.div>
+                    )}
+                  </div>
                 )}
               </div>
+              
+              {spotifyValidation.isValid && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4"
+                >
+                  <SpotifyEmbed spotifyUrl={formData.spotifyUrl} compact />
+                </motion.div>
+              )}
             </div>
           </div>
         );
