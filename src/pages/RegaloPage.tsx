@@ -1,22 +1,39 @@
 import { motion } from "framer-motion";
-import { Heart, Download } from "lucide-react";
+import { Heart, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
 import FloatingMusicPlayer from "@/components/FloatingMusicPlayer";
 import { QRCodeSVG } from "qrcode.react";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
-// Demo data
-const demoData = {
-  names: { person1: "María", person2: "Juan" },
-  startDate: new Date("2022-02-14"),
-  coverPhoto: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&auto=format&fit=crop",
-  soundtrack: {
-    name: "Romantic Piano",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  },
-  loveLetter: `Mi amor Juan,
+interface GiftPageData {
+  id: string;
+  slug: string;
+  your_name: string;
+  partner_name: string;
+  start_date: string;
+  cover_photo_url: string | null;
+  love_letter: string | null;
+  soundtrack_name: string | null;
+  soundtrack_url: string | null;
+  spotify_link: string | null;
+}
+
+// Demo data for /regalo/demo route
+const demoData: GiftPageData = {
+  id: "demo",
+  slug: "demo",
+  your_name: "María",
+  partner_name: "Juan",
+  start_date: "2022-02-14",
+  cover_photo_url: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&auto=format&fit=crop",
+  soundtrack_name: "Romantic Piano",
+  soundtrack_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  spotify_link: null,
+  love_letter: `Mi amor Juan,
 
 Desde el día 14 de febrero de 2022, mi vida cobró un nuevo significado. Cada momento a tu lado es un regalo que guardo en el corazón.
 
@@ -26,14 +43,58 @@ Gracias por elegir construir esta historia conmigo. Prometo seguir amándote con
 
 Con todo mi amor,
 María`,
-  author: "María",
 };
 
 const RegaloPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const qrRef = useRef<HTMLDivElement>(null);
+  const [pageData, setPageData] = useState<GiftPageData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    const fetchGiftPage = async () => {
+      // If demo route, use demo data
+      if (id === "demo") {
+        setPageData(demoData);
+        setIsLoading(false);
+        return;
+      }
+
+      if (!id) {
+        setNotFound(true);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("gift_pages")
+          .select("*")
+          .eq("slug", id)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (!data) {
+          setNotFound(true);
+        } else {
+          setPageData(data);
+        }
+      } catch (error) {
+        console.error("Error fetching gift page:", error);
+        setNotFound(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGiftPage();
+  }, [id]);
 
   const handleDownloadQR = () => {
-    if (!qrRef.current) return;
+    if (!qrRef.current || !pageData) return;
     const svg = qrRef.current.querySelector("svg");
     if (!svg) return;
 
@@ -54,12 +115,12 @@ const RegaloPage = () => {
         ctx.fillStyle = "#e11d48";
         ctx.font = "bold 18px 'Inter', sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(`${demoData.names.person1} ❤ ${demoData.names.person2}`, 200, 385);
+        ctx.fillText(`${pageData.your_name} ❤ ${pageData.partner_name}`, 200, 385);
       }
       const pngUrl = canvas.toDataURL("image/png");
       const downloadLink = document.createElement("a");
       downloadLink.href = pngUrl;
-      downloadLink.download = `forever-love-${demoData.names.person1}-${demoData.names.person2}.png`;
+      downloadLink.download = `forever-love-${pageData.your_name}-${pageData.partner_name}.png`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -68,21 +129,56 @@ const RegaloPage = () => {
     img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Cargando tu regalo...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // Not found state
+  if (notFound || !pageData) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-6" />
+          <h1 className="text-2xl font-semibold mb-2">Página no encontrada</h1>
+          <p className="text-muted-foreground mb-6">
+            Este regalo no existe o el enlace ha expirado.
+          </p>
+          <Button onClick={() => navigate("/crear")}>
+            Crear mi regalo
+          </Button>
+        </div>
+      </main>
+    );
+  }
+
+  const startDate = new Date(pageData.start_date);
+  const defaultCoverPhoto = "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&auto=format&fit=crop";
+
   return (
     <main className="min-h-screen bg-background">
       {/* Floating Music Player with Autoplay */}
-      <FloatingMusicPlayer 
-        audioUrl={demoData.soundtrack.url}
-        trackName={demoData.soundtrack.name}
-        autoPlay={true}
-      />
+      {pageData.soundtrack_url && (
+        <FloatingMusicPlayer 
+          audioUrl={pageData.soundtrack_url}
+          trackName={pageData.soundtrack_name || "Trilha Sonora"}
+          autoPlay={true}
+        />
+      )}
 
       {/* Hero Section with Cover Photo */}
       <section className="relative h-[70vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
         {/* Cover Photo */}
         <div className="absolute inset-0">
           <img
-            src={demoData.coverPhoto}
+            src={pageData.cover_photo_url || defaultCoverPhoto}
             alt="Cover"
             className="w-full h-full object-cover"
           />
@@ -114,7 +210,7 @@ const RegaloPage = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
               >
-                {demoData.names.person1}
+                {pageData.your_name}
               </motion.h1>
 
               <span className="text-primary text-3xl md:text-5xl">&</span>
@@ -125,7 +221,7 @@ const RegaloPage = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
               >
-                {demoData.names.person2}
+                {pageData.partner_name}
               </motion.h1>
             </div>
 
@@ -136,7 +232,7 @@ const RegaloPage = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-              Juntos desde {demoData.startDate.toLocaleDateString("es-ES", {
+              Juntos desde {startDate.toLocaleDateString("es-ES", {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -162,28 +258,30 @@ const RegaloPage = () => {
             <p className="text-muted-foreground">Cada segundo cuenta</p>
           </motion.div>
 
-          <RelationshipCounter startDate={demoData.startDate} />
+          <RelationshipCounter startDate={startDate} />
         </div>
       </section>
 
       {/* Love Letter */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-2xl">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl md:text-3xl font-semibold mb-2">
-              Carta de Amor
-            </h2>
-            <p className="text-muted-foreground">Palabras del corazón</p>
-          </motion.div>
+      {pageData.love_letter && (
+        <section className="py-20 px-4">
+          <div className="container mx-auto max-w-2xl">
+            <motion.div
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-2xl md:text-3xl font-semibold mb-2">
+                Carta de Amor
+              </h2>
+              <p className="text-muted-foreground">Palabras del corazón</p>
+            </motion.div>
 
-          <LoveLetter content={demoData.loveLetter} author={demoData.author} />
-        </div>
-      </section>
+            <LoveLetter content={pageData.love_letter} author={pageData.your_name} />
+          </div>
+        </section>
+      )}
 
       {/* QR Code Download Section */}
       <section className="py-20 px-4 border-t border-border">
