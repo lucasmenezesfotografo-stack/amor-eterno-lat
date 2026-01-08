@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
 import FloatingMusicPlayer from "@/components/FloatingMusicPlayer";
+import ShareButtons from "@/components/ShareButtons";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -311,10 +312,17 @@ const RegaloPage = () => {
               />
             </div>
 
-            <Button variant="default" size="lg" onClick={handleDownloadQR}>
+            <Button variant="default" size="lg" onClick={handleDownloadQR} className="mb-6">
               <Download className="w-5 h-5" />
               Descargar mi QR Code de regalo
             </Button>
+
+            {/* Share Buttons */}
+            <ShareButtons 
+              url={window.location.href}
+              title={`${pageData.your_name} & ${pageData.partner_name} - Forever Love`}
+              description="Mira nuestra página de amor ❤️"
+            />
           </motion.div>
         </div>
       </section>

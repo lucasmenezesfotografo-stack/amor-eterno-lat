@@ -23,7 +23,7 @@ const Index = () => {
             <span className="text-lg font-semibold">Forever Love</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link to="/regalo/demo">
+            <Link to="/demo">
               <Button variant="ghost" size="sm">
                 Ver Demo
               </Button>
@@ -80,7 +80,7 @@ const Index = () => {
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                <Link to="/regalo/demo">
+                <Link to="/demo">
                   <Button variant="outline" size="xl">
                     Ver demostración
                   </Button>
