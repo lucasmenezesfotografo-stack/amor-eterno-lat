@@ -686,6 +686,7 @@ const CrearPage = () => {
                   person2={formData.person2}
                   qrUrl={regaloUrl}
                   photoUrl={formData.photoUrl}
+                  startDate={formData.startDate}
                 />
               </motion.div>
             )}
