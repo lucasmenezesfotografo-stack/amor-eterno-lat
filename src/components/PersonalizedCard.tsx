@@ -1,12 +1,13 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Download, Heart, ImageIcon, Calendar, MessageSquare, LayoutGrid } from "lucide-react";
+import { Download, Heart, ImageIcon, Calendar, MessageSquare, LayoutGrid, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import ShareButtons from "@/components/ShareButtons";
 
 interface PersonalizedCardProps {
   person1: string;
@@ -334,6 +335,15 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           <Download className="w-5 h-5" />
           Descargar Tarjeta
         </Button>
+      </div>
+
+      {/* Share Section */}
+      <div className="pt-4 border-t border-border">
+        <ShareButtons 
+          url={qrUrl}
+          title={`${person1} & ${person2} - Forever Love`}
+          description="Mira nuestra página de amor ❤️"
+        />
       </div>
     </motion.div>
   );
