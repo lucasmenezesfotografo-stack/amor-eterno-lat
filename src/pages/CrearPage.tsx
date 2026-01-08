@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import SpotifyEmbed from "@/components/SpotifyEmbed";
 import SoundtrackSelector, { soundtracks } from "@/components/SoundtrackSelector";
 import DatePickerWithYearMonth from "@/components/DatePickerWithYearMonth";
+import PersonalizedCard from "@/components/PersonalizedCard";
 import QuickRegister from "@/components/QuickRegister";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -669,6 +670,23 @@ const CrearPage = () => {
                     )}
                   </div>
                 </div>
+              </motion.div>
+            )}
+
+            {/* Personalized Card Section */}
+            {qrGenerated && savedSlug && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="pt-8 border-t border-border"
+              >
+                <PersonalizedCard
+                  person1={formData.person1}
+                  person2={formData.person2}
+                  qrUrl={regaloUrl}
+                  photoUrl={formData.photoUrl}
+                />
               </motion.div>
             )}
           </div>
