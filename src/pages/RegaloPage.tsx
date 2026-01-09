@@ -9,6 +9,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { useRef, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { soundtracks } from "@/components/SoundtrackSelector";
 
 interface GiftPageData {
   id: string;
@@ -163,13 +164,19 @@ const RegaloPage = () => {
   const startDate = new Date(pageData.start_date);
   const defaultCoverPhoto = "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop";
 
+  // Find track info from soundtracks
+  const currentTrack = soundtracks.find(t => t.url === pageData.soundtrack_url) || 
+    soundtracks.find(t => t.name === pageData.soundtrack_name);
+
   return (
     <main className="min-h-screen bg-background">
-      {/* Floating Music Player with Autoplay */}
+      {/* Floating Music Player with Autoplay and Loop */}
       {pageData.soundtrack_url && (
         <FloatingMusicPlayer 
           audioUrl={pageData.soundtrack_url}
-          trackName={pageData.soundtrack_name || "Nuestra Canción"}
+          trackName={currentTrack?.name || pageData.soundtrack_name || "Nuestra Canción"}
+          artistName={currentTrack?.artist}
+          albumCover={currentTrack?.albumCover}
           autoPlay={true}
         />
       )}
