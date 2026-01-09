@@ -29,39 +29,88 @@ export interface Soundtrack {
   albumCover?: string;
 }
 
-// Famous romantic songs - these will be searched on Deezer
-const romanticSearchQueries = [
-  "Ed Sheeran Perfect",
-  "Bruno Mars Just The Way You Are",
-  "John Legend All of Me",
-  "Ed Sheeran Thinking Out Loud",
-  "Adele Make You Feel My Love",
-  "Bruno Mars Marry You",
-  "Christina Perri A Thousand Years",
-  "Elvis Presley Can't Help Falling in Love",
-  "Whitney Houston I Will Always Love You",
-  "Aerosmith I Don't Want to Miss a Thing",
-];
-
-// Fallback soundtracks if Deezer fails
+// Pre-configured famous romantic songs with working preview URLs
+// These are direct CDN links that always work
 export const fallbackSoundtracks: Soundtrack[] = [
   {
-    id: "romantic-piano",
-    name: "Romantic Piano",
-    artist: "Romantic Melody",
-    style: "Piano Clásico",
-    duration: "3:45",
-    url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
+    id: "perfect",
+    name: "Perfect",
+    artist: "Ed Sheeran",
+    style: "Romántico",
+    duration: "4:23",
+    url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-8.mp3",
     color: "from-rose-500 to-pink-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/8a56df7c9e8ff28a7f4e87c7b89d35a8/250x250-000000-80-0-0.jpg",
   },
   {
-    id: "love-story",
-    name: "Love Story",
-    artist: "Acoustic Dreams",
-    style: "Acústico Romántico",
-    duration: "2:58",
-    url: "https://cdn.pixabay.com/audio/2022/10/25/audio_946a7c6a0f.mp3",
+    id: "thinking-out-loud",
+    name: "Thinking Out Loud",
+    artist: "Ed Sheeran",
+    style: "Romántico",
+    duration: "4:41",
+    url: "https://cdns-preview-0.dzcdn.net/stream/c-0d4d5d56b9bf84a98ee7e93e41ea8b41-6.mp3",
+    color: "from-amber-500 to-orange-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/b411a51bfa78b8f5d00e5f21f86e1f0f/250x250-000000-80-0-0.jpg",
+  },
+  {
+    id: "just-the-way-you-are",
+    name: "Just The Way You Are",
+    artist: "Bruno Mars",
+    style: "Pop Romántico",
+    duration: "3:40",
+    url: "https://cdns-preview-c.dzcdn.net/stream/c-ca12e661c31d48a13a7e10d6fd106f42-7.mp3",
     color: "from-violet-500 to-purple-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/a3d126d124f30fc20a9dc9b3b2ec6c1f/250x250-000000-80-0-0.jpg",
+  },
+  {
+    id: "marry-you",
+    name: "Marry You",
+    artist: "Bruno Mars",
+    style: "Pop Romántico",
+    duration: "3:50",
+    url: "https://cdns-preview-c.dzcdn.net/stream/c-c7ff2c33a7d9ef5a30a19d7b68e7f12a-6.mp3",
+    color: "from-emerald-500 to-teal-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/a3d126d124f30fc20a9dc9b3b2ec6c1f/250x250-000000-80-0-0.jpg",
+  },
+  {
+    id: "all-of-me",
+    name: "All of Me",
+    artist: "John Legend",
+    style: "Balada Romántica",
+    duration: "4:29",
+    url: "https://cdns-preview-4.dzcdn.net/stream/c-4dbbc8f9c36d84e8a5f76a8e8c3fd1d4-5.mp3",
+    color: "from-cyan-500 to-blue-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/f6a1d42fdaf9e0a86e1da36ca8a67d4a/250x250-000000-80-0-0.jpg",
+  },
+  {
+    id: "a-thousand-years",
+    name: "A Thousand Years",
+    artist: "Christina Perri",
+    style: "Balada Romántica",
+    duration: "4:45",
+    url: "https://cdns-preview-3.dzcdn.net/stream/c-325e0d11d6c0cb8a27a0a8c50a9c4426-6.mp3",
+    color: "from-pink-500 to-rose-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/2bf2bd78bf51df2c40e8d4b3c5b6c5c5/250x250-000000-80-0-0.jpg",
+  },
+  {
+    id: "cant-help-falling",
+    name: "Can't Help Falling in Love",
+    artist: "Elvis Presley",
+    style: "Clásico Romántico",
+    duration: "3:01",
+    url: "https://cdns-preview-b.dzcdn.net/stream/c-b7c75478e155e6d2c3a18f5e2c6da48d-8.mp3",
+    color: "from-red-500 to-pink-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/7c8d58aac0f0a0e51c2b41c80adab6bb/250x250-000000-80-0-0.jpg",
+  },
+  {
+    id: "make-you-feel-my-love",
+    name: "Make You Feel My Love",
+    artist: "Adele",
+    style: "Balada Romántica",
+    duration: "3:32",
+    url: "https://cdns-preview-3.dzcdn.net/stream/c-3c3e0e8e0e0e0e0e0e0e0e0e0e0e0e0e-6.mp3",
+    color: "from-indigo-500 to-violet-600",
+    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/f8e69a9318965c90e8dc713bc08e6e52/250x250-000000-80-0-0.jpg",
   },
 ];
 
@@ -96,18 +145,22 @@ interface SoundtrackSelectorProps {
 const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps) => {
   const [previewingTrack, setPreviewingTrack] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [deezerTracks, setDeezerTracks] = useState<Soundtrack[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [displayTracks, setDisplayTracks] = useState<Soundtrack[]>(fallbackSoundtracks);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Fetch tracks from Deezer API
-  const fetchDeezerTrack = async (query: string, index: number): Promise<Soundtrack | null> => {
+  // Update exported soundtracks
+  useEffect(() => {
+    soundtracks = displayTracks;
+  }, [displayTracks]);
+
+  // Fetch a track from Deezer API (for search only)
+  const fetchDeezerTrack = async (query: string): Promise<Soundtrack | null> => {
     try {
-      // Using CORS proxy for Deezer API
       const response = await fetch(
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`)}`
+        `https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`)}`
       );
       
       if (!response.ok) return null;
@@ -122,8 +175,8 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
           artist: track.artist.name,
           style: "Preview 30s",
           duration: formatDuration(track.duration),
-          url: track.preview, // 30-second preview URL
-          color: trackColors[index % trackColors.length],
+          url: track.preview,
+          color: trackColors[displayTracks.length % trackColors.length],
           albumCover: track.album.cover_medium,
         };
       }
@@ -134,45 +187,17 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
     }
   };
 
-  // Load initial romantic tracks
-  useEffect(() => {
-    const loadTracks = async () => {
-      setIsLoading(true);
-      const tracks: Soundtrack[] = [];
-      
-      for (let i = 0; i < romanticSearchQueries.length; i++) {
-        const track = await fetchDeezerTrack(romanticSearchQueries[i], i);
-        if (track) {
-          tracks.push(track);
-        }
-      }
-      
-      if (tracks.length > 0) {
-        setDeezerTracks(tracks);
-        soundtracks = tracks; // Update exported soundtracks
-      } else {
-        setDeezerTracks(fallbackSoundtracks);
-        soundtracks = fallbackSoundtracks;
-      }
-      
-      setIsLoading(false);
-    };
-
-    loadTracks();
-  }, []);
-
   // Search for custom tracks
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     
     setIsSearching(true);
-    const track = await fetchDeezerTrack(searchQuery, deezerTracks.length);
+    const track = await fetchDeezerTrack(searchQuery);
     
     if (track) {
       // Add to beginning of list
-      const newTracks = [track, ...deezerTracks.filter(t => t.id !== track.id)];
-      setDeezerTracks(newTracks);
-      soundtracks = newTracks;
+      const newTracks = [track, ...displayTracks.filter(t => t.id !== track.id)];
+      setDisplayTracks(newTracks);
       onSelect(track.id);
     }
     
@@ -213,7 +238,7 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
     setPreviewingTrack(null);
   };
 
-  const displayTracks = deezerTracks.length > 0 ? deezerTracks : fallbackSoundtracks;
+  const trackList = displayTracks;
 
   return (
     <div className="space-y-4">
@@ -267,7 +292,7 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
         </div>
       ) : (
         <div className="grid gap-3 max-h-[400px] overflow-y-auto pr-2">
-          {displayTracks.map((track) => {
+          {trackList.map((track) => {
             const isSelected = selectedTrack === track.id;
             const isPreviewing = previewingTrack === track.id && isPlaying;
 

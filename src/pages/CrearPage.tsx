@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard, MoveVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -67,6 +67,7 @@ const CrearPage = () => {
     spotifyUrl: "",
     loveLetter: "",
     selectedSoundtrack: null as string | null,
+    namesPosition: "center" as "top" | "center" | "bottom",
   });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -440,6 +441,21 @@ const CrearPage = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                  
+                  {/* Names Position Preview */}
+                  <div className={cn(
+                    "absolute inset-0 flex flex-col px-4",
+                    formData.namesPosition === "top" ? "justify-start pt-4" :
+                    formData.namesPosition === "bottom" ? "justify-end pb-12" :
+                    "justify-center"
+                  )}>
+                    <div className="text-center">
+                      <p className="text-lg sm:text-xl font-display font-semibold text-white drop-shadow-lg">
+                        {formData.person1 || "Tu"} & {formData.person2 || "Tu amor"}
+                      </p>
+                    </div>
+                  </div>
+
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
@@ -496,6 +512,40 @@ const CrearPage = () => {
                 onChange={handlePhotoSelect}
                 className="hidden"
               />
+
+              {/* Names Position Selector */}
+              {formData.photoUrl && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 rounded-xl bg-secondary/50 border border-border"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <MoveVertical className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Posición de los nombres</span>
+                  </div>
+                  <div className="flex gap-2">
+                    {[
+                      { value: "top", label: "Arriba" },
+                      { value: "center", label: "Centro" },
+                      { value: "bottom", label: "Abajo" },
+                    ].map((position) => (
+                      <button
+                        key={position.value}
+                        onClick={() => setFormData({ ...formData, namesPosition: position.value as "top" | "center" | "bottom" })}
+                        className={cn(
+                          "flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all",
+                          formData.namesPosition === position.value
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary hover:bg-secondary/80 text-foreground"
+                        )}
+                      >
+                        {position.label}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Soundtrack Selection */}

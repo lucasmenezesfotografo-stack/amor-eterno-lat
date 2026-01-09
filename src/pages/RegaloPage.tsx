@@ -10,6 +10,7 @@ import { useRef, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { soundtracks } from "@/components/SoundtrackSelector";
+import { cn } from "@/lib/utils";
 
 interface GiftPageData {
   id: string;
@@ -22,6 +23,7 @@ interface GiftPageData {
   soundtrack_name: string | null;
   soundtrack_url: string | null;
   spotify_link: string | null;
+  names_position?: "top" | "center" | "bottom";
 }
 
 // Demo data for /regalo/demo route
@@ -182,7 +184,7 @@ const RegaloPage = () => {
       )}
 
       {/* Hero Section with Cover Photo */}
-      <section className="relative min-h-[80vh] sm:min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[80vh] sm:min-h-screen flex overflow-hidden">
         {/* Cover Photo */}
         <div className="absolute inset-0">
           <img
@@ -190,16 +192,26 @@ const RegaloPage = () => {
             alt="Cover"
             className="w-full h-full object-cover"
           />
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
+          {/* Overlay - lighter for better visibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-background" />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 text-center px-4 py-16 sm:py-20 w-full">
+        {/* Content - position based on names_position */}
+        <div className={cn(
+          "relative z-10 flex flex-col w-full px-4 py-16 sm:py-20",
+          pageData.names_position === "top" ? "justify-start pt-24 sm:pt-32" :
+          pageData.names_position === "bottom" ? "justify-end pb-24 sm:pb-32" :
+          "justify-center items-center"
+        )}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className={cn(
+              "text-center",
+              pageData.names_position === "top" || pageData.names_position === "bottom" 
+                ? "self-center" : ""
+            )}
           >
             {/* Heart */}
             <motion.div
@@ -207,15 +219,16 @@ const RegaloPage = () => {
               animate={{ scale: [1, 1.15, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-primary/20 backdrop-blur-xl flex items-center justify-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-primary/30 backdrop-blur-xl flex items-center justify-center">
                 <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-primary fill-primary" />
               </div>
             </motion.div>
 
-            {/* Names */}
+            {/* Names - Elegant Font */}
             <div className="flex flex-col items-center justify-center gap-2 sm:gap-4 md:flex-row md:gap-6 mb-4 sm:mb-6">
               <motion.h1
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white drop-shadow-lg"
+                style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
@@ -223,10 +236,11 @@ const RegaloPage = () => {
                 {pageData.your_name}
               </motion.h1>
 
-              <span className="text-primary text-3xl sm:text-4xl md:text-5xl">&</span>
+              <span className="text-primary text-3xl sm:text-4xl md:text-5xl font-romantic drop-shadow-lg">&</span>
 
               <motion.h1
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white drop-shadow-lg"
+                style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
@@ -237,14 +251,14 @@ const RegaloPage = () => {
 
             {/* Date Badge */}
             <motion.div
-              className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-card/80 backdrop-blur-xl border border-border"
+              className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-black/50 backdrop-blur-xl border border-white/20"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
               <Calendar className="w-4 h-4 text-primary" />
-              <span className="text-sm sm:text-base text-muted-foreground">Juntos desde</span>
-              <span className="text-sm sm:text-base font-semibold text-foreground">
+              <span className="text-sm sm:text-base text-white/80">Juntos desde</span>
+              <span className="text-sm sm:text-base font-semibold text-white">
                 {startDate.toLocaleDateString("es-ES", {
                   day: "numeric",
                   month: "long",
@@ -256,7 +270,7 @@ const RegaloPage = () => {
             {/* Music indicator */}
             {pageData.soundtrack_name && (
               <motion.div
-                className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
+                className="mt-4 inline-flex items-center gap-2 text-sm text-white/70"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
