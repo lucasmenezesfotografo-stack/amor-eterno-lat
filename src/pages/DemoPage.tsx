@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Download, Share2, Music, Star, Sparkles, Calendar } from "lucide-react";
+import { Heart, Download, Music, Star, Sparkles, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import RelationshipCounter from "@/components/RelationshipCounter";
@@ -7,10 +7,20 @@ import LoveLetter from "@/components/LoveLetter";
 import FloatingMusicPlayer from "@/components/FloatingMusicPlayer";
 import ShareButtons from "@/components/ShareButtons";
 import { QRCodeSVG } from "qrcode.react";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
+import { soundtracks, Soundtrack } from "@/components/SoundtrackSelector";
+
+interface DemoTrack {
+  name: string;
+  artist: string;
+  url: string;
+  albumCover?: string;
+}
 
 const DemoPage = () => {
   const qrRef = useRef<HTMLDivElement>(null);
+  const [demoTrack, setDemoTrack] = useState<DemoTrack | null>(null);
+  const [isLoadingTrack, setIsLoadingTrack] = useState(true);
   
   // Demo couple data - romantic and inspiring
   const demoData = {
@@ -18,11 +28,6 @@ const DemoPage = () => {
     person2: "Miguel",
     startDate: new Date("2021-06-15"),
     coverPhoto: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1400&auto=format&fit=crop&q=80",
-    soundtrack: {
-      name: "Romantic Piano",
-      artist: "Romantic Melody",
-      url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
-    },
     loveLetter: `Mi querido Miguel,
 
 Cada día a tu lado es un regalo que atesoro con todo mi corazón. Desde aquel 15 de junio cuando nuestros caminos se cruzaron, supe que mi vida había cambiado para siempre.
@@ -34,6 +39,59 @@ Gracias por elegirme cada día, por amarme como soy, por hacer de nuestra histor
 Te amo más allá de las palabras,
 Sofía ❤️`,
   };
+
+  // Load a track from Deezer for the demo
+  useEffect(() => {
+    const loadDemoTrack = async () => {
+      setIsLoadingTrack(true);
+      
+      // Try to get "Perfect" by Ed Sheeran from Deezer
+      try {
+        const response = await fetch(
+          `https://api.allorigins.win/raw?url=${encodeURIComponent("https://api.deezer.com/search?q=Ed Sheeran Perfect&limit=1")}`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data && data.data.length > 0) {
+            const track = data.data[0];
+            setDemoTrack({
+              name: track.title,
+              artist: track.artist.name,
+              url: track.preview,
+              albumCover: track.album.cover_medium,
+            });
+            setIsLoadingTrack(false);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("Error loading demo track:", error);
+      }
+      
+      // Fallback to soundtracks if available
+      if (soundtracks.length > 0) {
+        const firstTrack = soundtracks[0];
+        setDemoTrack({
+          name: firstTrack.name,
+          artist: firstTrack.artist,
+          url: firstTrack.url,
+          albumCover: firstTrack.albumCover,
+        });
+      } else {
+        // Ultimate fallback
+        setDemoTrack({
+          name: "Romantic Piano",
+          artist: "Romantic Melody",
+          url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
+        });
+      }
+      
+      setIsLoadingTrack(false);
+    };
+
+    loadDemoTrack();
+  }, []);
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
@@ -101,22 +159,26 @@ Sofía ❤️`,
             <span className="hidden xs:inline sm:inline">¡Esta es una demostración!</span>
             <span className="xs:hidden sm:hidden">Demo</span>
           </div>
-          <Link to="/crear">
+          <Link to="/criar">
             <Button size="sm" variant="secondary" className="text-xs gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 sm:px-3">
-              <span className="hidden sm:inline">Crear la mía</span>
-              <span className="sm:hidden">Crear</span>
+              <span className="hidden sm:inline">Criar a minha</span>
+              <span className="sm:hidden">Criar</span>
               <Heart className="w-3 h-3 fill-current" />
             </Button>
           </Link>
         </div>
       </motion.div>
 
-      {/* Floating Music Player - Auto plays on load */}
-      <FloatingMusicPlayer 
-        audioUrl={demoData.soundtrack.url}
-        trackName={`${demoData.soundtrack.name} - ${demoData.soundtrack.artist}`}
-        autoPlay={true}
-      />
+      {/* Floating Music Player - Auto plays on load with Deezer track */}
+      {demoTrack && demoTrack.url && (
+        <FloatingMusicPlayer 
+          audioUrl={demoTrack.url}
+          trackName={demoTrack.name}
+          artistName={demoTrack.artist}
+          albumCover={demoTrack.albumCover}
+          autoPlay={true}
+        />
+      )}
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-10 sm:pt-12">
@@ -200,15 +262,23 @@ Sofía ❤️`,
             </motion.div>
             
             {/* Music indicator */}
-            <motion.div
-              className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              <Music className="w-4 h-4" />
-              <span>♪ {demoData.soundtrack.name}</span>
-            </motion.div>
+            {demoTrack && (
+              <motion.div
+                className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                {isLoadingTrack ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Music className="w-4 h-4" />
+                    <span>♪ {demoTrack.name} - {demoTrack.artist}</span>
+                  </>
+                )}
+              </motion.div>
+            )}
           </motion.div>
         </div>
 
@@ -275,20 +345,36 @@ Sofía ❤️`,
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mb-4 sm:mb-6 shadow-xl shadow-rose-500/20">
-              <Music className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-            </div>
+            {demoTrack?.albumCover ? (
+              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl overflow-hidden mb-4 sm:mb-6 shadow-xl shadow-primary/20">
+                <img 
+                  src={demoTrack.albumCover} 
+                  alt={demoTrack.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mb-4 sm:mb-6 shadow-xl shadow-rose-500/20">
+                <Music className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              </div>
+            )}
             <h3 className="text-lg sm:text-xl font-semibold mb-2">Nuestra canción</h3>
-            <p className="text-xl sm:text-2xl font-bold text-foreground mb-1">{demoData.soundtrack.name}</p>
-            <p className="text-sm sm:text-base text-muted-foreground">{demoData.soundtrack.artist}</p>
-            <p className="text-xs text-primary mt-2 flex items-center justify-center gap-1">
+            {demoTrack ? (
+              <>
+                <p className="text-xl sm:text-2xl font-bold text-foreground mb-1">{demoTrack.name}</p>
+                <p className="text-sm sm:text-base text-muted-foreground">{demoTrack.artist}</p>
+              </>
+            ) : (
+              <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
+            )}
+            <p className="text-xs text-primary mt-3 flex items-center justify-center gap-1">
               <motion.span
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
               >
                 ♪
               </motion.span>
-              Reproduciendo ahora
+              Reproduciendo en loop (30s preview via Deezer)
             </p>
           </motion.div>
         </div>
@@ -353,10 +439,10 @@ Sofía ❤️`,
             <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8">
               Sorprende a tu amor con una página única y personalizada
             </p>
-            <Link to="/crear">
+            <Link to="/criar">
               <Button size="lg" className="gap-2 w-full sm:w-auto h-12 sm:h-14 text-base sm:text-lg px-6 sm:px-8">
                 <Heart className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
-                Crear nuestra página por $5/año
+                Criar a minha por $5/ano
               </Button>
             </Link>
           </motion.div>
@@ -371,7 +457,7 @@ Sofía ❤️`,
             <span className="font-semibold text-sm sm:text-base">Forever Love</span>
           </Link>
           <p className="text-xs sm:text-sm text-muted-foreground text-center">
-            Hecho con ❤️ para parejas enamoradas
+            Feito com ❤️ para casais apaixonados • Música via Deezer
           </p>
         </div>
       </footer>
