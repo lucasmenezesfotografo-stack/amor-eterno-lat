@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Download, Share2, Music, Star, Sparkles } from "lucide-react";
+import { Heart, Download, Share2, Music, Star, Sparkles, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import RelationshipCounter from "@/components/RelationshipCounter";
@@ -17,11 +17,11 @@ const DemoPage = () => {
     person1: "Sofía",
     person2: "Miguel",
     startDate: new Date("2021-06-15"),
-    coverPhoto: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1400&auto=format&fit=crop&q=80",
+    coverPhoto: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1400&auto=format&fit=crop&q=80",
     soundtrack: {
-      name: "Perfect",
-      artist: "Ed Sheeran",
-      url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      name: "Romantic Piano",
+      artist: "Romantic Melody",
+      url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
     },
     loveLetter: `Mi querido Miguel,
 
@@ -183,12 +183,12 @@ Sofía ❤️`,
 
             {/* Date Badge */}
             <motion.div
-              className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-card/80 backdrop-blur-xl border border-border"
+              className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-card/80 backdrop-blur-xl border border-border"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" />
+              <Calendar className="w-4 h-4 text-primary" />
               <span className="text-xs sm:text-sm text-muted-foreground">Juntos desde</span>
               <span className="font-semibold text-foreground text-xs sm:text-base">
                 {demoData.startDate.toLocaleDateString("es-ES", {
@@ -197,6 +197,17 @@ Sofía ❤️`,
                   year: "numeric",
                 })}
               </span>
+            </motion.div>
+            
+            {/* Music indicator */}
+            <motion.div
+              className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <Music className="w-4 h-4" />
+              <span>♪ {demoData.soundtrack.name}</span>
             </motion.div>
           </motion.div>
         </div>
@@ -264,13 +275,21 @@ Sofía ❤️`,
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4 sm:mb-6 shadow-xl shadow-emerald-500/20">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mb-4 sm:mb-6 shadow-xl shadow-rose-500/20">
               <Music className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
             <h3 className="text-lg sm:text-xl font-semibold mb-2">Nuestra canción</h3>
             <p className="text-xl sm:text-2xl font-bold text-foreground mb-1">{demoData.soundtrack.name}</p>
             <p className="text-sm sm:text-base text-muted-foreground">{demoData.soundtrack.artist}</p>
-            <p className="text-xs text-muted-foreground mt-2">♪ Sonando ahora</p>
+            <p className="text-xs text-primary mt-2 flex items-center justify-center gap-1">
+              <motion.span
+                animate={{ opacity: [1, 0.5, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                ♪
+              </motion.span>
+              Reproduciendo ahora
+            </p>
           </motion.div>
         </div>
       </section>
