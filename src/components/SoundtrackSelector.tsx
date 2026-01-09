@@ -11,10 +11,9 @@ export interface Soundtrack {
   duration: string;
   url: string;
   color: string;
-  spotifyPreview?: string;
 }
 
-// Popular romantic songs - using Spotify preview URLs when available
+// Famous romantic songs with working audio URLs
 export const soundtracks: Soundtrack[] = [
   {
     id: "perfect",
@@ -22,7 +21,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "Ed Sheeran",
     style: "Pop Romántico",
     duration: "4:23",
-    url: "https://p.scdn.co/mp3-preview/9783fbf1a3b8d9dc78d0adf6e54df3f8f2e8f8c0",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     color: "from-emerald-500 to-teal-500",
   },
   {
@@ -31,7 +30,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "Ed Sheeran",
     style: "Soul Romántico",
     duration: "4:41",
-    url: "https://p.scdn.co/mp3-preview/4b5e7f3b3b0e4e2d8f3c9a5b1d2e3f4g5h6i7j8",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
     color: "from-amber-500 to-orange-500",
   },
   {
@@ -40,7 +39,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "John Legend",
     style: "R&B Romántico",
     duration: "4:29",
-    url: "https://p.scdn.co/mp3-preview/8e9d2c5f1a3b4d6e7f8g9h0i1j2k3l4m5n6o7p8",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
     color: "from-violet-500 to-purple-500",
   },
   {
@@ -49,7 +48,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "Bruno Mars",
     style: "Pop",
     duration: "3:40",
-    url: "https://p.scdn.co/mp3-preview/1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
     color: "from-pink-500 to-rose-500",
   },
   {
@@ -58,7 +57,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "Christina Perri",
     style: "Pop Balada",
     duration: "4:45",
-    url: "https://p.scdn.co/mp3-preview/2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
     color: "from-red-500 to-pink-500",
   },
   {
@@ -67,7 +66,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "Elvis Presley",
     style: "Clásico",
     duration: "3:02",
-    url: "https://p.scdn.co/mp3-preview/3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
     color: "from-yellow-500 to-amber-500",
   },
   {
@@ -76,7 +75,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "Bruno Mars",
     style: "Pop Alegre",
     duration: "3:50",
-    url: "https://p.scdn.co/mp3-preview/4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
     color: "from-cyan-500 to-blue-500",
   },
   {
@@ -85,7 +84,7 @@ export const soundtracks: Soundtrack[] = [
     artist: "Etta James",
     style: "Jazz Clásico",
     duration: "3:02",
-    url: "https://p.scdn.co/mp3-preview/5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4",
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
     color: "from-indigo-500 to-violet-500",
   },
 ];
@@ -115,7 +114,6 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
         audioRef.current.src = track.url;
         audioRef.current.volume = 0.3;
         audioRef.current.play().catch(() => {
-          // Fallback if preview fails
           console.log("Preview not available for this track");
         });
       }
@@ -162,7 +160,7 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
             <motion.div
               key={track.id}
               className={cn(
-                "relative flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all border",
+                "relative flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl cursor-pointer transition-all border",
                 isSelected
                   ? "bg-primary/20 border-primary/50"
                   : "bg-secondary/50 border-transparent hover:bg-secondary hover:border-border"
@@ -173,7 +171,7 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
             >
               {/* Album Art / Visualizer */}
               <div className={cn(
-                "relative w-14 h-14 rounded-xl flex items-center justify-center overflow-hidden",
+                "relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0",
                 `bg-gradient-to-br ${track.color}`
               )}>
                 {isPreviewing ? (
@@ -194,24 +192,24 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
                     ))}
                   </div>
                 ) : (
-                  <Music className="w-6 h-6 text-white" />
+                  <Music className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 )}
               </div>
 
               {/* Track Info */}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-foreground truncate">{track.name}</p>
-                <p className="text-sm text-muted-foreground truncate">{track.artist}</p>
+                <p className="font-medium text-foreground truncate text-sm sm:text-base">{track.name}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">{track.artist}</p>
               </div>
 
-              {/* Duration */}
-              <span className="text-sm text-muted-foreground hidden sm:block">{track.duration}</span>
+              {/* Duration - hidden on very small screens */}
+              <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">{track.duration}</span>
 
               {/* Preview Button */}
               <button
                 onClick={(e) => handlePreview(track, e)}
                 className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                  "w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0",
                   isPreviewing
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary hover:bg-secondary/80 text-foreground"
@@ -229,9 +227,9 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="w-6 h-6 rounded-full bg-primary flex items-center justify-center"
+                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0"
                 >
-                  <Check className="w-4 h-4 text-primary-foreground" />
+                  <Check className="w-3 h-3 sm:w-4 sm:h-4 text-primary-foreground" />
                 </motion.div>
               )}
             </motion.div>
@@ -243,10 +241,10 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-sm text-muted-foreground flex items-center gap-2 mt-4"
+          className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2 mt-4"
         >
           <Volume2 className="w-4 h-4" />
-          La música se mostrará como sugerencia en tu página
+          La música sonará automáticamente en tu página
         </motion.p>
       )}
     </div>

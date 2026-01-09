@@ -14,32 +14,49 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(true);
+  const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Try to autoplay when component mounts
+  // Auto-play on first user interaction (click anywhere on page)
   useEffect(() => {
-    if (autoPlay && audioRef.current) {
-      audioRef.current.volume = volume;
-      
-      // Try to play automatically
-      const playPromise = audioRef.current.play();
-      
-      if (playPromise !== undefined) {
-        playPromise
+    if (!autoPlay || hasAutoPlayed) return;
+
+    const handleFirstInteraction = () => {
+      if (audioRef.current && !hasAutoPlayed) {
+        audioRef.current.volume = volume;
+        audioRef.current.play()
           .then(() => {
             setIsPlaying(true);
-            setShowPrompt(false);
-            setHasInteracted(true);
+            setHasAutoPlayed(true);
           })
           .catch(() => {
-            // Autoplay was prevented, show prompt
-            setShowPrompt(true);
+            // Still blocked, keep listening
           });
       }
+    };
+
+    // Try to autoplay immediately
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setHasAutoPlayed(true);
+        })
+        .catch(() => {
+          // Autoplay blocked, wait for user interaction
+          document.addEventListener('click', handleFirstInteraction, { once: true });
+          document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+          document.addEventListener('scroll', handleFirstInteraction, { once: true });
+        });
     }
-  }, [autoPlay, volume]);
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+      document.removeEventListener('scroll', handleFirstInteraction);
+    };
+  }, [autoPlay, hasAutoPlayed, volume]);
 
   const handlePlayPause = () => {
     if (!audioRef.current) return;
@@ -50,8 +67,7 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
     } else {
       audioRef.current.play();
       setIsPlaying(true);
-      setShowPrompt(false);
-      setHasInteracted(true);
+      setHasAutoPlayed(true);
     }
   };
 
@@ -80,20 +96,6 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
     }
   };
 
-  const handleStartMusic = () => {
-    if (audioRef.current) {
-      audioRef.current.play();
-      setIsPlaying(true);
-      setShowPrompt(false);
-      setHasInteracted(true);
-    }
-  };
-
-  const dismissPrompt = () => {
-    setShowPrompt(false);
-    setHasInteracted(true);
-  };
-
   return (
     <>
       {/* Hidden Audio Element */}
@@ -104,45 +106,9 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
         preload="auto"
       />
 
-      {/* Initial Prompt to Start Music */}
-      <AnimatePresence>
-        {showPrompt && !hasInteracted && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50"
-          >
-            <div className="bg-card/95 backdrop-blur-xl border border-border rounded-2xl p-4 shadow-2xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                <Music className="w-6 h-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">Música de fondo</p>
-                <p className="text-xs text-muted-foreground">{trackName}</p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleStartMusic}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
-                >
-                  Reproducir
-                </button>
-                <button
-                  onClick={dismissPrompt}
-                  className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Floating Player */}
       <motion.div
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5, duration: 0.3 }}
@@ -154,11 +120,11 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
               initial={{ opacity: 0, width: 56, height: 56 }}
               animate={{ opacity: 1, width: "auto", height: "auto" }}
               exit={{ opacity: 0, width: 56, height: 56 }}
-              className="bg-card/95 backdrop-blur-xl border border-border rounded-2xl p-4 shadow-2xl"
+              className="bg-card/95 backdrop-blur-xl border border-border rounded-2xl p-3 sm:p-4 shadow-2xl max-w-[calc(100vw-2rem)]"
             >
-              <div className="flex items-center gap-4 min-w-[200px]">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-[180px] sm:min-w-[200px]">
                 {/* Visualizer Animation */}
-                <div className="relative w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center overflow-hidden">
+                <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/20 flex items-center justify-center overflow-hidden flex-shrink-0">
                   {isPlaying && (
                     <div className="absolute inset-0 flex items-end justify-center gap-0.5 p-2">
                       {[...Array(4)].map((_, i) => (
@@ -178,38 +144,38 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
                     </div>
                   )}
                   {!isPlaying && (
-                    <Music className="w-5 h-5 text-primary" />
+                    <Music className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                   )}
                 </div>
 
                 {/* Track Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{trackName}</p>
+                  <p className="text-xs sm:text-sm font-medium text-foreground truncate">{trackName}</p>
                   <p className="text-xs text-muted-foreground">
-                    {isPlaying ? "Reproduciendo" : "Pausado"}
+                    {isPlaying ? "♪ Reproduciendo" : "Pausado"}
                   </p>
                 </div>
 
                 {/* Controls */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <button
                     onClick={handlePlayPause}
-                    className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/30 transition-colors"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/30 transition-colors"
                   >
                     {isPlaying ? (
-                      <Pause className="w-4 h-4 text-primary" />
+                      <Pause className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
                     ) : (
-                      <Play className="w-4 h-4 text-primary ml-0.5" />
+                      <Play className="w-3 h-3 sm:w-4 sm:h-4 text-primary ml-0.5" />
                     )}
                   </button>
                   <button
                     onClick={handleMuteToggle}
-                    className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors"
                   >
                     {isMuted ? (
-                      <VolumeX className="w-4 h-4 text-muted-foreground" />
+                      <VolumeX className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
                     ) : (
-                      <Volume2 className="w-4 h-4 text-foreground" />
+                      <Volume2 className="w-3 h-3 sm:w-4 sm:h-4 text-foreground" />
                     )}
                   </button>
                 </div>
@@ -217,14 +183,14 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
                 {/* Collapse Button */}
                 <button
                   onClick={() => setIsExpanded(false)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Volume Slider */}
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-2 sm:mt-3 flex items-center gap-2">
                 <VolumeX className="w-3 h-3 text-muted-foreground" />
                 <input
                   type="range"
@@ -246,7 +212,7 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
               exit={{ opacity: 0 }}
               onClick={() => setIsExpanded(true)}
               className={cn(
-                "w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all",
+                "w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-2xl transition-all",
                 isPlaying 
                   ? "bg-primary text-primary-foreground" 
                   : "bg-card border border-border text-foreground hover:bg-card/80"
@@ -254,7 +220,7 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
             >
               {/* Music Visualizer or Icon */}
               {isPlaying ? (
-                <div className="flex items-end justify-center gap-0.5 h-6">
+                <div className="flex items-end justify-center gap-0.5 h-5 sm:h-6">
                   {[...Array(3)].map((_, i) => (
                     <motion.div
                       key={i}
@@ -271,7 +237,7 @@ const FloatingMusicPlayer = ({ audioUrl, trackName = "Trilha Sonora", autoPlay =
                   ))}
                 </div>
               ) : (
-                <Music className="w-5 h-5" />
+                <Music className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
             </motion.button>
           )}

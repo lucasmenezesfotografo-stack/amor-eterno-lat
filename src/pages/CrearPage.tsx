@@ -506,55 +506,6 @@ const CrearPage = () => {
               />
             </div>
 
-            {/* Or Spotify Link - Alternative */}
-            <div className="pt-6 border-t border-border">
-              <label className="block text-sm font-medium text-foreground mb-2">
-                O pega un link de Spotify (alternativo)
-              </label>
-              <div className="relative">
-                <Input
-                  placeholder="https://open.spotify.com/track/..."
-                  value={formData.spotifyUrl}
-                  onChange={(e) => setFormData({ ...formData, spotifyUrl: e.target.value, selectedSong: null, selectedSoundtrack: null })}
-                  className={cn(
-                    "input-premium pr-12",
-                    formData.spotifyUrl && spotifyValidation.isValid && "border-green-500 focus:ring-green-500/20",
-                    formData.spotifyUrl && !spotifyValidation.isValid && "border-destructive focus:ring-destructive/20"
-                  )}
-                />
-                {formData.spotifyUrl && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    {spotifyValidation.isValid ? (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
-                      >
-                        <Check className="w-4 h-4 text-white" />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
-                      >
-                        <AlertCircle className="w-4 h-4 text-white" />
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-              </div>
-              
-              {spotifyValidation.isValid && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-4"
-                >
-                  <SpotifyEmbed spotifyUrl={formData.spotifyUrl} compact />
-                </motion.div>
-              )}
-            </div>
           </div>
         );
 
