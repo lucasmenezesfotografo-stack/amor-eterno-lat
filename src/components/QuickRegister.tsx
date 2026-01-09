@@ -58,7 +58,7 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
         email,
         password: formData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/crear`,
+          emailRedirectTo: `${window.location.origin}/criar`,
           data: {
             display_name: formData.name,
           },
@@ -67,12 +67,37 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
 
       if (error) throw error;
 
-      if (data.user) {
+      if (data.user && data.session) {
+        // User created AND session established
         toast({
           title: "¡Cuenta creada!",
           description: "Ahora puedes crear tu página de amor.",
         });
-        onSuccess();
+        
+        // Force a small delay to ensure auth state updates
+        setTimeout(() => {
+          onSuccess();
+        }, 100);
+      } else if (data.user && !data.session) {
+        // User created but needs email confirmation
+        // Since we auto-confirm, try to sign in directly
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password: formData.password,
+        });
+
+        if (signInError) throw signInError;
+
+        if (signInData.session) {
+          toast({
+            title: "¡Cuenta creada!",
+            description: "Ahora puedes crear tu página de amor.",
+          });
+          
+          setTimeout(() => {
+            onSuccess();
+          }, 100);
+        }
       }
     } catch (error: any) {
       console.error("Error creating account:", error);
