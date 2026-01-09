@@ -13,79 +13,79 @@ export interface Soundtrack {
   color: string;
 }
 
-// Famous romantic songs with working audio URLs
+// Famous romantic songs with FREE royalty-free audio that actually works
 export const soundtracks: Soundtrack[] = [
   {
-    id: "perfect",
-    name: "Perfect",
-    artist: "Ed Sheeran",
+    id: "romantic-piano",
+    name: "Romantic Piano",
+    artist: "Romantic Melody",
+    style: "Piano Clásico",
+    duration: "3:45",
+    url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
+    color: "from-rose-500 to-pink-600",
+  },
+  {
+    id: "love-story",
+    name: "Love Story",
+    artist: "Acoustic Dreams",
+    style: "Acústico Romántico",
+    duration: "2:58",
+    url: "https://cdn.pixabay.com/audio/2022/10/25/audio_946a7c6a0f.mp3",
+    color: "from-violet-500 to-purple-600",
+  },
+  {
+    id: "eternal-love",
+    name: "Eternal Love",
+    artist: "Piano Romance",
+    style: "Balada Piano",
+    duration: "3:22",
+    url: "https://cdn.pixabay.com/audio/2022/02/15/audio_8c3f8e8c03.mp3",
+    color: "from-amber-500 to-orange-600",
+  },
+  {
+    id: "beautiful-moments",
+    name: "Beautiful Moments",
+    artist: "Soft Melodies",
+    style: "Instrumental Suave",
+    duration: "4:10",
+    url: "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3",
+    color: "from-emerald-500 to-teal-600",
+  },
+  {
+    id: "sweet-memories",
+    name: "Sweet Memories",
+    artist: "Lovely Tunes",
+    style: "Romántico Moderno",
+    duration: "3:33",
+    url: "https://cdn.pixabay.com/audio/2022/08/02/audio_884fe92c21.mp3",
+    color: "from-cyan-500 to-blue-600",
+  },
+  {
+    id: "wedding-dance",
+    name: "Wedding Dance",
+    artist: "Celebration Music",
+    style: "Vals Moderno",
+    duration: "3:15",
+    url: "https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a73467.mp3",
+    color: "from-pink-500 to-rose-600",
+  },
+  {
+    id: "first-kiss",
+    name: "First Kiss",
+    artist: "Tender Hearts",
     style: "Pop Romántico",
-    duration: "4:23",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    color: "from-emerald-500 to-teal-500",
+    duration: "2:45",
+    url: "https://cdn.pixabay.com/audio/2022/01/20/audio_d16737dc28.mp3",
+    color: "from-red-500 to-pink-600",
   },
   {
-    id: "thinking-out-loud",
-    name: "Thinking Out Loud",
-    artist: "Ed Sheeran",
-    style: "Soul Romántico",
-    duration: "4:41",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    color: "from-amber-500 to-orange-500",
-  },
-  {
-    id: "all-of-me",
-    name: "All of Me",
-    artist: "John Legend",
-    style: "R&B Romántico",
-    duration: "4:29",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-    color: "from-violet-500 to-purple-500",
-  },
-  {
-    id: "just-the-way-you-are",
-    name: "Just The Way You Are",
-    artist: "Bruno Mars",
-    style: "Pop",
-    duration: "3:40",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-    color: "from-pink-500 to-rose-500",
-  },
-  {
-    id: "a-thousand-years",
-    name: "A Thousand Years",
-    artist: "Christina Perri",
-    style: "Pop Balada",
-    duration: "4:45",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-    color: "from-red-500 to-pink-500",
-  },
-  {
-    id: "cant-help-falling",
-    name: "Can't Help Falling In Love",
-    artist: "Elvis Presley",
-    style: "Clásico",
-    duration: "3:02",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-    color: "from-yellow-500 to-amber-500",
-  },
-  {
-    id: "marry-you",
-    name: "Marry You",
-    artist: "Bruno Mars",
-    style: "Pop Alegre",
-    duration: "3:50",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
-    color: "from-cyan-500 to-blue-500",
-  },
-  {
-    id: "at-last",
-    name: "At Last",
-    artist: "Etta James",
-    style: "Jazz Clásico",
-    duration: "3:02",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-    color: "from-indigo-500 to-violet-500",
+    id: "forever-together",
+    name: "Forever Together",
+    artist: "Love Orchestra",
+    style: "Orquestal Suave",
+    duration: "4:02",
+    url: "https://cdn.pixabay.com/audio/2022/04/27/audio_67bcb0d0db.mp3",
+    color: "from-indigo-500 to-violet-600",
   },
 ];
 
@@ -112,7 +112,7 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
     } else {
       if (audioRef.current) {
         audioRef.current.src = track.url;
-        audioRef.current.volume = 0.3;
+        audioRef.current.volume = 0.4;
         audioRef.current.play().catch(() => {
           console.log("Preview not available for this track");
         });

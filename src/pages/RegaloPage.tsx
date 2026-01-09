@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Download, Loader2 } from "lucide-react";
+import { Heart, Download, Loader2, Music, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
@@ -30,9 +30,9 @@ const demoData: GiftPageData = {
   your_name: "María",
   partner_name: "Juan",
   start_date: "2022-02-14",
-  cover_photo_url: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&auto=format&fit=crop",
+  cover_photo_url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop",
   soundtrack_name: "Romantic Piano",
-  soundtrack_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  soundtrack_url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
   spotify_link: null,
   love_letter: `Mi amor Juan,
 
@@ -161,7 +161,7 @@ const RegaloPage = () => {
   }
 
   const startDate = new Date(pageData.start_date);
-  const defaultCoverPhoto = "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=1200&auto=format&fit=crop";
+  const defaultCoverPhoto = "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop";
 
   return (
     <main className="min-h-screen bg-background">
@@ -169,13 +169,13 @@ const RegaloPage = () => {
       {pageData.soundtrack_url && (
         <FloatingMusicPlayer 
           audioUrl={pageData.soundtrack_url}
-          trackName={pageData.soundtrack_name || "Trilha Sonora"}
+          trackName={pageData.soundtrack_name || "Nuestra Canción"}
           autoPlay={true}
         />
       )}
 
       {/* Hero Section with Cover Photo */}
-      <section className="relative h-[70vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[80vh] sm:min-h-screen flex items-center justify-center overflow-hidden">
         {/* Cover Photo */}
         <div className="absolute inset-0">
           <img
@@ -184,11 +184,11 @@ const RegaloPage = () => {
             className="w-full h-full object-cover"
           />
           {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
         </div>
 
         {/* Content */}
-        <div className="relative z-10 text-center px-4">
+        <div className="relative z-10 text-center px-4 py-16 sm:py-20 w-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -196,17 +196,19 @@ const RegaloPage = () => {
           >
             {/* Heart */}
             <motion.div
-              className="mb-6"
+              className="mb-6 sm:mb-8"
               animate={{ scale: [1, 1.15, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              <Heart className="w-12 h-12 mx-auto text-primary fill-primary" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-primary/20 backdrop-blur-xl flex items-center justify-center">
+                <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-primary fill-primary" />
+              </div>
             </motion.div>
 
             {/* Names */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 mb-4">
+            <div className="flex flex-col items-center justify-center gap-2 sm:gap-4 md:flex-row md:gap-6 mb-4 sm:mb-6">
               <motion.h1
-                className="text-4xl md:text-6xl font-semibold"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
@@ -214,10 +216,10 @@ const RegaloPage = () => {
                 {pageData.your_name}
               </motion.h1>
 
-              <span className="text-primary text-3xl md:text-5xl">&</span>
+              <span className="text-primary text-3xl sm:text-4xl md:text-5xl">&</span>
 
               <motion.h1
-                className="text-4xl md:text-6xl font-semibold"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
@@ -226,37 +228,65 @@ const RegaloPage = () => {
               </motion.h1>
             </div>
 
-            {/* Date */}
-            <motion.p
-              className="text-lg text-muted-foreground"
+            {/* Date Badge */}
+            <motion.div
+              className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-card/80 backdrop-blur-xl border border-border"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-              Juntos desde {startDate.toLocaleDateString("es-ES", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </motion.p>
+              <Calendar className="w-4 h-4 text-primary" />
+              <span className="text-sm sm:text-base text-muted-foreground">Juntos desde</span>
+              <span className="text-sm sm:text-base font-semibold text-foreground">
+                {startDate.toLocaleDateString("es-ES", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+            </motion.div>
+            
+            {/* Music indicator */}
+            {pageData.soundtrack_name && (
+              <motion.div
+                className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                <Music className="w-4 h-4" />
+                <span>♪ {pageData.soundtrack_name}</span>
+              </motion.div>
+            )}
           </motion.div>
         </div>
+        
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-2 sm:w-1.5 sm:h-3 bg-white/50 rounded-full mt-1.5 sm:mt-2" />
+          </div>
+        </motion.div>
       </section>
 
       {/* Counter Section */}
-      <section className="py-20 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
+      <section className="py-16 sm:py-24 px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
         <div className="container mx-auto relative z-10">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl md:text-3xl font-semibold mb-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
               Tiempo juntos
             </h2>
-            <p className="text-muted-foreground">Cada segundo cuenta</p>
+            <p className="text-muted-foreground text-sm sm:text-base">Cada segundo cuenta cuando estás enamorado</p>
           </motion.div>
 
           <RelationshipCounter startDate={startDate} />
@@ -265,18 +295,18 @@ const RegaloPage = () => {
 
       {/* Love Letter */}
       {pageData.love_letter && (
-        <section className="py-20 px-4">
+        <section className="py-16 sm:py-24 px-4">
           <div className="container mx-auto max-w-2xl">
             <motion.div
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-2xl md:text-3xl font-semibold mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
                 Carta de Amor
               </h2>
-              <p className="text-muted-foreground">Palabras del corazón</p>
+              <p className="text-muted-foreground text-sm sm:text-base">Palabras del corazón</p>
             </motion.div>
 
             <LoveLetter content={pageData.love_letter} author={pageData.your_name} />
@@ -285,36 +315,36 @@ const RegaloPage = () => {
       )}
 
       {/* QR Code Download Section */}
-      <section className="py-20 px-4 border-t border-border">
+      <section className="py-16 sm:py-24 px-4 border-t border-border">
         <div className="container mx-auto max-w-md text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl font-semibold mb-2">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-2">
               Descarga el QR Code
             </h2>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8">
               Comparte este regalo especial
             </p>
 
             <div
               ref={qrRef}
-              className="w-48 h-48 mx-auto bg-card border border-border rounded-2xl flex items-center justify-center mb-6 p-4"
+              className="w-40 h-40 sm:w-48 sm:h-48 mx-auto bg-card border border-border rounded-2xl flex items-center justify-center mb-4 sm:mb-6 p-3 sm:p-4"
             >
               <QRCodeSVG
                 value={window.location.href}
-                size={160}
+                size={140}
                 level="H"
                 fgColor="#e11d48"
                 bgColor="transparent"
               />
             </div>
 
-            <Button variant="default" size="lg" onClick={handleDownloadQR} className="mb-6">
-              <Download className="w-5 h-5" />
-              Descargar mi QR Code de regalo
+            <Button variant="default" size="lg" onClick={handleDownloadQR} className="mb-6 w-full sm:w-auto">
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Descargar mi QR Code</span>
             </Button>
 
             {/* Share Buttons */}
@@ -328,10 +358,10 @@ const RegaloPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border">
+      <footer className="py-6 sm:py-8 px-4 border-t border-border">
         <div className="container mx-auto text-center">
-          <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-            Hecho con <Heart className="w-4 h-4 text-primary fill-primary" /> Forever Love
+          <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-2">
+            Hecho con <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Forever Love
           </p>
         </div>
       </footer>

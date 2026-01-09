@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight } from "lucide-react";
+import { Heart, Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight, Play, Calendar, MessageSquareHeart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
@@ -106,9 +106,13 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* Demo Section - Phone Mockup */}
-      <section className="py-24 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-card/50 to-background" />
+      {/* Demo Section - Beautiful Phone Preview */}
+      <section className="py-24 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-rose-500/10 rounded-full blur-[120px]" />
         
         <div className="container mx-auto relative z-10">
           <motion.div
@@ -133,40 +137,175 @@ const Index = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            {/* Phone Mockup */}
-            <div className="phone-mockup w-[300px] md:w-[340px]">
-              <div className="phone-mockup-screen aspect-[9/19.5] relative">
-                {/* Screen Content */}
-                <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-background p-6 flex flex-col items-center justify-center">
-                  {/* Mini Counter */}
-                  <div className="mb-6">
-                    <Heart className="w-10 h-10 text-primary fill-primary mx-auto mb-4 animate-heartbeat" />
-                    <p className="text-sm text-muted-foreground mb-2">Maria & João</p>
-                    <p className="text-2xl font-semibold text-gradient-cherry">2 Anos, 5 Meses</p>
-                  </div>
-
-                  {/* Mini Photo */}
-                  <div className="w-32 h-32 rounded-2xl bg-card border border-border mb-6 overflow-hidden">
-                    <img 
-                      src="https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=400&auto=format&fit=crop"
-                      alt="Couple"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Mini Music Player */}
-                  <div className="w-full bg-card/80 rounded-xl p-3 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Music className="w-5 h-5 text-primary" />
+            {/* Premium Phone Mockup */}
+            <div className="relative">
+              {/* Phone Frame */}
+              <div className="relative w-[280px] sm:w-[320px] md:w-[360px]">
+                {/* Phone body with glass effect */}
+                <div className="relative bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-[3rem] p-2 shadow-2xl shadow-black/50">
+                  {/* Dynamic Island / Notch */}
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-20" />
+                  
+                  {/* Screen */}
+                  <div className="relative bg-gradient-to-b from-background to-card rounded-[2.5rem] overflow-hidden aspect-[9/19]">
+                    {/* Background Cover Photo */}
+                    <div className="absolute inset-0">
+                      <img 
+                        src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&auto=format&fit=crop"
+                        alt="Couple"
+                        className="w-full h-full object-cover opacity-40"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-xs text-foreground font-medium">Perfect</p>
-                      <p className="text-xs text-muted-foreground">Ed Sheeran</p>
+                    
+                    {/* Content */}
+                    <div className="relative z-10 h-full flex flex-col p-5 pt-12">
+                      {/* Heart Animation */}
+                      <motion.div
+                        className="flex justify-center mb-4"
+                        animate={{ scale: [1, 1.15, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        <div className="w-14 h-14 rounded-full bg-primary/20 backdrop-blur-xl flex items-center justify-center">
+                          <Heart className="w-7 h-7 text-primary fill-primary" />
+                        </div>
+                      </motion.div>
+                      
+                      {/* Names */}
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+                          Sofía <span className="text-primary">&</span> Miguel
+                        </h3>
+                        <div className="flex items-center justify-center gap-1.5 mt-2 text-xs text-muted-foreground">
+                          <Calendar className="w-3 h-3" />
+                          <span>Juntos desde 15 de junio, 2021</span>
+                        </div>
+                      </div>
+                      
+                      {/* Counter Cards */}
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        {[
+                          { value: "3", label: "Años" },
+                          { value: "6", label: "Meses" },
+                          { value: "24", label: "Días" },
+                        ].map((item) => (
+                          <div key={item.label} className="bg-card/80 backdrop-blur-sm rounded-xl p-2 text-center border border-border/50">
+                            <p className="text-lg sm:text-xl font-bold text-primary">{item.value}</p>
+                            <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Photo Preview */}
+                      <div className="relative rounded-xl overflow-hidden mb-4 flex-shrink-0">
+                        <img 
+                          src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop"
+                          alt="Couple photo"
+                          className="w-full h-28 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                        <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
+                          <MessageSquareHeart className="w-3 h-3 text-primary" />
+                          <span className="text-[10px] text-foreground/80">Carta de amor incluida</span>
+                        </div>
+                      </div>
+                      
+                      {/* Music Player */}
+                      <div className="mt-auto bg-card/90 backdrop-blur-xl rounded-xl p-3 flex items-center gap-3 border border-border/50">
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
+                            <Music className="w-5 h-5 text-white" />
+                          </div>
+                          {/* Playing indicator */}
+                          <motion.div
+                            className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full"
+                            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
+                            transition={{ duration: 1, repeat: Infinity }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">Romantic Piano</p>
+                          <p className="text-[10px] text-muted-foreground truncate">♪ Reproduciendo</p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <motion.div
+                            className="w-0.5 h-3 bg-primary rounded-full"
+                            animate={{ height: ["30%", "100%", "50%"] }}
+                            transition={{ duration: 0.5, repeat: Infinity }}
+                          />
+                          <motion.div
+                            className="w-0.5 h-3 bg-primary rounded-full"
+                            animate={{ height: ["60%", "30%", "100%"] }}
+                            transition={{ duration: 0.5, repeat: Infinity, delay: 0.1 }}
+                          />
+                          <motion.div
+                            className="w-0.5 h-3 bg-primary rounded-full"
+                            animate={{ height: ["100%", "50%", "30%"] }}
+                            transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+                
+                {/* Reflection effect */}
+                <div className="absolute inset-x-4 -bottom-20 h-20 bg-gradient-to-b from-primary/10 to-transparent blur-2xl rounded-full" />
               </div>
+              
+              {/* Floating elements around phone */}
+              <motion.div
+                className="absolute -left-16 top-20 hidden lg:block"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                      <QrCode className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">QR Code</p>
+                      <p className="text-xs text-muted-foreground">Listo para compartir</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                className="absolute -right-16 bottom-32 hidden lg:block"
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity }}
+              >
+                <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                      <Check className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Personalizable</p>
+                      <p className="text-xs text-muted-foreground">Foto, música y más</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
+          </motion.div>
+          
+          {/* CTA below preview */}
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <Link to="/demo">
+              <Button variant="outline" size="lg" className="gap-2">
+                <Play className="w-4 h-4" />
+                Ver demo interactiva
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
