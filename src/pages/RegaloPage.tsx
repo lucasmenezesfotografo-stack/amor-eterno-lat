@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
 import FloatingMusicPlayer from "@/components/FloatingMusicPlayer";
+import MusicActivationOverlay from "@/components/MusicActivationOverlay";
 import ShareButtons from "@/components/ShareButtons";
 import { QRCodeSVG } from "qrcode.react";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { soundtracks } from "@/components/SoundtrackSelector";
@@ -34,8 +35,8 @@ const demoData: GiftPageData = {
   partner_name: "Juan",
   start_date: "2022-02-14",
   cover_photo_url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop",
-  soundtrack_name: "Romantic Piano",
-  soundtrack_url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
+  soundtrack_name: "Perfect",
+  soundtrack_url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-8.mp3",
   spotify_link: null,
   love_letter: `Mi amor Juan,
 
@@ -56,6 +57,8 @@ const RegaloPage = () => {
   const [pageData, setPageData] = useState<GiftPageData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [musicActivated, setMusicActivated] = useState(false);
+  const [showMusicOverlay, setShowMusicOverlay] = useState(false);
 
   useEffect(() => {
     const fetchGiftPage = async () => {
@@ -96,6 +99,22 @@ const RegaloPage = () => {
 
     fetchGiftPage();
   }, [id]);
+
+  // Show music overlay when page loads and has soundtrack
+  useEffect(() => {
+    if (pageData?.soundtrack_url && !musicActivated) {
+      // Small delay to let the page load
+      const timer = setTimeout(() => {
+        setShowMusicOverlay(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [pageData, musicActivated]);
+
+  const handleMusicActivate = useCallback(() => {
+    setMusicActivated(true);
+    setShowMusicOverlay(false);
+  }, []);
 
   const handleDownloadQR = () => {
     if (!qrRef.current || !pageData) return;
@@ -172,8 +191,18 @@ const RegaloPage = () => {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Floating Music Player with Autoplay and Loop */}
-      {pageData.soundtrack_url && (
+      {/* Music Activation Overlay - shown on first load for pages with music */}
+      {showMusicOverlay && pageData.soundtrack_url && (
+        <MusicActivationOverlay
+          trackName={currentTrack?.name || pageData.soundtrack_name || "Nuestra Canción"}
+          artistName={currentTrack?.artist}
+          albumCover={currentTrack?.albumCover}
+          onActivate={handleMusicActivate}
+        />
+      )}
+
+      {/* Floating Music Player with Autoplay and Loop - only after activation */}
+      {pageData.soundtrack_url && musicActivated && (
         <FloatingMusicPlayer 
           audioUrl={pageData.soundtrack_url}
           trackName={currentTrack?.name || pageData.soundtrack_name || "Nuestra Canción"}

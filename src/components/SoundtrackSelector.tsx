@@ -139,7 +139,7 @@ const formatDuration = (seconds: number): string => {
 
 interface SoundtrackSelectorProps {
   selectedTrack: string | null;
-  onSelect: (trackId: string) => void;
+  onSelect: (trackId: string, trackData?: { name: string; artist: string; url: string; albumCover?: string }) => void;
 }
 
 const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps) => {
@@ -149,7 +149,32 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  
+  // Use Audio object instead of ref for better control
+  const audioInstanceRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize audio instance
+  useEffect(() => {
+    audioInstanceRef.current = new Audio();
+    audioInstanceRef.current.volume = 0.5;
+    
+    audioInstanceRef.current.onended = () => {
+      setIsPlaying(false);
+      setPreviewingTrack(null);
+    };
+    
+    audioInstanceRef.current.onerror = () => {
+      setIsPlaying(false);
+      setPreviewingTrack(null);
+    };
+
+    return () => {
+      if (audioInstanceRef.current) {
+        audioInstanceRef.current.pause();
+        audioInstanceRef.current.src = "";
+      }
+    };
+  }, []);
 
   // Update exported soundtracks
   useEffect(() => {
@@ -198,7 +223,13 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
       // Add to beginning of list
       const newTracks = [track, ...displayTracks.filter(t => t.id !== track.id)];
       setDisplayTracks(newTracks);
-      onSelect(track.id);
+      // Pass track data along with ID
+      onSelect(track.id, {
+        name: track.name,
+        artist: track.artist,
+        url: track.url,
+        albumCover: track.albumCover,
+      });
     }
     
     setIsSearching(false);
@@ -208,51 +239,63 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
   const handlePreview = (track: Soundtrack, e: React.MouseEvent) => {
     e.stopPropagation();
     
+    const audio = audioInstanceRef.current;
+    if (!audio) return;
+    
     if (previewingTrack === track.id && isPlaying) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
+      // Stop current playback
+      audio.pause();
+      audio.currentTime = 0;
       setIsPlaying(false);
       setPreviewingTrack(null);
     } else {
-      if (audioRef.current) {
-        audioRef.current.src = track.url;
-        audioRef.current.volume = 0.5;
-        audioRef.current.play().catch(() => {
-          console.log("Preview not available for this track");
+      // Stop any previous track and play new one
+      audio.pause();
+      audio.currentTime = 0;
+      audio.src = track.url;
+      audio.volume = 0.5;
+      audio.play()
+        .then(() => {
+          setPreviewingTrack(track.id);
+          setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.log("Preview not available for this track:", err);
+          setIsPlaying(false);
+          setPreviewingTrack(null);
         });
-      }
-      setPreviewingTrack(track.id);
-      setIsPlaying(true);
     }
   };
 
   const handleSelect = (trackId: string) => {
-    onSelect(trackId);
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    // Find track data
+    const track = displayTracks.find(t => t.id === trackId);
+    
+    // Stop any preview playback
+    if (audioInstanceRef.current) {
+      audioInstanceRef.current.pause();
+      audioInstanceRef.current.currentTime = 0;
     }
     setIsPlaying(false);
     setPreviewingTrack(null);
+    
+    // Pass track data to parent
+    if (track) {
+      onSelect(trackId, {
+        name: track.name,
+        artist: track.artist,
+        url: track.url,
+        albumCover: track.albumCover,
+      });
+    } else {
+      onSelect(trackId);
+    }
   };
 
   const trackList = displayTracks;
 
   return (
     <div className="space-y-4">
-      <audio 
-        ref={audioRef} 
-        onEnded={() => {
-          setIsPlaying(false);
-          setPreviewingTrack(null);
-        }}
-        onError={() => {
-          setIsPlaying(false);
-          setPreviewingTrack(null);
-        }}
-      />
 
       <div className="flex items-center gap-2 mb-4">
         <Music className="w-5 h-5 text-primary" />
