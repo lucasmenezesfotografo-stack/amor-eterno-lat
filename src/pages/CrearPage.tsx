@@ -67,6 +67,10 @@ const CrearPage = () => {
     spotifyUrl: "",
     loveLetter: "",
     selectedSoundtrack: null as string | null,
+    soundtrackName: null as string | null,
+    soundtrackArtist: null as string | null,
+    soundtrackUrl: null as string | null,
+    soundtrackAlbumCover: null as string | null,
     namesPosition: "center" as "top" | "center" | "bottom",
   });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -147,6 +151,8 @@ const CrearPage = () => {
     
     try {
       const slug = generateSlug(formData.person1, formData.person2);
+      
+      // Use stored track data or find from soundtracks as fallback
       const selectedTrack = formData.selectedSoundtrack 
         ? soundtracks.find(t => t.id === formData.selectedSoundtrack) 
         : null;
@@ -158,8 +164,9 @@ const CrearPage = () => {
         start_date: format(formData.startDate, "yyyy-MM-dd"),
         cover_photo_url: formData.photoUrl || null,
         love_letter: formData.loveLetter || null,
-        soundtrack_name: selectedTrack?.name || null,
-        soundtrack_url: selectedTrack?.url || null,
+        // Use stored track data (from onSelect) or fallback to found track
+        soundtrack_name: formData.soundtrackName || selectedTrack?.name || null,
+        soundtrack_url: formData.soundtrackUrl || selectedTrack?.url || null,
         spotify_link: formData.spotifyUrl || null,
         user_id: user?.id || null,
       });
@@ -552,7 +559,18 @@ const CrearPage = () => {
             <div className="pt-4 border-t border-border">
               <SoundtrackSelector
                 selectedTrack={formData.selectedSoundtrack}
-                onSelect={(trackId) => setFormData({ ...formData, selectedSoundtrack: trackId, spotifyUrl: "", selectedSong: null })}
+                onSelect={(trackId, trackData) => {
+                  setFormData({ 
+                    ...formData, 
+                    selectedSoundtrack: trackId, 
+                    soundtrackName: trackData?.name || null,
+                    soundtrackArtist: trackData?.artist || null,
+                    soundtrackUrl: trackData?.url || null,
+                    soundtrackAlbumCover: trackData?.albumCover || null,
+                    spotifyUrl: "", 
+                    selectedSong: null 
+                  });
+                }}
               />
             </div>
 
