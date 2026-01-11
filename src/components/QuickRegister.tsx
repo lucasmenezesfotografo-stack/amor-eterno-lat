@@ -54,6 +54,8 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
     try {
       const email = generateEmail(formData.name);
       
+      console.log("Attempting signup with email:", email);
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password: formData.password,
@@ -65,45 +67,79 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
         },
       });
 
-      if (error) throw error;
+      console.log("Signup response:", { 
+        userId: data?.user?.id, 
+        hasSession: !!data?.session,
+        error: error?.message 
+      });
 
-      if (data.user && data.session) {
-        // User created AND session established
+      if (error) {
+        throw error;
+      }
+
+      // With auto-confirm enabled, session should be available immediately
+      if (data.session) {
         toast({
           title: "¡Cuenta creada!",
           description: "Ahora puedes crear tu página de amor.",
         });
+        onSuccess();
+        return;
+      }
+
+      // If user was created but no session (auto-confirm might have race condition)
+      if (data.user) {
+        // Wait a bit for Supabase to process
+        await new Promise(resolve => setTimeout(resolve, 800));
         
-        // Force a small delay to ensure auth state updates
-        setTimeout(() => {
-          onSuccess();
-        }, 100);
-      } else if (data.user && !data.session) {
-        // User created but needs email confirmation
-        // Since we auto-confirm, try to sign in directly
+        console.log("Attempting sign in after signup...");
+        
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password: formData.password,
         });
 
-        if (signInError) throw signInError;
+        console.log("Sign in response:", { 
+          hasSession: !!signInData?.session,
+          error: signInError?.message 
+        });
+
+        if (signInError) {
+          throw signInError;
+        }
 
         if (signInData.session) {
           toast({
             title: "¡Cuenta creada!",
             description: "Ahora puedes crear tu página de amor.",
           });
-          
-          setTimeout(() => {
-            onSuccess();
-          }, 100);
+          onSuccess();
+          return;
         }
       }
+
+      // Fallback - shouldn't reach here with auto-confirm
+      toast({
+        title: "Error inesperado",
+        description: "Por favor, intenta de nuevo.",
+        variant: "destructive",
+      });
     } catch (error: any) {
       console.error("Error creating account:", error);
+      
+      let errorMessage = "No se pudo crear la cuenta. Intenta de nuevo.";
+      
+      if (error.message?.includes("already registered")) {
+        errorMessage = "Este nombre ya está en uso. Prueba con otro nombre.";
+      } else if (error.message?.includes("password")) {
+        errorMessage = "La contraseña debe tener al menos 6 caracteres.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Error",
-        description: error.message || "No se pudo crear la cuenta. Intenta de nuevo.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
