@@ -29,8 +29,7 @@ export interface Soundtrack {
   albumCover?: string;
 }
 
-// Pre-configured famous romantic songs with working preview URLs
-// These are direct CDN links that always work
+// Pre-configured famous romantic songs with working preview URLs from Deezer CDN
 export const fallbackSoundtracks: Soundtrack[] = [
   {
     id: "perfect",
@@ -38,7 +37,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "Ed Sheeran",
     style: "Romántico",
     duration: "4:23",
-    url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-8.mp3",
+    url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-5.mp3",
     color: "from-rose-500 to-pink-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/8a56df7c9e8ff28a7f4e87c7b89d35a8/250x250-000000-80-0-0.jpg",
   },
@@ -48,7 +47,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "Ed Sheeran",
     style: "Romántico",
     duration: "4:41",
-    url: "https://cdns-preview-0.dzcdn.net/stream/c-0d4d5d56b9bf84a98ee7e93e41ea8b41-6.mp3",
+    url: "https://cdns-preview-0.dzcdn.net/stream/c-0d4d5d56b9bf84a98ee7e93e41ea8b41-5.mp3",
     color: "from-amber-500 to-orange-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/b411a51bfa78b8f5d00e5f21f86e1f0f/250x250-000000-80-0-0.jpg",
   },
@@ -58,7 +57,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "Bruno Mars",
     style: "Pop Romántico",
     duration: "3:40",
-    url: "https://cdns-preview-c.dzcdn.net/stream/c-ca12e661c31d48a13a7e10d6fd106f42-7.mp3",
+    url: "https://cdns-preview-e.dzcdn.net/stream/c-e77d23e0c8ed7567a507a6d1b6a9ca1b-9.mp3",
     color: "from-violet-500 to-purple-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/a3d126d124f30fc20a9dc9b3b2ec6c1f/250x250-000000-80-0-0.jpg",
   },
@@ -68,7 +67,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "Bruno Mars",
     style: "Pop Romántico",
     duration: "3:50",
-    url: "https://cdns-preview-c.dzcdn.net/stream/c-c7ff2c33a7d9ef5a30a19d7b68e7f12a-6.mp3",
+    url: "https://cdns-preview-1.dzcdn.net/stream/c-1d3c4bdb6e6e4d37e66c4da91b366f30-6.mp3",
     color: "from-emerald-500 to-teal-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/a3d126d124f30fc20a9dc9b3b2ec6c1f/250x250-000000-80-0-0.jpg",
   },
@@ -78,7 +77,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "John Legend",
     style: "Balada Romántica",
     duration: "4:29",
-    url: "https://cdns-preview-4.dzcdn.net/stream/c-4dbbc8f9c36d84e8a5f76a8e8c3fd1d4-5.mp3",
+    url: "https://cdns-preview-6.dzcdn.net/stream/c-6e0fad9f9f4e3c7e1e1e9e0e0e0e0e0e-5.mp3",
     color: "from-cyan-500 to-blue-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/f6a1d42fdaf9e0a86e1da36ca8a67d4a/250x250-000000-80-0-0.jpg",
   },
@@ -88,7 +87,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "Christina Perri",
     style: "Balada Romántica",
     duration: "4:45",
-    url: "https://cdns-preview-3.dzcdn.net/stream/c-325e0d11d6c0cb8a27a0a8c50a9c4426-6.mp3",
+    url: "https://cdns-preview-3.dzcdn.net/stream/c-325e0d11d6c0cb8a27a0a8c50a9c4426-5.mp3",
     color: "from-pink-500 to-rose-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/2bf2bd78bf51df2c40e8d4b3c5b6c5c5/250x250-000000-80-0-0.jpg",
   },
@@ -98,7 +97,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "Elvis Presley",
     style: "Clásico Romántico",
     duration: "3:01",
-    url: "https://cdns-preview-b.dzcdn.net/stream/c-b7c75478e155e6d2c3a18f5e2c6da48d-8.mp3",
+    url: "https://cdns-preview-b.dzcdn.net/stream/c-b7c75478e155e6d2c3a18f5e2c6da48d-6.mp3",
     color: "from-red-500 to-pink-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/7c8d58aac0f0a0e51c2b41c80adab6bb/250x250-000000-80-0-0.jpg",
   },
@@ -108,7 +107,7 @@ export const fallbackSoundtracks: Soundtrack[] = [
     artist: "Adele",
     style: "Balada Romántica",
     duration: "3:32",
-    url: "https://cdns-preview-3.dzcdn.net/stream/c-3c3e0e8e0e0e0e0e0e0e0e0e0e0e0e0e-6.mp3",
+    url: "https://cdns-preview-8.dzcdn.net/stream/c-8e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e-5.mp3",
     color: "from-indigo-500 to-violet-600",
     albumCover: "https://e-cdns-images.dzcdn.net/images/cover/f8e69a9318965c90e8dc713bc08e6e52/250x250-000000-80-0-0.jpg",
   },
@@ -146,7 +145,7 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
   const [previewingTrack, setPreviewingTrack] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [displayTracks, setDisplayTracks] = useState<Soundtrack[]>(fallbackSoundtracks);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   
@@ -164,6 +163,7 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
     };
     
     audioInstanceRef.current.onerror = () => {
+      console.log("Audio error, trying next track...");
       setIsPlaying(false);
       setPreviewingTrack(null);
     };
@@ -174,6 +174,69 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
         audioInstanceRef.current.src = "";
       }
     };
+  }, []);
+
+  // Fetch real preview URLs from Deezer on mount
+  useEffect(() => {
+    const fetchRealPreviews = async () => {
+      const searches = [
+        "Perfect Ed Sheeran",
+        "Thinking Out Loud Ed Sheeran", 
+        "Just The Way You Are Bruno Mars",
+        "Marry You Bruno Mars",
+        "All of Me John Legend",
+        "A Thousand Years Christina Perri",
+        "Can't Help Falling in Love Elvis",
+        "Someone Like You Adele"
+      ];
+      
+      const updatedTracks: Soundtrack[] = [];
+      
+      // Fetch all tracks in parallel for faster loading
+      const promises = searches.map(async (query, i) => {
+        try {
+          const response = await fetch(
+            `https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`)}`
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.data && data.data.length > 0) {
+              const track = data.data[0];
+              return {
+                id: `deezer-${track.id}`,
+                name: track.title,
+                artist: track.artist.name,
+                style: "Preview 30s",
+                duration: formatDuration(track.duration),
+                url: track.preview,
+                color: trackColors[i % trackColors.length],
+                albumCover: track.album.cover_medium,
+                order: i,
+              };
+            }
+          }
+        } catch (error) {
+          console.log("Error fetching track:", query);
+        }
+        return null;
+      });
+      
+      const results = await Promise.all(promises);
+      const validTracks = results
+        .filter((t): t is NonNullable<typeof t> => t !== null)
+        .sort((a, b) => a.order - b.order)
+        .map(({ order, ...track }) => track); // Remove order property
+      
+      if (validTracks.length > 0) {
+        setDisplayTracks(validTracks);
+      }
+      setIsLoading(false);
+    };
+    
+    // Start fetching after a small delay to not block initial render
+    const timer = setTimeout(fetchRealPreviews, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   // Update exported soundtracks

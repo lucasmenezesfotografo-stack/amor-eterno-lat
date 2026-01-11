@@ -210,9 +210,9 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           <p className="text-sm font-romantic italic opacity-90 mb-4 px-3">"{customMessage}"</p>
         )}
 
-        {/* Premium QR Code container */}
+        {/* Premium QR Code container - FIXED SIZE */}
         <div 
-          className="rounded-2xl p-4 w-fit mx-auto mb-3 relative"
+          className="rounded-2xl p-4 mx-auto mb-3 relative inline-block"
           style={{
             ...glassStyles,
             border: `1px solid ${selectedStyle.accent}30`,
@@ -220,11 +220,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         >
           <QRCodeSVG 
             value={qrUrl} 
-            size={90} 
+            size={100} 
             level="H" 
             fgColor={selectedStyle.qrColor}
             bgColor="rgba(255,255,255,0.95)"
-            className="rounded-lg"
+            className="rounded-lg block"
+            includeMargin={true}
           />
         </div>
         <p className="text-[10px] opacity-60 tracking-widest uppercase font-sans">Escanea para ver nuestra historia</p>
@@ -306,18 +307,19 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
 
         {/* Elegant QR container */}
         <div 
-          className="rounded-2xl p-4 w-fit mx-auto"
+          className="rounded-2xl p-4 mx-auto inline-block"
           style={{
             border: `2px solid ${selectedStyle.accent}20`,
-            backgroundColor: "rgba(255,255,255,0.8)",
+            backgroundColor: "rgba(255,255,255,0.9)",
           }}
         >
           <QRCodeSVG 
             value={qrUrl} 
-            size={80} 
+            size={90} 
             level="H" 
             fgColor={selectedStyle.qrColor}
-            bgColor="transparent" 
+            bgColor="transparent"
+            includeMargin={true}
           />
         </div>
       </div>
@@ -399,7 +401,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           )}
         </div>
         
-        <div className="flex items-center">
+        <div className="flex items-center flex-shrink-0">
           <div 
             className="rounded-xl p-3"
             style={{
@@ -409,11 +411,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           >
             <QRCodeSVG 
               value={qrUrl} 
-              size={70} 
+              size={80} 
               level="H" 
               fgColor={selectedStyle.qrColor}
               bgColor="rgba(255,255,255,0.95)"
-              className="rounded-lg"
+              className="rounded-lg block"
+              includeMargin={true}
             />
           </div>
         </div>
@@ -521,7 +524,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           }} />
         )}
         <div 
-          className="rounded-xl p-3 w-fit mx-auto relative z-10"
+          className="rounded-xl p-3 mx-auto relative z-10 inline-block"
           style={{
             ...glassStyles,
             border: `1px solid ${selectedStyle.accent}30`,
@@ -529,11 +532,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         >
           <QRCodeSVG 
             value={qrUrl} 
-            size={80} 
+            size={90} 
             level="H" 
             fgColor={selectedStyle.qrColor}
             bgColor="rgba(255,255,255,0.95)"
-            className="rounded-lg"
+            className="rounded-lg block"
+            includeMargin={true}
           />
         </div>
         <p className={cn(
