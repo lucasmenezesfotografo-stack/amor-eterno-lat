@@ -36,7 +36,7 @@ const demoData: GiftPageData = {
   start_date: "2022-02-14",
   cover_photo_url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop",
   soundtrack_name: "Perfect",
-  soundtrack_url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-8.mp3",
+  soundtrack_url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-5.mp3",
   spotify_link: null,
   love_letter: `Mi amor Juan,
 
