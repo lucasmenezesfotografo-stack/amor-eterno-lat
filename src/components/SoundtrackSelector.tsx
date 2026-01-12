@@ -1,432 +1,263 @@
 import { motion } from "framer-motion";
-import { Music, Check, Play, Pause, Volume2, Loader2, Search } from "lucide-react";
+import { Music, Check, Play, Pause, Youtube, Loader2, Search, Link, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 
-export interface DeezerTrack {
-  id: number;
-  title: string;
-  artist: {
-    name: string;
-  };
-  album: {
-    title: string;
-    cover_medium: string;
-  };
-  duration: number;
-  preview: string; // 30-second preview URL
-}
-
-export interface Soundtrack {
+export interface YouTubeTrack {
   id: string;
   name: string;
   artist: string;
-  style: string;
-  duration: string;
-  url: string;
-  color: string;
+  youtubeVideoId: string;
   albumCover?: string;
+  color: string;
 }
 
-// Pre-configured famous romantic songs with working preview URLs from Deezer CDN
-export const fallbackSoundtracks: Soundtrack[] = [
+// Pre-configured famous romantic songs with YouTube video IDs
+export const romanticTracks: YouTubeTrack[] = [
   {
     id: "perfect",
     name: "Perfect",
     artist: "Ed Sheeran",
-    style: "Romántico",
-    duration: "4:23",
-    url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-5.mp3",
+    youtubeVideoId: "2Vv-BfVoq4g",
+    albumCover: "https://i.ytimg.com/vi/2Vv-BfVoq4g/hqdefault.jpg",
     color: "from-rose-500 to-pink-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/8a56df7c9e8ff28a7f4e87c7b89d35a8/250x250-000000-80-0-0.jpg",
   },
   {
     id: "thinking-out-loud",
     name: "Thinking Out Loud",
     artist: "Ed Sheeran",
-    style: "Romántico",
-    duration: "4:41",
-    url: "https://cdns-preview-0.dzcdn.net/stream/c-0d4d5d56b9bf84a98ee7e93e41ea8b41-5.mp3",
+    youtubeVideoId: "lp-EO5I60KA",
+    albumCover: "https://i.ytimg.com/vi/lp-EO5I60KA/hqdefault.jpg",
     color: "from-amber-500 to-orange-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/b411a51bfa78b8f5d00e5f21f86e1f0f/250x250-000000-80-0-0.jpg",
   },
   {
     id: "just-the-way-you-are",
     name: "Just The Way You Are",
     artist: "Bruno Mars",
-    style: "Pop Romántico",
-    duration: "3:40",
-    url: "https://cdns-preview-e.dzcdn.net/stream/c-e77d23e0c8ed7567a507a6d1b6a9ca1b-9.mp3",
+    youtubeVideoId: "LjhCEhWiKXk",
+    albumCover: "https://i.ytimg.com/vi/LjhCEhWiKXk/hqdefault.jpg",
     color: "from-violet-500 to-purple-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/a3d126d124f30fc20a9dc9b3b2ec6c1f/250x250-000000-80-0-0.jpg",
   },
   {
     id: "marry-you",
     name: "Marry You",
     artist: "Bruno Mars",
-    style: "Pop Romántico",
-    duration: "3:50",
-    url: "https://cdns-preview-1.dzcdn.net/stream/c-1d3c4bdb6e6e4d37e66c4da91b366f30-6.mp3",
+    youtubeVideoId: "dElRVQFqj-k",
+    albumCover: "https://i.ytimg.com/vi/dElRVQFqj-k/hqdefault.jpg",
     color: "from-emerald-500 to-teal-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/a3d126d124f30fc20a9dc9b3b2ec6c1f/250x250-000000-80-0-0.jpg",
   },
   {
     id: "all-of-me",
     name: "All of Me",
     artist: "John Legend",
-    style: "Balada Romántica",
-    duration: "4:29",
-    url: "https://cdns-preview-6.dzcdn.net/stream/c-6e0fad9f9f4e3c7e1e1e9e0e0e0e0e0e-5.mp3",
+    youtubeVideoId: "450p7goxZqg",
+    albumCover: "https://i.ytimg.com/vi/450p7goxZqg/hqdefault.jpg",
     color: "from-cyan-500 to-blue-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/f6a1d42fdaf9e0a86e1da36ca8a67d4a/250x250-000000-80-0-0.jpg",
   },
   {
     id: "a-thousand-years",
     name: "A Thousand Years",
     artist: "Christina Perri",
-    style: "Balada Romántica",
-    duration: "4:45",
-    url: "https://cdns-preview-3.dzcdn.net/stream/c-325e0d11d6c0cb8a27a0a8c50a9c4426-5.mp3",
+    youtubeVideoId: "rtOvBOTyX00",
+    albumCover: "https://i.ytimg.com/vi/rtOvBOTyX00/hqdefault.jpg",
     color: "from-pink-500 to-rose-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/2bf2bd78bf51df2c40e8d4b3c5b6c5c5/250x250-000000-80-0-0.jpg",
   },
   {
     id: "cant-help-falling",
     name: "Can't Help Falling in Love",
     artist: "Elvis Presley",
-    style: "Clásico Romántico",
-    duration: "3:01",
-    url: "https://cdns-preview-b.dzcdn.net/stream/c-b7c75478e155e6d2c3a18f5e2c6da48d-6.mp3",
+    youtubeVideoId: "vGJTaP6anOU",
+    albumCover: "https://i.ytimg.com/vi/vGJTaP6anOU/hqdefault.jpg",
     color: "from-red-500 to-pink-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/7c8d58aac0f0a0e51c2b41c80adab6bb/250x250-000000-80-0-0.jpg",
   },
   {
     id: "make-you-feel-my-love",
     name: "Make You Feel My Love",
     artist: "Adele",
-    style: "Balada Romántica",
-    duration: "3:32",
-    url: "https://cdns-preview-8.dzcdn.net/stream/c-8e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e-5.mp3",
+    youtubeVideoId: "0put0_a--Ng",
+    albumCover: "https://i.ytimg.com/vi/0put0_a--Ng/hqdefault.jpg",
     color: "from-indigo-500 to-violet-600",
-    albumCover: "https://e-cdns-images.dzcdn.net/images/cover/f8e69a9318965c90e8dc713bc08e6e52/250x250-000000-80-0-0.jpg",
   },
 ];
 
-// Export soundtracks for use in other components
-export let soundtracks: Soundtrack[] = [...fallbackSoundtracks];
+// Helper function to extract YouTube video ID from URL
+export const extractYoutubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+  
+  // Match various YouTube URL formats
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/, // Just the video ID
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  
+  return null;
+};
 
-// Colors for tracks
-const trackColors = [
-  "from-rose-500 to-pink-600",
-  "from-violet-500 to-purple-600",
-  "from-amber-500 to-orange-600",
-  "from-emerald-500 to-teal-600",
-  "from-cyan-500 to-blue-600",
-  "from-pink-500 to-rose-600",
-  "from-red-500 to-pink-600",
-  "from-indigo-500 to-violet-600",
-  "from-fuchsia-500 to-purple-600",
-  "from-orange-500 to-red-600",
-];
-
-const formatDuration = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+// Validate if URL is a valid YouTube URL
+export const isValidYoutubeUrl = (url: string): boolean => {
+  if (!url) return false;
+  return extractYoutubeVideoId(url) !== null;
 };
 
 interface SoundtrackSelectorProps {
   selectedTrack: string | null;
-  onSelect: (trackId: string, trackData?: { name: string; artist: string; url: string; albumCover?: string }) => void;
+  customYoutubeUrl: string;
+  onSelect: (trackId: string | null, trackData?: { 
+    name: string; 
+    artist: string; 
+    youtubeVideoId: string; 
+    albumCover?: string 
+  }) => void;
+  onCustomUrlChange: (url: string) => void;
 }
 
-const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps) => {
+const SoundtrackSelector = ({ 
+  selectedTrack, 
+  customYoutubeUrl,
+  onSelect, 
+  onCustomUrlChange 
+}: SoundtrackSelectorProps) => {
   const [previewingTrack, setPreviewingTrack] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [displayTracks, setDisplayTracks] = useState<Soundtrack[]>(fallbackSoundtracks);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  
-  // Use Audio object instead of ref for better control
-  const audioInstanceRef = useRef<HTMLAudioElement | null>(null);
+  const [customUrlError, setCustomUrlError] = useState<string | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Initialize audio instance
+  // Validate custom URL when it changes
   useEffect(() => {
-    audioInstanceRef.current = new Audio();
-    audioInstanceRef.current.volume = 0.5;
-    
-    audioInstanceRef.current.onended = () => {
-      setIsPlaying(false);
-      setPreviewingTrack(null);
-    };
-    
-    audioInstanceRef.current.onerror = () => {
-      console.log("Audio error, trying next track...");
-      setIsPlaying(false);
-      setPreviewingTrack(null);
-    };
-
-    return () => {
-      if (audioInstanceRef.current) {
-        audioInstanceRef.current.pause();
-        audioInstanceRef.current.src = "";
-      }
-    };
-  }, []);
-
-  // Fetch real preview URLs from Deezer on mount
-  useEffect(() => {
-    const fetchRealPreviews = async () => {
-      const searches = [
-        "Perfect Ed Sheeran",
-        "Thinking Out Loud Ed Sheeran", 
-        "Just The Way You Are Bruno Mars",
-        "Marry You Bruno Mars",
-        "All of Me John Legend",
-        "A Thousand Years Christina Perri",
-        "Can't Help Falling in Love Elvis",
-        "Someone Like You Adele"
-      ];
-      
-      const updatedTracks: Soundtrack[] = [];
-      
-      // Fetch all tracks in parallel for faster loading
-      const promises = searches.map(async (query, i) => {
-        try {
-          const response = await fetch(
-            `https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`)}`
-          );
-          
-          if (response.ok) {
-            const data = await response.json();
-            if (data.data && data.data.length > 0) {
-              const track = data.data[0];
-              return {
-                id: `deezer-${track.id}`,
-                name: track.title,
-                artist: track.artist.name,
-                style: "Preview 30s",
-                duration: formatDuration(track.duration),
-                url: track.preview,
-                color: trackColors[i % trackColors.length],
-                albumCover: track.album.cover_medium,
-                order: i,
-              };
-            }
-          }
-        } catch (error) {
-          console.log("Error fetching track:", query);
-        }
-        return null;
-      });
-      
-      const results = await Promise.all(promises);
-      const validTracks = results
-        .filter((t): t is NonNullable<typeof t> => t !== null)
-        .sort((a, b) => a.order - b.order)
-        .map(({ order, ...track }) => track); // Remove order property
-      
-      if (validTracks.length > 0) {
-        setDisplayTracks(validTracks);
-      }
-      setIsLoading(false);
-    };
-    
-    // Start fetching after a small delay to not block initial render
-    const timer = setTimeout(fetchRealPreviews, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Update exported soundtracks
-  useEffect(() => {
-    soundtracks = displayTracks;
-  }, [displayTracks]);
-
-  // Fetch a track from Deezer API (for search only)
-  const fetchDeezerTrack = async (query: string): Promise<Soundtrack | null> => {
-    try {
-      const response = await fetch(
-        `https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`)}`
-      );
-      
-      if (!response.ok) return null;
-      
-      const data = await response.json();
-      
-      if (data.data && data.data.length > 0) {
-        const track = data.data[0];
-        return {
-          id: `deezer-${track.id}`,
-          name: track.title,
-          artist: track.artist.name,
-          style: "Preview 30s",
-          duration: formatDuration(track.duration),
-          url: track.preview,
-          color: trackColors[displayTracks.length % trackColors.length],
-          albumCover: track.album.cover_medium,
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error("Error fetching from Deezer:", error);
-      return null;
+    if (customYoutubeUrl && !isValidYoutubeUrl(customYoutubeUrl)) {
+      setCustomUrlError("Por favor, ingresa un enlace válido de YouTube");
+    } else {
+      setCustomUrlError(null);
     }
-  };
+  }, [customYoutubeUrl]);
 
-  // Search for custom tracks
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-    
-    setIsSearching(true);
-    const track = await fetchDeezerTrack(searchQuery);
-    
-    if (track) {
-      // Add to beginning of list
-      const newTracks = [track, ...displayTracks.filter(t => t.id !== track.id)];
-      setDisplayTracks(newTracks);
-      // Pass track data along with ID
-      onSelect(track.id, {
-        name: track.name,
-        artist: track.artist,
-        url: track.url,
-        albumCover: track.albumCover,
-      });
-    }
-    
-    setIsSearching(false);
-    setSearchQuery("");
-  };
-
-  const handlePreview = (track: Soundtrack, e: React.MouseEvent) => {
+  const handlePreview = (track: YouTubeTrack, e: React.MouseEvent) => {
     e.stopPropagation();
     
-    const audio = audioInstanceRef.current;
-    if (!audio) return;
-    
-    if (previewingTrack === track.id && isPlaying) {
-      // Stop current playback
-      audio.pause();
-      audio.currentTime = 0;
-      setIsPlaying(false);
+    if (previewingTrack === track.id) {
       setPreviewingTrack(null);
     } else {
-      // Stop any previous track and play new one
-      audio.pause();
-      audio.currentTime = 0;
-      audio.src = track.url;
-      audio.volume = 0.5;
-      audio.play()
-        .then(() => {
-          setPreviewingTrack(track.id);
-          setIsPlaying(true);
-        })
-        .catch((err) => {
-          console.log("Preview not available for this track:", err);
-          setIsPlaying(false);
-          setPreviewingTrack(null);
-        });
+      setPreviewingTrack(track.id);
     }
   };
 
-  const handleSelect = (trackId: string) => {
-    // Find track data
-    const track = displayTracks.find(t => t.id === trackId);
-    
-    // Stop any preview playback
-    if (audioInstanceRef.current) {
-      audioInstanceRef.current.pause();
-      audioInstanceRef.current.currentTime = 0;
-    }
-    setIsPlaying(false);
+  const handleSelect = (track: YouTubeTrack) => {
+    // Clear custom URL when selecting a preset
+    onCustomUrlChange("");
     setPreviewingTrack(null);
     
-    // Pass track data to parent
-    if (track) {
-      onSelect(trackId, {
-        name: track.name,
-        artist: track.artist,
-        url: track.url,
-        albumCover: track.albumCover,
-      });
-    } else {
-      onSelect(trackId);
+    onSelect(track.id, {
+      name: track.name,
+      artist: track.artist,
+      youtubeVideoId: track.youtubeVideoId,
+      albumCover: track.albumCover,
+    });
+  };
+
+  const handleCustomUrlBlur = () => {
+    if (customYoutubeUrl && isValidYoutubeUrl(customYoutubeUrl)) {
+      const videoId = extractYoutubeVideoId(customYoutubeUrl);
+      if (videoId) {
+        // Deselect any preset track
+        onSelect("custom", {
+          name: "Canción personalizada",
+          artist: "YouTube",
+          youtubeVideoId: videoId,
+          albumCover: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+        });
+      }
     }
   };
 
-  const trackList = displayTracks;
+  // Get the current video ID to preview (custom takes priority)
+  const getPreviewVideoId = (): string | null => {
+    if (customYoutubeUrl && isValidYoutubeUrl(customYoutubeUrl)) {
+      return extractYoutubeVideoId(customYoutubeUrl);
+    }
+    if (previewingTrack) {
+      const track = romanticTracks.find(t => t.id === previewingTrack);
+      return track?.youtubeVideoId || null;
+    }
+    return null;
+  };
+
+  const previewVideoId = getPreviewVideoId();
 
   return (
     <div className="space-y-4">
-
       <div className="flex items-center gap-2 mb-4">
-        <Music className="w-5 h-5 text-primary" />
+        <Youtube className="w-5 h-5 text-primary" />
         <h3 className="text-lg font-medium text-foreground">Elige tu Canción</h3>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex gap-2 mb-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar canción o artista..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="pl-10"
-          />
-        </div>
-        <button
-          onClick={handleSearch}
-          disabled={isSearching || !searchQuery.trim()}
-          className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+      <p className="text-sm text-muted-foreground mb-4">
+        La música se reproduce mediante YouTube
+      </p>
+
+      {/* YouTube Preview Player */}
+      {previewVideoId && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mb-4 rounded-xl overflow-hidden bg-black"
         >
-          {isSearching ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Search className="w-4 h-4" />
-          )}
-          <span className="hidden sm:inline">Buscar</span>
-        </button>
-      </div>
+          <div className="relative pt-[56.25%]">
+            <iframe
+              ref={iframeRef}
+              className="absolute inset-0 w-full h-full"
+              src={`https://www.youtube.com/embed/${previewVideoId}?autoplay=1&enablejsapi=1`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </motion.div>
+      )}
 
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-12 gap-4">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-muted-foreground text-sm">Cargando canciones famosas...</p>
-        </div>
-      ) : (
-        <div className="grid gap-3 max-h-[400px] overflow-y-auto pr-2">
-          {trackList.map((track) => {
-            const isSelected = selectedTrack === track.id;
-            const isPreviewing = previewingTrack === track.id && isPlaying;
+      {/* Preset Tracks List */}
+      <div className="grid gap-3 max-h-[350px] overflow-y-auto pr-2">
+        {romanticTracks.map((track) => {
+          const isSelected = selectedTrack === track.id && !customYoutubeUrl;
+          const isPreviewing = previewingTrack === track.id;
 
-            return (
-              <motion.div
-                key={track.id}
-                className={cn(
-                  "relative flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl cursor-pointer transition-all border",
-                  isSelected
-                    ? "bg-primary/20 border-primary/50"
-                    : "bg-secondary/50 border-transparent hover:bg-secondary hover:border-border"
+          return (
+            <motion.div
+              key={track.id}
+              className={cn(
+                "relative flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl cursor-pointer transition-all border",
+                isSelected
+                  ? "bg-primary/20 border-primary/50"
+                  : "bg-secondary/50 border-transparent hover:bg-secondary hover:border-border"
+              )}
+              onClick={() => handleSelect(track)}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
+              {/* Album Art */}
+              <div className={cn(
+                "relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0",
+                !track.albumCover && `bg-gradient-to-br ${track.color}`
+              )}>
+                {track.albumCover ? (
+                  <img 
+                    src={track.albumCover} 
+                    alt={track.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Music className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 )}
-                onClick={() => handleSelect(track.id)}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-              >
-                {/* Album Art / Visualizer */}
-                <div className={cn(
-                  "relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0",
-                  !track.albumCover && `bg-gradient-to-br ${track.color}`
-                )}>
-                  {track.albumCover ? (
-                    <img 
-                      src={track.albumCover} 
-                      alt={track.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : isPreviewing ? (
+                
+                {/* Playing indicator overlay */}
+                {isPreviewing && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <div className="flex items-end justify-center gap-0.5 h-6">
                       {[...Array(4)].map((_, i) => (
                         <motion.div
@@ -443,91 +274,96 @@ const SoundtrackSelector = ({ selectedTrack, onSelect }: SoundtrackSelectorProps
                         />
                       ))}
                     </div>
-                  ) : (
-                    <Music className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                  )}
-                  
-                  {/* Playing overlay on album cover */}
-                  {track.albumCover && isPreviewing && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <div className="flex items-end justify-center gap-0.5 h-6">
-                        {[...Array(4)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            className="w-1 bg-white rounded-full"
-                            animate={{
-                              height: ["30%", "100%", "50%", "80%", "30%"],
-                            }}
-                            transition={{
-                              duration: 0.6,
-                              repeat: Infinity,
-                              delay: i * 0.1,
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Track Info */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground truncate text-sm sm:text-base">{track.name}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground truncate">{track.artist}</p>
-                </div>
-
-                {/* Duration - hidden on very small screens */}
-                <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">{track.duration}</span>
-
-                {/* Preview Button */}
-                <button
-                  onClick={(e) => handlePreview(track, e)}
-                  className={cn(
-                    "w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0",
-                    isPreviewing
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary hover:bg-secondary/80 text-foreground"
-                  )}
-                >
-                  {isPreviewing ? (
-                    <Pause className="w-4 h-4" />
-                  ) : (
-                    <Play className="w-4 h-4 ml-0.5" />
-                  )}
-                </button>
-
-                {/* Selected Indicator */}
-                {isSelected && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0"
-                  >
-                    <Check className="w-3 h-3 sm:w-4 sm:h-4 text-primary-foreground" />
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
-            );
-          })}
+              </div>
+
+              {/* Track Info */}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-foreground truncate text-sm sm:text-base">{track.name}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">{track.artist}</p>
+              </div>
+
+              {/* Preview Button */}
+              <button
+                onClick={(e) => handlePreview(track, e)}
+                className={cn(
+                  "w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0",
+                  isPreviewing
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary hover:bg-secondary/80 text-foreground"
+                )}
+              >
+                {isPreviewing ? (
+                  <Pause className="w-4 h-4" />
+                ) : (
+                  <Play className="w-4 h-4 ml-0.5" />
+                )}
+              </button>
+
+              {/* Selected Indicator */}
+              {isSelected && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                >
+                  <Check className="w-3 h-3 text-primary-foreground" />
+                </motion.div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Custom YouTube URL Input */}
+      <div className="mt-6 pt-6 border-t border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <Link className="w-4 h-4 text-muted-foreground" />
+          <label className="text-sm font-medium text-foreground">
+            ¿Quieres otra canción? Pega aquí el enlace de YouTube
+          </label>
         </div>
-      )}
+        
+        <Input
+          placeholder="https://www.youtube.com/watch?v=..."
+          value={customYoutubeUrl}
+          onChange={(e) => onCustomUrlChange(e.target.value)}
+          onBlur={handleCustomUrlBlur}
+          className={cn(
+            "transition-colors",
+            customUrlError && customYoutubeUrl ? "border-destructive focus-visible:ring-destructive" : ""
+          )}
+        />
+        
+        {customUrlError && customYoutubeUrl && (
+          <div className="flex items-center gap-2 mt-2 text-sm text-destructive">
+            <AlertCircle className="w-4 h-4" />
+            <span>{customUrlError}</span>
+          </div>
+        )}
 
-      {selectedTrack && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20"
-        >
-          <Volume2 className="w-4 h-4 text-primary" />
-          <p className="text-xs sm:text-sm text-foreground">
-            La música sonará automáticamente en loop (30 segundos)
-          </p>
-        </motion.div>
-      )}
-
-      <p className="text-xs text-muted-foreground text-center mt-2">
-        Música proporcionada por Deezer • Preview 30 segundos
-      </p>
+        {customYoutubeUrl && isValidYoutubeUrl(customYoutubeUrl) && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-3 p-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center gap-3"
+          >
+            <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+              <img 
+                src={`https://i.ytimg.com/vi/${extractYoutubeVideoId(customYoutubeUrl)}/hqdefault.jpg`}
+                alt="Video thumbnail"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground">Canción personalizada</p>
+              <p className="text-xs text-muted-foreground">Esta canción tendrá prioridad</p>
+            </div>
+            <Check className="w-5 h-5 text-primary" />
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };
