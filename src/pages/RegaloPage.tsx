@@ -6,12 +6,18 @@ import LoveLetter from "@/components/LoveLetter";
 import YouTubeMusicPlayer from "@/components/YouTubeMusicPlayer";
 import MusicActivationOverlay from "@/components/MusicActivationOverlay";
 import ShareButtons from "@/components/ShareButtons";
+import MemoryGallery from "@/components/MemoryGallery";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { romanticTracks } from "@/components/SoundtrackSelector";
 import { cn } from "@/lib/utils";
+
+interface Memory {
+  imageUrl: string;
+  caption: string;
+}
 
 interface GiftPageData {
   id: string;
@@ -26,6 +32,7 @@ interface GiftPageData {
   youtube_video_id: string | null;
   spotify_link: string | null;
   names_position?: "top" | "center" | "bottom";
+  memories?: Memory[] | null;
 }
 
 // Demo data for /regalo/demo route
@@ -50,6 +57,16 @@ Gracias por elegir construir esta historia conmigo. Prometo seguir amándote con
 
 Con todo mi amor,
 María`,
+  memories: [
+    {
+      imageUrl: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?w=600&auto=format&fit=crop",
+      caption: "Nuestro primer viaje juntos ✨"
+    },
+    {
+      imageUrl: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600&auto=format&fit=crop",
+      caption: "El día que dijimos sí"
+    }
+  ]
 };
 
 const RegaloPage = () => {
@@ -89,7 +106,12 @@ const RegaloPage = () => {
         if (!data) {
           setNotFound(true);
         } else {
-          setPageData(data as GiftPageData);
+          // Parse memories from JSON
+          const parsedData: GiftPageData = {
+            ...data,
+            memories: data.memories ? (data.memories as unknown as Memory[]) : null,
+          };
+          setPageData(parsedData);
         }
       } catch (error) {
         console.error("Error fetching gift page:", error);
@@ -366,6 +388,18 @@ const RegaloPage = () => {
             </motion.div>
 
             <LoveLetter content={pageData.love_letter} author={pageData.your_name} />
+          </div>
+        </section>
+      )}
+
+      {/* Memories Gallery */}
+      {pageData.memories && pageData.memories.length > 0 && (
+        <section className="py-16 sm:py-24 px-4">
+          <div className="container mx-auto max-w-2xl">
+            <MemoryGallery 
+              memories={pageData.memories} 
+              designStyle="classic"
+            />
           </div>
         </section>
       )}
