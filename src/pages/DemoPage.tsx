@@ -1,26 +1,20 @@
 import { motion } from "framer-motion";
-import { Heart, Download, Music, Star, Sparkles, Calendar, Loader2 } from "lucide-react";
+import { Heart, Download, Music, Star, Sparkles, Calendar, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
-import FloatingMusicPlayer from "@/components/FloatingMusicPlayer";
+import YouTubeMusicPlayer from "@/components/YouTubeMusicPlayer";
 import ShareButtons from "@/components/ShareButtons";
 import { QRCodeSVG } from "qrcode.react";
-import { useRef, useEffect, useState } from "react";
-import { soundtracks, Soundtrack } from "@/components/SoundtrackSelector";
-
-interface DemoTrack {
-  name: string;
-  artist: string;
-  url: string;
-  albumCover?: string;
-}
+import { useRef, useState } from "react";
+import { romanticTracks } from "@/components/SoundtrackSelector";
+import MusicActivationOverlay from "@/components/MusicActivationOverlay";
 
 const DemoPage = () => {
   const qrRef = useRef<HTMLDivElement>(null);
-  const [demoTrack, setDemoTrack] = useState<DemoTrack | null>(null);
-  const [isLoadingTrack, setIsLoadingTrack] = useState(true);
+  const [musicActivated, setMusicActivated] = useState(false);
+  const [showMusicOverlay, setShowMusicOverlay] = useState(true);
   
   // Demo couple data - romantic and inspiring
   const demoData = {
@@ -40,58 +34,13 @@ Te amo más allá de las palabras,
 Sofía ❤️`,
   };
 
-  // Load a track from Deezer for the demo
-  useEffect(() => {
-    const loadDemoTrack = async () => {
-      setIsLoadingTrack(true);
-      
-      // Try to get "Perfect" by Ed Sheeran from Deezer
-      try {
-        const response = await fetch(
-          `https://api.allorigins.win/raw?url=${encodeURIComponent("https://api.deezer.com/search?q=Ed Sheeran Perfect&limit=1")}`
-        );
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (data.data && data.data.length > 0) {
-            const track = data.data[0];
-            setDemoTrack({
-              name: track.title,
-              artist: track.artist.name,
-              url: track.preview,
-              albumCover: track.album.cover_medium,
-            });
-            setIsLoadingTrack(false);
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Error loading demo track:", error);
-      }
-      
-      // Fallback to soundtracks if available
-      if (soundtracks.length > 0) {
-        const firstTrack = soundtracks[0];
-        setDemoTrack({
-          name: firstTrack.name,
-          artist: firstTrack.artist,
-          url: firstTrack.url,
-          albumCover: firstTrack.albumCover,
-        });
-      } else {
-        // Ultimate fallback
-        setDemoTrack({
-          name: "Romantic Piano",
-          artist: "Romantic Melody",
-          url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0ef34a3f0.mp3",
-        });
-      }
-      
-      setIsLoadingTrack(false);
-    };
+  // Use first romantic track for demo
+  const demoTrack = romanticTracks[0];
 
-    loadDemoTrack();
-  }, []);
+  const handleMusicActivate = () => {
+    setMusicActivated(true);
+    setShowMusicOverlay(false);
+  };
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
@@ -146,6 +95,16 @@ Sofía ❤️`,
 
   return (
     <main className="min-h-screen bg-background">
+      {/* Music Activation Overlay */}
+      {showMusicOverlay && (
+        <MusicActivationOverlay
+          trackName={demoTrack.name}
+          artistName={demoTrack.artist}
+          albumCover={demoTrack.albumCover}
+          onActivate={handleMusicActivate}
+        />
+      )}
+
       {/* Demo Banner */}
       <motion.div 
         className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-primary to-rose-500 text-white py-2 sm:py-2.5 px-3 sm:px-4"
@@ -159,20 +118,20 @@ Sofía ❤️`,
             <span className="hidden xs:inline sm:inline">¡Esta es una demostración!</span>
             <span className="xs:hidden sm:hidden">Demo</span>
           </div>
-          <Link to="/criar">
+          <Link to="/crear">
             <Button size="sm" variant="secondary" className="text-xs gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 sm:px-3">
-              <span className="hidden sm:inline">Criar a minha</span>
-              <span className="sm:hidden">Criar</span>
+              <span className="hidden sm:inline">Crear la mía</span>
+              <span className="sm:hidden">Crear</span>
               <Heart className="w-3 h-3 fill-current" />
             </Button>
           </Link>
         </div>
       </motion.div>
 
-      {/* Floating Music Player - Auto plays on load with Deezer track */}
-      {demoTrack && demoTrack.url && (
-        <FloatingMusicPlayer 
-          audioUrl={demoTrack.url}
+      {/* YouTube Music Player - only after activation */}
+      {musicActivated && (
+        <YouTubeMusicPlayer 
+          videoId={demoTrack.youtubeVideoId}
           trackName={demoTrack.name}
           artistName={demoTrack.artist}
           albumCover={demoTrack.albumCover}
@@ -262,23 +221,15 @@ Sofía ❤️`,
             </motion.div>
             
             {/* Music indicator */}
-            {demoTrack && (
-              <motion.div
-                className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-              >
-                {isLoadingTrack ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <Music className="w-4 h-4" />
-                    <span>♪ {demoTrack.name} - {demoTrack.artist}</span>
-                  </>
-                )}
-              </motion.div>
-            )}
+            <motion.div
+              className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              <Youtube className="w-4 h-4" />
+              <span>♪ {demoTrack.name} - {demoTrack.artist}</span>
+            </motion.div>
           </motion.div>
         </div>
 
@@ -345,36 +296,19 @@ Sofía ❤️`,
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            {demoTrack?.albumCover ? (
-              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl overflow-hidden mb-4 sm:mb-6 shadow-xl shadow-primary/20">
-                <img 
-                  src={demoTrack.albumCover} 
-                  alt={demoTrack.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mb-4 sm:mb-6 shadow-xl shadow-rose-500/20">
-                <Music className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-              </div>
-            )}
+            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl overflow-hidden mb-4 sm:mb-6 shadow-xl shadow-primary/20">
+              <img 
+                src={demoTrack.albumCover} 
+                alt={demoTrack.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
             <h3 className="text-lg sm:text-xl font-semibold mb-2">Nuestra canción</h3>
-            {demoTrack ? (
-              <>
-                <p className="text-xl sm:text-2xl font-bold text-foreground mb-1">{demoTrack.name}</p>
-                <p className="text-sm sm:text-base text-muted-foreground">{demoTrack.artist}</p>
-              </>
-            ) : (
-              <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
-            )}
+            <p className="text-xl sm:text-2xl font-bold text-foreground mb-1">{demoTrack.name}</p>
+            <p className="text-sm sm:text-base text-muted-foreground">{demoTrack.artist}</p>
             <p className="text-xs text-primary mt-3 flex items-center justify-center gap-1">
-              <motion.span
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-              >
-                ♪
-              </motion.span>
-              Reproduciendo en loop (30s preview via Deezer)
+              <Youtube className="w-3 h-3" />
+              La música se reproduce mediante YouTube
             </p>
           </motion.div>
         </div>
@@ -439,10 +373,10 @@ Sofía ❤️`,
             <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8">
               Sorprende a tu amor con una página única y personalizada
             </p>
-            <Link to="/criar">
+            <Link to="/crear">
               <Button size="lg" className="gap-2 w-full sm:w-auto h-12 sm:h-14 text-base sm:text-lg px-6 sm:px-8">
                 <Heart className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
-                Criar a minha por $5/ano
+                Crear la mía por $5/año
               </Button>
             </Link>
           </motion.div>
@@ -451,13 +385,9 @@ Sofía ❤️`,
 
       {/* Footer */}
       <footer className="py-6 sm:py-8 px-4 border-t border-border">
-        <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-          <Link to="/" className="flex items-center gap-2">
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-primary fill-primary" />
-            <span className="font-semibold text-sm sm:text-base">Forever Love</span>
-          </Link>
-          <p className="text-xs sm:text-sm text-muted-foreground text-center">
-            Feito com ❤️ para casais apaixonados • Música via Deezer
+        <div className="container mx-auto text-center">
+          <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-2">
+            Hecho con <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Forever Love
           </p>
         </div>
       </footer>

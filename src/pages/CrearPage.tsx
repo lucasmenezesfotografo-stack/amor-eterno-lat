@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
 import SpotifyEmbed from "@/components/SpotifyEmbed";
-import SoundtrackSelector, { soundtracks } from "@/components/SoundtrackSelector";
+import SoundtrackSelector, { romanticTracks, extractYoutubeVideoId, isValidYoutubeUrl } from "@/components/SoundtrackSelector";
 import DatePickerWithYearMonth from "@/components/DatePickerWithYearMonth";
 import PersonalizedCard from "@/components/PersonalizedCard";
 import QuickRegister from "@/components/QuickRegister";
@@ -69,8 +69,9 @@ const CrearPage = () => {
     selectedSoundtrack: null as string | null,
     soundtrackName: null as string | null,
     soundtrackArtist: null as string | null,
-    soundtrackUrl: null as string | null,
+    youtubeVideoId: null as string | null,
     soundtrackAlbumCover: null as string | null,
+    customYoutubeUrl: "",
     namesPosition: "center" as "top" | "center" | "bottom",
   });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -152,9 +153,15 @@ const CrearPage = () => {
     try {
       const slug = generateSlug(formData.person1, formData.person2);
       
-      // Use stored track data or find from soundtracks as fallback
+      // Get the final YouTube video ID - custom URL takes priority
+      let finalYoutubeVideoId = formData.youtubeVideoId;
+      if (formData.customYoutubeUrl && isValidYoutubeUrl(formData.customYoutubeUrl)) {
+        finalYoutubeVideoId = extractYoutubeVideoId(formData.customYoutubeUrl);
+      }
+      
+      // Find track info for name if using preset
       const selectedTrack = formData.selectedSoundtrack 
-        ? soundtracks.find(t => t.id === formData.selectedSoundtrack) 
+        ? romanticTracks.find(t => t.id === formData.selectedSoundtrack) 
         : null;
 
       const { error } = await supabase.from("gift_pages").insert({
@@ -164,9 +171,8 @@ const CrearPage = () => {
         start_date: format(formData.startDate, "yyyy-MM-dd"),
         cover_photo_url: formData.photoUrl || null,
         love_letter: formData.loveLetter || null,
-        // Use stored track data (from onSelect) or fallback to found track
         soundtrack_name: formData.soundtrackName || selectedTrack?.name || null,
-        soundtrack_url: formData.soundtrackUrl || selectedTrack?.url || null,
+        youtube_video_id: finalYoutubeVideoId || null,
         spotify_link: formData.spotifyUrl || null,
         user_id: user?.id || null,
       });
@@ -559,16 +565,23 @@ const CrearPage = () => {
             <div className="pt-4 border-t border-border">
               <SoundtrackSelector
                 selectedTrack={formData.selectedSoundtrack}
+                customYoutubeUrl={formData.customYoutubeUrl}
                 onSelect={(trackId, trackData) => {
                   setFormData({ 
                     ...formData, 
                     selectedSoundtrack: trackId, 
                     soundtrackName: trackData?.name || null,
                     soundtrackArtist: trackData?.artist || null,
-                    soundtrackUrl: trackData?.url || null,
+                    youtubeVideoId: trackData?.youtubeVideoId || null,
                     soundtrackAlbumCover: trackData?.albumCover || null,
                     spotifyUrl: "", 
                     selectedSong: null 
+                  });
+                }}
+                onCustomUrlChange={(url) => {
+                  setFormData({
+                    ...formData,
+                    customYoutubeUrl: url,
                   });
                 }}
               />
