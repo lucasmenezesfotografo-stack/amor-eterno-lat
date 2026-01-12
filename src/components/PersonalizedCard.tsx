@@ -19,23 +19,22 @@ interface PersonalizedCardProps {
   startDate?: Date;
 }
 
-// Premium romantic color accents (used for hearts and small details only)
+// Premium romantic color accents
 const accentColors = [
+  { id: "charcoal", name: "Carbón", color: "#2D2D2D", hex: "#2D2D2D" },
   { id: "rose", name: "Rosa", color: "#e11d48", hex: "#e11d48" },
   { id: "blush", name: "Rubor", color: "#f472b6", hex: "#f472b6" },
   { id: "burgundy", name: "Borgoña", color: "#881337", hex: "#881337" },
   { id: "gold", name: "Dorado", color: "#d4af37", hex: "#d4af37" },
   { id: "sage", name: "Salvia", color: "#84a98c", hex: "#84a98c" },
   { id: "navy", name: "Marino", color: "#1e3a5f", hex: "#1e3a5f" },
-  { id: "terracotta", name: "Terracota", color: "#c08552", hex: "#c08552" },
-  { id: "lavender", name: "Lavanda", color: "#9f7aea", hex: "#9f7aea" },
 ];
 
 const layouts = [
-  { id: "classic", name: "Diseño clásico", description: "Foto superior con texto elegante" },
-  { id: "minimal", name: "Diseño minimalista", description: "QR Code como protagonista" },
-  { id: "horizontal", name: "Diseño horizontal", description: "Formato paisaje con foto" },
-  { id: "photo-focus", name: "Diseño con foto", description: "Estilo moderno digital" },
+  { id: "classic", name: "Clásico", description: "Foto superior, texto elegante" },
+  { id: "minimal", name: "Minimalista", description: "QR Code como protagonista" },
+  { id: "horizontal", name: "Horizontal", description: "Formato paisaje elegante" },
+  { id: "photo-focus", name: "Con Foto", description: "Estilo moderno digital" },
 ];
 
 const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: PersonalizedCardProps) => {
@@ -50,7 +49,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   const cardRef = useRef<HTMLDivElement>(null);
 
   const formattedDate = startDate 
-    ? format(startDate, "d 'de' MMMM, yyyy", { locale: es })
+    ? format(startDate, "dd.MM.yyyy", { locale: es })
     : "";
 
   const handleDownloadCard = async () => {
@@ -58,219 +57,228 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     const html2canvas = (await import("html2canvas")).default;
     
     const canvas = await html2canvas(cardRef.current, {
-      scale: 3,
+      scale: 4,
       backgroundColor: null,
       useCORS: true,
     });
 
     const link = document.createElement("a");
-    link.download = `tarjeta-amor-${person1}-${person2}.png`;
+    link.download = `tarjeta-${person1}-${person2}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
   };
 
   // ============================================
-  // CLASSIC CARD - Wedding invitation style
+  // CLASSIC CARD - 10x15cm (2:3 ratio) - Like Image 1
+  // Photo on top, elegant text below with names, date, QR
   // ============================================
   const renderClassicCard = () => (
     <div
       ref={cardRef}
-      className="w-72 sm:w-80 overflow-hidden animate-card-entrance"
+      className="overflow-hidden animate-card-entrance"
       style={{
-        backgroundColor: "#FAF9F7",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)",
-        borderRadius: "4px",
+        width: "300px",
+        height: "450px", // 10x15cm ratio (2:3)
+        backgroundColor: "#FFFFFF",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+        borderRadius: "2px",
       }}
     >
-      {/* Photo section */}
-      {showPhoto && photoUrl && (
-        <div className="relative h-40 sm:h-48 overflow-hidden">
-          <img 
-            src={photoUrl} 
-            alt="Foto" 
-            className="w-full h-full object-cover"
-            crossOrigin="anonymous" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        </div>
-      )}
-      
-      {/* Content section */}
-      <div className="p-6 sm:p-8 text-center">
-        {/* Romantic word in script */}
-        <p 
-          className={cn("text-2xl sm:text-3xl mb-3 sm:mb-4", selectedScriptFont.className)}
-          style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
-        >
-          Forever
-        </p>
-        
-        {/* Decorative line with heart */}
-        <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="w-8 sm:w-12 h-px bg-[#1C1C1C]/20" />
-          <Heart 
-            className="w-3 h-3 sm:w-4 sm:h-4 fill-current" 
-            style={{ color: selectedAccent.color }}
-          />
-          <div className="w-8 sm:w-12 h-px bg-[#1C1C1C]/20" />
-        </div>
-        
-        {/* Names in serif */}
-        <h2 
-          className={cn("text-xl sm:text-2xl font-medium tracking-wide text-[#1C1C1C] mb-1", selectedSerifFont.className)}
-          style={{ fontFamily: selectedSerifFont.fontFamily }}
-        >
-          {person1}
-        </h2>
-        <span 
-          className={cn("text-lg sm:text-xl text-[#6B6B6B]", selectedScriptFont.className)}
-          style={{ fontFamily: selectedScriptFont.fontFamily }}
-        >
-          &
-        </span>
-        <h2 
-          className={cn("text-xl sm:text-2xl font-medium tracking-wide text-[#1C1C1C] mt-1 mb-3 sm:mb-4", selectedSerifFont.className)}
-          style={{ fontFamily: selectedSerifFont.fontFamily }}
-        >
-          {person2}
-        </h2>
-        
-        {/* Date */}
-        {showDate && formattedDate && (
-          <p className="font-sans text-[10px] sm:text-xs tracking-widest uppercase text-[#6B6B6B] mb-3 sm:mb-4">
-            {formattedDate}
-          </p>
-        )}
-        
-        {/* Custom message */}
-        {customMessage && (
-          <p 
-            className={cn("italic text-xs sm:text-sm text-[#6B6B6B] mb-4 sm:mb-6 px-2 sm:px-4", selectedSerifFont.className)}
-            style={{ fontFamily: selectedSerifFont.fontFamily }}
-          >
-            "{customMessage}"
-          </p>
-        )}
-        
-        {/* QR Code */}
-        <div className="inline-block p-2 sm:p-3 bg-white rounded-sm" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-          <QRCodeSVG 
-            value={qrUrl} 
-            size={80} 
-            level="H" 
-            fgColor="#1C1C1C"
-            bgColor="transparent"
-            includeMargin={true}
-          />
-        </div>
-        
-        <p className="font-sans text-[9px] sm:text-[10px] tracking-widest uppercase text-[#6B6B6B] mt-3 sm:mt-4">
-          Escanea para ver nuestra historia
-        </p>
-      </div>
-    </div>
-  );
-
-  // ============================================
-  // MINIMAL CARD - Editorial gallery style
-  // ============================================
-  const renderMinimalCard = () => (
-    <div
-      ref={cardRef}
-      className="w-64 sm:w-72 overflow-hidden animate-card-entrance"
-      style={{
-        backgroundColor: "#FAF9F7",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)",
-        borderRadius: "4px",
-      }}
-    >
-      <div className="p-8 sm:p-12 text-center">
-        {/* Small elegant text at top */}
-        <p className="font-sans text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#6B6B6B] mb-6 sm:mb-8">
-          Nuestra Historia
-        </p>
-        
-        {/* Romantic word - main visual element */}
-        <p 
-          className={cn("text-4xl sm:text-5xl mb-8 sm:mb-10", selectedScriptFont.className)}
-          style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
-        >
-          Love
-        </p>
-        
-        {/* QR Code - PROTAGONIST - centered with breathing room */}
-        <div className="inline-block p-3 sm:p-4 bg-white rounded-sm mb-8 sm:mb-10" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-          <QRCodeSVG 
-            value={qrUrl} 
-            size={120} 
-            level="H" 
-            fgColor="#1C1C1C"
-            bgColor="transparent"
-            includeMargin={true}
-          />
-        </div>
-        
-        {/* Names - subtle, elegant */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
-          <div className="w-6 sm:w-8 h-px bg-[#1C1C1C]/15" />
-          <Heart 
-            className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" 
-            style={{ color: selectedAccent.color }}
-          />
-          <div className="w-6 sm:w-8 h-px bg-[#1C1C1C]/15" />
-        </div>
-        
-        <p 
-          className={cn("text-base sm:text-lg font-medium text-[#1C1C1C] tracking-wide", selectedSerifFont.className)}
-          style={{ fontFamily: selectedSerifFont.fontFamily }}
-        >
-          {person1} & {person2}
-        </p>
-        
-        {showDate && formattedDate && (
-          <p className="font-sans text-[9px] sm:text-[10px] tracking-widest uppercase text-[#6B6B6B] mt-2 sm:mt-3">
-            {formattedDate}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-
-  // ============================================
-  // HORIZONTAL CARD - Thank you card style
-  // ============================================
-  const renderHorizontalCard = () => (
-    <div
-      ref={cardRef}
-      className="w-[320px] sm:w-[440px] h-44 sm:h-56 overflow-hidden flex animate-card-entrance"
-      style={{
-        backgroundColor: "#FAF9F7",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)",
-        borderRadius: "4px",
-      }}
-    >
-      {/* Left - Photo (50-60%) */}
+      {/* Photo section - top half */}
       {showPhoto && photoUrl ? (
-        <div className="w-[55%] h-full overflow-hidden">
+        <div className="relative overflow-hidden" style={{ height: "55%" }}>
           <img 
             src={photoUrl} 
-            alt="Foto" 
+            alt="Foto de pareja" 
             className="w-full h-full object-cover"
             crossOrigin="anonymous" 
           />
         </div>
       ) : (
         <div 
-          className="w-[55%] h-full flex items-center justify-center"
-          style={{ backgroundColor: "#F5F4F2" }}
+          className="flex items-center justify-center"
+          style={{ height: "55%", backgroundColor: "#F5F4F2" }}
         >
           <div className="text-center">
             <Heart 
-              className="w-6 h-6 sm:w-8 sm:h-8 mx-auto fill-current mb-2" 
+              className="w-12 h-12 mx-auto mb-3 fill-current" 
               style={{ color: selectedAccent.color }}
             />
             <p 
-              className={cn("text-xl sm:text-2xl", selectedScriptFont.className)} 
+              className={cn("text-3xl", selectedScriptFont.className)}
+              style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
+            >
+              Forever
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {/* Content section - bottom half */}
+      <div className="flex flex-col justify-between p-5" style={{ height: "45%" }}>
+        <div className="flex-1 flex flex-col justify-center">
+          {/* Script word */}
+          <p 
+            className={cn("text-3xl mb-2", selectedScriptFont.className)}
+            style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
+          >
+            Forever
+          </p>
+          
+          {/* Names and Date row */}
+          <div className="flex items-start justify-between">
+            <div>
+              <p 
+                className={cn("text-sm font-medium tracking-wide text-[#2D2D2D] uppercase", selectedSerifFont.className)}
+                style={{ fontFamily: selectedSerifFont.fontFamily, letterSpacing: "0.05em" }}
+              >
+                {person1} & {person2}
+              </p>
+              {showDate && formattedDate && (
+                <p className="font-sans text-xs text-[#6B6B6B] mt-0.5">
+                  {formattedDate}
+                </p>
+              )}
+            </div>
+            
+            {/* QR Code */}
+            <div className="flex flex-col items-center">
+              <div className="p-1 bg-white" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <QRCodeSVG 
+                  value={qrUrl} 
+                  size={60} 
+                  level="H" 
+                  fgColor="#2D2D2D"
+                  bgColor="transparent"
+                  includeMargin={false}
+                />
+              </div>
+              <p className="font-sans text-[8px] text-[#6B6B6B] mt-1 uppercase tracking-wider">
+                Share the love
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Custom message */}
+        {customMessage && (
+          <p 
+            className={cn("text-xs text-[#6B6B6B] italic mt-2 text-center", selectedSerifFont.className)}
+            style={{ fontFamily: selectedSerifFont.fontFamily }}
+          >
+            "{customMessage}"
+          </p>
+        )}
+      </div>
+    </div>
+  );
+
+  // ============================================
+  // MINIMAL CARD - 10x15cm (2:3 ratio) - Like Image 3
+  // Clean, centered, "Capture the love" style
+  // ============================================
+  const renderMinimalCard = () => (
+    <div
+      ref={cardRef}
+      className="overflow-hidden animate-card-entrance flex flex-col items-center justify-center"
+      style={{
+        width: "280px",
+        height: "420px", // 10x15cm ratio (2:3)
+        backgroundColor: "#FAF9F7",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+        borderRadius: "2px",
+      }}
+    >
+      <div className="flex flex-col items-center justify-center h-full px-8 py-10 text-center">
+        {/* Top text */}
+        <p className="font-sans text-xs tracking-[0.3em] uppercase text-[#2D2D2D] mb-4">
+          Capture the
+        </p>
+        
+        {/* Main script word */}
+        <p 
+          className={cn("text-5xl mb-8", selectedScriptFont.className)}
+          style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
+        >
+          love
+        </p>
+        
+        {/* QR Code - PROTAGONIST */}
+        <div className="p-3 bg-white mb-8" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+          <QRCodeSVG 
+            value={qrUrl} 
+            size={140} 
+            level="H" 
+            fgColor="#2D2D2D"
+            bgColor="transparent"
+            includeMargin={false}
+          />
+        </div>
+        
+        {/* Instructions */}
+        <p className="font-sans text-[10px] tracking-[0.15em] uppercase text-[#2D2D2D] font-medium mb-1">
+          Share your photos with us!
+        </p>
+        <p className="font-sans text-[9px] text-[#6B6B6B] leading-relaxed max-w-[180px]">
+          Scan the QR code and upload your favourites for us!
+        </p>
+        
+        {/* Names - subtle at bottom */}
+        <div className="mt-6 pt-4 border-t border-[#E8E6E3] w-full">
+          <p 
+            className={cn("text-sm font-medium text-[#2D2D2D]", selectedSerifFont.className)}
+            style={{ fontFamily: selectedSerifFont.fontFamily }}
+          >
+            {person1} & {person2}
+          </p>
+          {showDate && formattedDate && (
+            <p className="font-sans text-[10px] text-[#6B6B6B] mt-1">
+              {formattedDate}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ============================================
+  // HORIZONTAL CARD - 15x10cm (3:2 ratio) - Like Image 2
+  // Photo on left, elegant text with message and QR on right
+  // ============================================
+  const renderHorizontalCard = () => (
+    <div
+      ref={cardRef}
+      className="overflow-hidden flex animate-card-entrance"
+      style={{
+        width: "450px",
+        height: "280px", // 15x10cm ratio (approximately 3:2)
+        backgroundColor: "#FAF9F7",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+        borderRadius: "2px",
+      }}
+    >
+      {/* Left - Photo (50%) */}
+      {showPhoto && photoUrl ? (
+        <div className="w-1/2 h-full overflow-hidden">
+          <img 
+            src={photoUrl} 
+            alt="Foto de pareja" 
+            className="w-full h-full object-cover"
+            crossOrigin="anonymous" 
+          />
+        </div>
+      ) : (
+        <div 
+          className="w-1/2 h-full flex items-center justify-center"
+          style={{ backgroundColor: "#F0EFED" }}
+        >
+          <div className="text-center">
+            <Heart 
+              className="w-10 h-10 mx-auto mb-2 fill-current" 
+              style={{ color: selectedAccent.color }}
+            />
+            <p 
+              className={cn("text-2xl", selectedScriptFont.className)} 
               style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
             >
               Love
@@ -279,59 +287,59 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </div>
       )}
       
-      {/* Right - Content */}
-      <div className="flex-1 p-4 sm:p-6 flex flex-col justify-center">
-        {/* Romantic script word */}
-        <p 
-          className={cn("text-lg sm:text-2xl mb-2 sm:mb-3", selectedScriptFont.className)}
-          style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
-        >
-          Forever
-        </p>
-        
-        {/* Names */}
-        <h2 
-          className={cn("text-lg sm:text-xl font-medium text-[#1C1C1C] leading-tight", selectedSerifFont.className)}
-          style={{ fontFamily: selectedSerifFont.fontFamily }}
-        >
-          {person1}
-        </h2>
-        <span 
-          className={cn("text-base sm:text-lg text-[#6B6B6B]", selectedScriptFont.className)}
-          style={{ fontFamily: selectedScriptFont.fontFamily }}
-        >
-          &
-        </span>
-        <h2 
-          className={cn("text-lg sm:text-xl font-medium text-[#1C1C1C] leading-tight mb-2 sm:mb-3", selectedSerifFont.className)}
-          style={{ fontFamily: selectedSerifFont.fontFamily }}
-        >
-          {person2}
-        </h2>
-        
-        {showDate && formattedDate && (
-          <p className="font-sans text-[8px] sm:text-[9px] tracking-widest uppercase text-[#6B6B6B] mb-2 sm:mb-4">
-            {formattedDate}
+      {/* Right - Content (50%) */}
+      <div className="w-1/2 h-full flex flex-col justify-between p-6">
+        {/* Message area */}
+        <div className="flex-1 flex flex-col justify-center">
+          <p 
+            className={cn("text-sm leading-relaxed text-[#4A4A4A] mb-4", selectedSerifFont.className)}
+            style={{ fontFamily: selectedSerifFont.fontFamily }}
+          >
+            {customMessage || "Our hearts are filled with love and gratitude. Thank you so much for helping to make our special day unforgettable. It would not have been the same without you."}
           </p>
-        )}
+          
+          {/* Signature */}
+          <p className="font-sans text-xs text-[#6B6B6B] mb-1">
+            All our love,
+          </p>
+          <p 
+            className={cn("text-xl", selectedScriptFont.className)}
+            style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
+          >
+            {person1} & {person2}
+          </p>
+        </div>
         
-        {/* QR Code - small and integrated */}
-        <div className="inline-block p-1.5 sm:p-2 bg-white rounded-sm self-start" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-          <QRCodeSVG 
-            value={qrUrl} 
-            size={48} 
-            level="H" 
-            fgColor="#1C1C1C"
-            bgColor="transparent"
-            includeMargin={true}
-          />
+        {/* QR Code area */}
+        <div className="flex items-end justify-between mt-4">
+          <div className="flex flex-col items-start">
+            <div className="p-1.5 bg-white" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+              <QRCodeSVG 
+                value={qrUrl} 
+                size={55} 
+                level="H" 
+                fgColor="#2D2D2D"
+                bgColor="transparent"
+                includeMargin={false}
+              />
+            </div>
+            <p className="font-sans text-[8px] text-[#6B6B6B] mt-1.5 leading-tight">
+              Scan to see<br />more memories
+            </p>
+          </div>
+          
+          {showDate && formattedDate && (
+            <p className="font-sans text-[10px] text-[#6B6B6B]">
+              {formattedDate}
+            </p>
+          )}
         </div>
       </div>
     </div>
   );
 
   // ============================================
-  // PHOTO FOCUS CARD - Modern/Digital (UNCHANGED)
+  // PHOTO FOCUS CARD - Modern/Digital (preserved)
   // ============================================
   const renderPhotoFocusCard = () => (
     <div
@@ -370,12 +378,18 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
                 }}
               />
             </motion.div>
-            <h2 className="text-lg sm:text-xl font-serif font-semibold tracking-wide">{person1} & {person2}</h2>
+            <h2 className="text-lg sm:text-xl font-serif font-semibold tracking-wide">
+              {person1} & {person2}
+            </h2>
             {showDate && formattedDate && (
-              <p className="text-[10px] sm:text-xs opacity-80 mt-1.5 sm:mt-2 font-sans tracking-wider">{formattedDate}</p>
+              <p className="text-[10px] sm:text-xs opacity-80 mt-1.5 sm:mt-2 font-sans tracking-wider">
+                {formattedDate}
+              </p>
             )}
             {customMessage && (
-              <p className="text-[10px] sm:text-xs italic opacity-90 mt-1.5 sm:mt-2 font-serif">"{customMessage}"</p>
+              <p className="text-[10px] sm:text-xs italic opacity-90 mt-1.5 sm:mt-2 font-serif">
+                "{customMessage}"
+              </p>
             )}
           </div>
         </div>
@@ -395,9 +409,13 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
                 }}
               />
             </motion.div>
-            <h2 className="text-lg sm:text-xl font-serif font-semibold tracking-wide">{person1} & {person2}</h2>
+            <h2 className="text-lg sm:text-xl font-serif font-semibold tracking-wide">
+              {person1} & {person2}
+            </h2>
             {showDate && formattedDate && (
-              <p className="text-[10px] sm:text-xs opacity-80 mt-1.5 sm:mt-2 font-sans tracking-wider">{formattedDate}</p>
+              <p className="text-[10px] sm:text-xs opacity-80 mt-1.5 sm:mt-2 font-sans tracking-wider">
+                {formattedDate}
+              </p>
             )}
           </div>
         </div>
@@ -444,43 +462,51 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       switch (layout.id) {
         case "classic":
           return (
-            <div className="w-full h-full flex flex-col bg-[#FAF9F7] p-2">
-              <div className="h-6 sm:h-8 bg-[#E8E6E3] rounded-sm mb-1" />
-              <div className="flex-1 flex flex-col items-center justify-center gap-1">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full" style={{ backgroundColor: selectedAccent.color + "30" }} />
-                <div className="w-6 sm:w-8 h-0.5 sm:h-1 bg-[#1C1C1C]/20 rounded-full" />
-                <div className="w-4 sm:w-6 h-0.5 sm:h-1 bg-[#1C1C1C]/20 rounded-full" />
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#1C1C1C]/10 mt-1" />
+            <div className="w-full h-full flex flex-col bg-white">
+              <div className="h-8 bg-[#E8E6E3]" />
+              <div className="flex-1 p-1.5 flex flex-col justify-center">
+                <div className="text-[6px] font-script mb-0.5" style={{ color: selectedAccent.color }}>Forever</div>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="w-8 h-0.5 bg-[#2D2D2D]/40 rounded-full mb-0.5" />
+                    <div className="w-5 h-0.5 bg-[#2D2D2D]/20 rounded-full" />
+                  </div>
+                  <div className="w-4 h-4 bg-[#2D2D2D]/10" />
+                </div>
               </div>
             </div>
           );
         case "minimal":
           return (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-[#FAF9F7] p-2">
-              <div className="text-[7px] sm:text-[8px] font-script mb-1" style={{ color: selectedAccent.color }}>Love</div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#1C1C1C]/10 mb-1" />
-              <div className="w-5 sm:w-6 h-0.5 bg-[#1C1C1C]/20 rounded-full" />
+            <div className="w-full h-full flex flex-col items-center justify-center bg-[#FAF9F7] p-1">
+              <div className="text-[5px] text-[#2D2D2D]/60 mb-0.5">CAPTURE THE</div>
+              <div className="text-[8px] font-script mb-1" style={{ color: selectedAccent.color }}>love</div>
+              <div className="w-6 h-6 bg-[#2D2D2D]/10 mb-1" />
+              <div className="w-8 h-0.5 bg-[#2D2D2D]/20 rounded-full" />
             </div>
           );
         case "horizontal":
           return (
             <div className="w-full h-full flex bg-[#FAF9F7]">
               <div className="w-1/2 h-full bg-[#E8E6E3]" />
-              <div className="w-1/2 h-full p-1 flex flex-col justify-center">
-                <div className="w-3 sm:w-4 h-0.5 sm:h-1 rounded-full mb-1" style={{ backgroundColor: selectedAccent.color + "40" }} />
-                <div className="w-5 sm:w-6 h-0.5 bg-[#1C1C1C]/20 rounded-full mb-1" />
-                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-[#1C1C1C]/10" />
+              <div className="w-1/2 h-full p-1 flex flex-col justify-between">
+                <div className="space-y-0.5">
+                  <div className="w-full h-0.5 bg-[#2D2D2D]/15 rounded-full" />
+                  <div className="w-3/4 h-0.5 bg-[#2D2D2D]/15 rounded-full" />
+                </div>
+                <div className="text-[5px] font-script" style={{ color: selectedAccent.color }}>Love</div>
+                <div className="w-3 h-3 bg-[#2D2D2D]/10" />
               </div>
             </div>
           );
         case "photo-focus":
           return (
-            <div className="w-full h-full flex flex-col bg-gradient-to-br from-rose-500 to-pink-600">
+            <div className="w-full h-full flex flex-col bg-gradient-to-br from-rose-500 to-pink-600 rounded-sm">
               <div className="flex-1 flex items-end justify-center pb-1">
-                <div className="w-5 sm:w-6 h-0.5 bg-white/40 rounded-full" />
+                <div className="w-6 h-0.5 bg-white/40 rounded-full" />
               </div>
-              <div className="h-5 sm:h-6 bg-gradient-to-br from-rose-600 to-pink-700 flex items-center justify-center">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white/20" />
+              <div className="h-4 bg-gradient-to-br from-rose-600 to-pink-700 flex items-center justify-center">
+                <div className="w-3 h-3 bg-white/20" />
               </div>
             </div>
           );
@@ -499,30 +525,30 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           "relative rounded-lg overflow-hidden transition-all duration-200 text-left",
           "border-2",
           isSelected 
-            ? "border-[#1C1C1C] shadow-md" 
+            ? "border-[#2D2D2D] shadow-md" 
             : "border-[#E8E6E3] hover:border-[#D0CDCA]"
         )}
-        style={{ width: "75px" }}
+        style={{ width: "80px" }}
       >
         {/* Preview */}
-        <div className="h-12 sm:h-16 overflow-hidden rounded-t-md">
+        <div className="h-14 overflow-hidden rounded-t-md">
           {previewContent()}
         </div>
         
         {/* Label */}
-        <div className="p-1.5 sm:p-2 bg-white">
-          <p className="font-sans text-[8px] sm:text-[10px] font-medium text-[#1C1C1C] truncate">
-            {layout.name.replace("Diseño ", "")}
+        <div className="p-1.5 bg-white">
+          <p className="font-sans text-[9px] font-medium text-[#2D2D2D] truncate text-center">
+            {layout.name}
           </p>
         </div>
         
         {/* Selected indicator */}
         {isSelected && (
           <div 
-            className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center"
+            className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center"
             style={{ backgroundColor: selectedAccent.color }}
           >
-            <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" />
+            <Check className="w-2.5 h-2.5 text-white" />
           </div>
         )}
       </motion.button>
@@ -537,18 +563,18 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     >
       {/* Header */}
       <div className="text-center">
-        <h3 className="font-serif text-lg sm:text-xl font-medium text-[#1C1C1C] mb-2">
+        <h3 className="font-serif text-lg sm:text-xl font-medium text-foreground mb-2">
           Elige tu diseño
         </h3>
-        <p className="font-sans text-xs sm:text-sm text-[#6B6B6B]">
+        <p className="font-sans text-xs sm:text-sm text-muted-foreground">
           Vista previa de tu tarjeta personalizada
         </p>
       </div>
 
-      {/* Layout Selector - Premium cards */}
+      {/* Layout Selector */}
       <div>
-        <label className="font-sans text-xs font-medium text-[#6B6B6B] mb-3 flex items-center gap-1.5">
-          <LayoutGrid className="w-3.5 h-3.5" /> Elige tu diseño
+        <label className="font-sans text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
+          <LayoutGrid className="w-3.5 h-3.5" /> Selecciona un estilo
         </label>
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
           {layouts.map((layout, index) => (
@@ -588,7 +614,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
 
       {/* Accent Color Selector */}
       <div>
-        <label className="font-sans text-xs font-medium text-[#6B6B6B] mb-3 block">
+        <label className="font-sans text-xs font-medium text-muted-foreground mb-3 block">
           Color de acento
         </label>
         <div className="flex flex-wrap justify-center gap-2">
@@ -599,7 +625,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
               className={cn(
                 "w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200",
                 selectedAccent.id === color.id
-                  ? "ring-2 ring-offset-2 ring-[#1C1C1C] scale-110"
+                  ? "ring-2 ring-offset-2 ring-foreground scale-110"
                   : "opacity-70 hover:opacity-100 hover:scale-105"
               )}
               style={{ backgroundColor: color.color }}
@@ -611,17 +637,17 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
 
       {/* Custom Message */}
       <div>
-        <label className="font-sans text-xs font-medium text-[#6B6B6B] mb-2 flex items-center gap-1.5">
+        <label className="font-sans text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
           <MessageSquare className="w-3.5 h-3.5" /> Mensaje personalizado (opcional)
         </label>
         <Input
           placeholder="Ej: Te amo con todo mi corazón..."
           value={customMessage}
-          onChange={(e) => setCustomMessage(e.target.value.slice(0, 60))}
-          maxLength={60}
-          className="text-sm rounded-lg border-[#E8E6E3] bg-white focus:border-[#1C1C1C] focus:ring-[#1C1C1C]/10"
+          onChange={(e) => setCustomMessage(e.target.value.slice(0, 100))}
+          maxLength={100}
+          className="text-sm rounded-lg border-border bg-background focus:border-foreground"
         />
-        <p className="font-sans text-[10px] text-[#6B6B6B] mt-1 text-right">{customMessage.length}/60</p>
+        <p className="font-sans text-[10px] text-muted-foreground mt-1 text-right">{customMessage.length}/100</p>
       </div>
 
       {/* Toggle Options */}
@@ -679,7 +705,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         <Button 
           onClick={handleDownloadCard} 
           size="lg" 
-          className="gap-2 rounded-lg bg-[#1C1C1C] hover:bg-[#2D2D2D] text-white shadow-md w-full sm:w-auto"
+          className="gap-2 rounded-lg shadow-md w-full sm:w-auto"
         >
           <Download className="w-4 h-4 sm:w-5 sm:h-5" />
           Descargar Tarjeta
@@ -687,7 +713,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       </div>
 
       {/* Share Section */}
-      <div className="pt-4 sm:pt-6 border-t border-[#E8E6E3]">
+      <div className="pt-4 sm:pt-6 border-t border-border">
         <ShareButtons 
           url={qrUrl}
           title={`${person1} & ${person2} - Forever Love`}
