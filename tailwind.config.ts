@@ -18,12 +18,28 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Playfair Display", "Georgia", "serif"],
-        romantic: ["Dancing Script", "cursive"],
+        sans: ["Lato", "system-ui", "sans-serif"],
+        serif: ["Cormorant Garamond", "Georgia", "serif"],
+        script: ["Great Vibes", "cursive"],
+        display: ["Cormorant Garamond", "Georgia", "serif"],
+        romantic: ["Great Vibes", "cursive"],
       },
       colors: {
         border: "hsl(var(--border))",
+        paper: {
+          DEFAULT: "hsl(var(--paper))",
+          warm: "hsl(var(--paper-warm))",
+          cream: "hsl(var(--paper-cream))",
+        },
+        romantic: {
+          rose: "hsl(var(--romantic-rose))",
+          blush: "hsl(var(--romantic-blush))",
+          soft: "hsl(var(--romantic-soft))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          soft: "hsl(var(--gold-soft))",
+        },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
