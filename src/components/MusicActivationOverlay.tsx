@@ -134,7 +134,7 @@ const MusicActivationOverlay = ({
               </p>
             </motion.div>
 
-            {/* Activation Button */}
+            {/* Activation Button - larger touch target for mobile */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -143,7 +143,7 @@ const MusicActivationOverlay = ({
               <Button
                 size="lg"
                 onClick={handleActivate}
-                className="w-full sm:w-auto px-8 py-6 text-base sm:text-lg gap-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl shadow-primary/30"
+                className="w-full sm:w-auto min-h-[56px] px-8 py-4 text-base sm:text-lg gap-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl shadow-primary/30 active:scale-95 transition-transform touch-manipulation"
               >
                 <Music className="w-5 h-5 sm:w-6 sm:h-6" />
                 🎵 Activar Música
