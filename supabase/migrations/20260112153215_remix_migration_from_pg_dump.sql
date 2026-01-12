@@ -50,7 +50,8 @@ CREATE TABLE public.gift_pages (
     soundtrack_url text,
     spotify_link text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    user_id uuid
+    user_id uuid,
+    youtube_video_id text
 );
 
 
