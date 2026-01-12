@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Music, Heart, Volume2 } from "lucide-react";
+import { Music, Heart, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MusicActivationOverlayProps {
@@ -78,6 +78,9 @@ const MusicActivationOverlay = ({
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-2 right-2">
+                    <Youtube className="w-6 h-6 text-white drop-shadow-lg" />
+                  </div>
                 </div>
               ) : (
                 <div className="w-28 h-28 sm:w-36 sm:h-36 mx-auto rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-2xl shadow-primary/30">
@@ -127,7 +130,7 @@ const MusicActivationOverlay = ({
                 Este regalo tiene música
               </h2>
               <p className="text-sm sm:text-base text-muted-foreground">
-                Toca el botón para activar la banda sonora
+                Activa la música para escuchar la canción elegida
               </p>
             </motion.div>
 
@@ -142,10 +145,21 @@ const MusicActivationOverlay = ({
                 onClick={handleActivate}
                 className="w-full sm:w-auto px-8 py-6 text-base sm:text-lg gap-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl shadow-primary/30"
               >
-                <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                Activar Música con Amor
+                <Music className="w-5 h-5 sm:w-6 sm:h-6" />
+                🎵 Activar Música
               </Button>
             </motion.div>
+
+            {/* YouTube attribution */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-1"
+            >
+              <Youtube className="w-3 h-3" />
+              La música se reproduce mediante YouTube
+            </motion.p>
 
             {/* Skip Option */}
             <motion.button
