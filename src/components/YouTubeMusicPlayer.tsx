@@ -23,8 +23,7 @@ const YouTubeMusicPlayer = ({
   const [isMuted, setIsMuted] = useState(false);
   const playerRef = useRef<HTMLIFrameElement>(null);
 
-  // YouTube Player URL with loop
-  // Using playlist parameter with same video ID enables looping
+  // YouTube Player URL with loop - optimized for mobile
   const getPlayerUrl = (autoplay: boolean, muted: boolean) => {
     const params = new URLSearchParams({
       autoplay: autoplay ? "1" : "0",
@@ -32,10 +31,13 @@ const YouTubeMusicPlayer = ({
       loop: "1",
       playlist: videoId, // Required for loop to work
       enablejsapi: "1",
-      playsinline: "1",
+      playsinline: "1", // Critical for iOS
       controls: "0",
       modestbranding: "1",
       rel: "0",
+      fs: "0",
+      iv_load_policy: "3", // Hide annotations
+      disablekb: "1", // Disable keyboard controls
     });
     return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
   };

@@ -23,6 +23,15 @@ export default {
         script: ["Great Vibes", "cursive"],
         display: ["Cormorant Garamond", "Georgia", "serif"],
         romantic: ["Great Vibes", "cursive"],
+        // Additional romantic script fonts
+        "playfair": ["Playfair Display", "Georgia", "serif"],
+        "dancing": ["Dancing Script", "cursive"],
+        "pinyon": ["Pinyon Script", "cursive"],
+        "tangerine": ["Tangerine", "cursive"],
+        "alex-brush": ["Alex Brush", "cursive"],
+        "parisienne": ["Parisienne", "cursive"],
+        "sacramento": ["Sacramento", "cursive"],
+        "allura": ["Allura", "cursive"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -149,6 +158,18 @@ export default {
           "0%": { transform: "translateX(100%)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" },
         },
+        "card-entrance": {
+          "0%": { opacity: "0", transform: "scale(0.9) translateY(20px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        "card-entrance-stagger": {
+          "0%": { opacity: "0", transform: "translateY(30px) rotate(-2deg)" },
+          "100%": { opacity: "1", transform: "translateY(0) rotate(0deg)" },
+        },
+        "float-gentle": {
+          "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+          "50%": { transform: "translateY(-8px) rotate(1deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -160,6 +181,9 @@ export default {
         heartbeat: "heartbeat 1.5s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
         "slide-in-right": "slide-in-right 0.4s ease-out forwards",
+        "card-entrance": "card-entrance 0.6s ease-out forwards",
+        "card-entrance-stagger": "card-entrance-stagger 0.7s ease-out forwards",
+        "float-gentle": "float-gentle 4s ease-in-out infinite",
       },
     },
   },
