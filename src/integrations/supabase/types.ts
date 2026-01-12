@@ -28,6 +28,7 @@ export type Database = {
           start_date: string
           user_id: string | null
           your_name: string
+          youtube_video_id: string | null
         }
         Insert: {
           cover_photo_url?: string | null
@@ -42,6 +43,7 @@ export type Database = {
           start_date: string
           user_id?: string | null
           your_name: string
+          youtube_video_id?: string | null
         }
         Update: {
           cover_photo_url?: string | null
@@ -56,6 +58,7 @@ export type Database = {
           start_date?: string
           user_id?: string | null
           your_name?: string
+          youtube_video_id?: string | null
         }
         Relationships: []
       }

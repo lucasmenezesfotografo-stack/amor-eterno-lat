@@ -1,16 +1,16 @@
 import { motion } from "framer-motion";
-import { Heart, Download, Loader2, Music, Calendar } from "lucide-react";
+import { Heart, Download, Loader2, Music, Calendar, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
-import FloatingMusicPlayer from "@/components/FloatingMusicPlayer";
+import YouTubeMusicPlayer from "@/components/YouTubeMusicPlayer";
 import MusicActivationOverlay from "@/components/MusicActivationOverlay";
 import ShareButtons from "@/components/ShareButtons";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { soundtracks } from "@/components/SoundtrackSelector";
+import { romanticTracks } from "@/components/SoundtrackSelector";
 import { cn } from "@/lib/utils";
 
 interface GiftPageData {
@@ -23,6 +23,7 @@ interface GiftPageData {
   love_letter: string | null;
   soundtrack_name: string | null;
   soundtrack_url: string | null;
+  youtube_video_id: string | null;
   spotify_link: string | null;
   names_position?: "top" | "center" | "bottom";
 }
@@ -36,7 +37,8 @@ const demoData: GiftPageData = {
   start_date: "2022-02-14",
   cover_photo_url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop",
   soundtrack_name: "Perfect",
-  soundtrack_url: "https://cdns-preview-d.dzcdn.net/stream/c-deda7fa9316d9e9e880d2c6207e92260-5.mp3",
+  soundtrack_url: null,
+  youtube_video_id: "2Vv-BfVoq4g", // Ed Sheeran - Perfect
   spotify_link: null,
   love_letter: `Mi amor Juan,
 
@@ -87,7 +89,7 @@ const RegaloPage = () => {
         if (!data) {
           setNotFound(true);
         } else {
-          setPageData(data);
+          setPageData(data as GiftPageData);
         }
       } catch (error) {
         console.error("Error fetching gift page:", error);
@@ -100,9 +102,9 @@ const RegaloPage = () => {
     fetchGiftPage();
   }, [id]);
 
-  // Show music overlay when page loads and has soundtrack
+  // Show music overlay when page loads and has YouTube video
   useEffect(() => {
-    if (pageData?.soundtrack_url && !musicActivated) {
+    if (pageData?.youtube_video_id && !musicActivated) {
       // Small delay to let the page load
       const timer = setTimeout(() => {
         setShowMusicOverlay(true);
@@ -185,29 +187,33 @@ const RegaloPage = () => {
   const startDate = new Date(pageData.start_date);
   const defaultCoverPhoto = "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop";
 
-  // Find track info from soundtracks
-  const currentTrack = soundtracks.find(t => t.url === pageData.soundtrack_url) || 
-    soundtracks.find(t => t.name === pageData.soundtrack_name);
+  // Find track info from romanticTracks if available
+  const currentTrack = romanticTracks.find(t => t.youtubeVideoId === pageData.youtube_video_id) || 
+    romanticTracks.find(t => t.name === pageData.soundtrack_name);
+  
+  // Get album cover from YouTube thumbnail if no track found
+  const albumCover = currentTrack?.albumCover || 
+    (pageData.youtube_video_id ? `https://i.ytimg.com/vi/${pageData.youtube_video_id}/hqdefault.jpg` : undefined);
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Music Activation Overlay - shown on first load for pages with music */}
-      {showMusicOverlay && pageData.soundtrack_url && (
+      {/* Music Activation Overlay - shown on first load for pages with YouTube video */}
+      {showMusicOverlay && pageData.youtube_video_id && (
         <MusicActivationOverlay
           trackName={currentTrack?.name || pageData.soundtrack_name || "Nuestra Canción"}
           artistName={currentTrack?.artist}
-          albumCover={currentTrack?.albumCover}
+          albumCover={albumCover}
           onActivate={handleMusicActivate}
         />
       )}
 
-      {/* Floating Music Player with Autoplay and Loop - only after activation */}
-      {pageData.soundtrack_url && musicActivated && (
-        <FloatingMusicPlayer 
-          audioUrl={pageData.soundtrack_url}
+      {/* YouTube Music Player - only after activation */}
+      {pageData.youtube_video_id && musicActivated && (
+        <YouTubeMusicPlayer 
+          videoId={pageData.youtube_video_id}
           trackName={currentTrack?.name || pageData.soundtrack_name || "Nuestra Canción"}
           artistName={currentTrack?.artist}
-          albumCover={currentTrack?.albumCover}
+          albumCover={albumCover}
           autoPlay={true}
         />
       )}
@@ -304,7 +310,7 @@ const RegaloPage = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
               >
-                <Music className="w-4 h-4" />
+                <Youtube className="w-4 h-4" />
                 <span>♪ {pageData.soundtrack_name}</span>
               </motion.div>
             )}
