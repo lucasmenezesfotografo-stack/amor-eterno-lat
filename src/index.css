@@ -2,87 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Forever Love - Premium Big Tech Design System */
-/* Midnight Rose Theme */
+/* Forever Love - Premium Romantic Design System */
+/* Paper & Invitation Theme */
+
+/* Import premium fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Lato:wght@300;400;500&display=swap');
 
 @layer base {
   :root {
-    /* Midnight Rose Palette - Dark Premium Theme */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
+    /* Premium Paper Palette */
+    --background: 40 20% 97%; /* #FAF9F7 off-white */
+    --foreground: 0 0% 11%; /* #1C1C1C */
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
+    --card: 40 20% 97%;
+    --card-foreground: 0 0% 11%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 11%;
 
-    /* Cherry Rose Primary */
+    /* Rose/Romantic Primary */
     --primary: 347 77% 50%;
     --primary-foreground: 0 0% 100%;
 
-    /* Dark Secondary */
-    --secondary: 0 0% 14%;
-    --secondary-foreground: 0 0% 90%;
+    /* Warm Secondary */
+    --secondary: 30 20% 94%;
+    --secondary-foreground: 0 0% 20%;
 
     /* Rose Accent */
     --accent: 347 77% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 30 15% 92%;
+    --muted-foreground: 0 0% 42%; /* #6B6B6B */
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
+    --border: 30 15% 88%;
+    --input: 30 15% 92%;
     --ring: 347 77% 50%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
-    /* Custom Design Tokens */
-    --cherry: 347 77% 50%;
-    --cherry-light: 347 70% 60%;
-    --cherry-dark: 347 85% 40%;
+    /* Custom Premium Tokens */
+    --paper: 40 20% 97%;
+    --paper-warm: 35 30% 95%;
+    --paper-cream: 45 40% 96%;
     
-    --midnight: 0 0% 4%;
-    --midnight-card: 0 0% 10%;
-    --midnight-elevated: 0 0% 14%;
+    --text-primary: 0 0% 11%;
+    --text-secondary: 0 0% 42%;
+    --text-muted: 0 0% 55%;
     
-    --success: 142 70% 45%;
-    --success-foreground: 0 0% 100%;
+    --romantic-rose: 347 77% 50%;
+    --romantic-blush: 350 60% 65%;
+    --romantic-soft: 350 40% 90%;
     
-    /* Glassmorphism */
-    --glass-bg: 0 0% 10% / 0.8;
-    --glass-border: 0 0% 100% / 0.08;
-    --glass-shadow: 0 0% 0% / 0.5;
+    --gold: 43 74% 49%;
+    --gold-soft: 43 50% 80%;
     
-    /* Gradients */
-    --gradient-cherry: linear-gradient(135deg, hsl(347 77% 50%), hsl(347 70% 60%));
-    --gradient-dark: linear-gradient(180deg, hsl(0 0% 4%), hsl(0 0% 8%));
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 12% / 0.8), hsl(0 0% 8% / 0.6));
-    --gradient-radial: radial-gradient(ellipse at center, hsl(347 77% 50% / 0.15) 0%, transparent 70%);
-    
-    /* Shadows */
-    --shadow-soft: 0 4px 30px hsl(0 0% 0% / 0.4);
-    --shadow-cherry: 0 8px 40px hsl(347 77% 50% / 0.25);
-    --shadow-elevated: 0 20px 60px hsl(0 0% 0% / 0.5);
-    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.4);
-    --shadow-glow: 0 0 60px hsl(347 77% 50% / 0.3);
+    /* Shadows for paper effect */
+    --shadow-paper: 0 2px 8px hsla(0, 0%, 0%, 0.04), 0 4px 16px hsla(0, 0%, 0%, 0.04);
+    --shadow-card: 0 1px 3px hsla(0, 0%, 0%, 0.03), 0 4px 12px hsla(0, 0%, 0%, 0.05);
+    --shadow-elevated: 0 8px 30px hsla(0, 0%, 0%, 0.08);
 
-    --sidebar-background: 0 0% 4%;
-    --sidebar-foreground: 0 0% 98%;
+    --sidebar-background: 40 20% 97%;
+    --sidebar-foreground: 0 0% 11%;
     --sidebar-primary: 347 77% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 347 77% 50%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 16%;
+    --sidebar-border: 30 15% 88%;
     --sidebar-ring: 347 77% 50%;
   }
 
+  /* Dark mode - optional, maintains app consistency */
   .dark {
-    /* Same as root - always dark */
     --background: 0 0% 4%;
     --foreground: 0 0% 98%;
     --card: 0 0% 10%;
