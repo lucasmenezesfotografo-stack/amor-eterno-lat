@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           id: string
           love_letter: string | null
+          memories: Json | null
           partner_name: string
           slug: string
           soundtrack_name: string | null
@@ -35,6 +36,7 @@ export type Database = {
           created_at?: string
           id?: string
           love_letter?: string | null
+          memories?: Json | null
           partner_name: string
           slug: string
           soundtrack_name?: string | null
@@ -50,6 +52,7 @@ export type Database = {
           created_at?: string
           id?: string
           love_letter?: string | null
+          memories?: Json | null
           partner_name?: string
           slug?: string
           soundtrack_name?: string | null

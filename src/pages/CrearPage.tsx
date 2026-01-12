@@ -1,7 +1,8 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard, MoveVertical } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard, MoveVertical, Camera } from "lucide-react";
+import MemoryUploader, { Memory } from "@/components/MemoryUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -73,6 +74,7 @@ const CrearPage = () => {
     soundtrackAlbumCover: null as string | null,
     customYoutubeUrl: "",
     namesPosition: "center" as "top" | "center" | "bottom",
+    memories: [] as Memory[],
   });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -175,6 +177,9 @@ const CrearPage = () => {
         youtube_video_id: finalYoutubeVideoId || null,
         spotify_link: formData.spotifyUrl || null,
         user_id: user?.id || null,
+        memories: formData.memories.length > 0 
+          ? JSON.parse(JSON.stringify(formData.memories)) 
+          : null,
       });
 
       if (error) throw error;
@@ -561,8 +566,17 @@ const CrearPage = () => {
               )}
             </div>
 
+            {/* Memories Section */}
+            <div className="pt-6 border-t border-border">
+              <MemoryUploader
+                memories={formData.memories}
+                onMemoriesChange={(memories) => setFormData({ ...formData, memories })}
+                maxMemories={4}
+              />
+            </div>
+
             {/* Soundtrack Selection */}
-            <div className="pt-4 border-t border-border">
+            <div className="pt-6 border-t border-border">
               <SoundtrackSelector
                 selectedTrack={formData.selectedSoundtrack}
                 customYoutubeUrl={formData.customYoutubeUrl}
