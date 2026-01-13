@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Music, Heart, Youtube } from "lucide-react";
+import { Music, Heart, Youtube, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MusicActivationOverlayProps {
@@ -20,7 +20,14 @@ const MusicActivationOverlay = ({
 
   const handleActivate = () => {
     setIsVisible(false);
-    onActivate();
+    // Small delay to ensure user interaction is registered before playing
+    setTimeout(() => {
+      onActivate();
+    }, 100);
+  };
+
+  const handleSkip = () => {
+    setIsVisible(false);
   };
 
   return (
@@ -30,61 +37,61 @@ const MusicActivationOverlay = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-xl flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-background/98 backdrop-blur-xl flex items-center justify-center p-6"
         >
           <motion.div
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
-            className="max-w-sm w-full text-center"
+            className="max-w-sm w-full text-center relative"
           >
             {/* Animated Hearts Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(6)].map((_, i) => (
+              {[...Array(8)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute"
                   style={{
-                    left: `${15 + i * 15}%`,
-                    top: `${20 + (i % 3) * 25}%`,
+                    left: `${10 + i * 12}%`,
+                    top: `${15 + (i % 4) * 20}%`,
                   }}
                   animate={{
-                    y: [-10, 10, -10],
-                    opacity: [0.2, 0.5, 0.2],
-                    scale: [0.8, 1, 0.8],
+                    y: [-15, 15, -15],
+                    opacity: [0.15, 0.4, 0.15],
+                    scale: [0.8, 1.1, 0.8],
                   }}
                   transition={{
-                    duration: 3 + i * 0.5,
+                    duration: 3 + i * 0.4,
                     repeat: Infinity,
-                    delay: i * 0.3,
+                    delay: i * 0.25,
                   }}
                 >
-                  <Heart className="w-4 h-4 sm:w-6 sm:h-6 text-primary/30 fill-primary/20" />
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-primary/40 fill-primary/30" />
                 </motion.div>
               ))}
             </div>
 
             {/* Album Cover or Music Icon */}
             <motion.div
-              className="relative mx-auto mb-6 sm:mb-8"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              className="relative mx-auto mb-8"
+              animate={{ scale: [1, 1.03, 1] }}
+              transition={{ duration: 2.5, repeat: Infinity }}
             >
               {albumCover ? (
-                <div className="w-28 h-28 sm:w-36 sm:h-36 mx-auto rounded-2xl overflow-hidden shadow-2xl ring-4 ring-primary/30">
+                <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-2xl overflow-hidden shadow-2xl ring-4 ring-primary/20">
                   <img 
                     src={albumCover} 
-                    alt={trackName || "Album cover"}
+                    alt={trackName || "Portada del álbum"}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <div className="absolute bottom-2 right-2">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  <div className="absolute bottom-3 right-3">
                     <Youtube className="w-6 h-6 text-white drop-shadow-lg" />
                   </div>
                 </div>
               ) : (
-                <div className="w-28 h-28 sm:w-36 sm:h-36 mx-auto rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-2xl shadow-primary/30">
-                  <Music className="w-12 h-12 sm:w-16 sm:h-16 text-primary-foreground" />
+                <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-2xl shadow-primary/30">
+                  <Music className="w-14 h-14 sm:w-16 sm:h-16 text-primary-foreground" />
                 </div>
               )}
               
@@ -92,8 +99,8 @@ const MusicActivationOverlay = ({
               <motion.div
                 className="absolute inset-0 rounded-2xl border-2 border-primary"
                 animate={{ 
-                  scale: [1, 1.15, 1],
-                  opacity: [0.5, 0, 0.5],
+                  scale: [1, 1.2, 1],
+                  opacity: [0.4, 0, 0.4],
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
@@ -125,52 +132,50 @@ const MusicActivationOverlay = ({
               transition={{ delay: 0.3 }}
               className="mb-8"
             >
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3 flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-primary fill-primary" />
                 Este regalo tiene música
               </h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Activa la música para escuchar la canción elegida
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                Toca el botón para escuchar la canción elegida especialmente para ti
               </p>
             </motion.div>
 
-            {/* Activation Button - larger touch target for mobile */}
+            {/* Activation Button - CRITICAL: Large touch target for iOS/Safari */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
+              className="space-y-4"
             >
               <Button
                 size="lg"
                 onClick={handleActivate}
-                className="w-full sm:w-auto min-h-[56px] px-8 py-4 text-base sm:text-lg gap-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl shadow-primary/30 active:scale-95 transition-transform touch-manipulation"
+                className="w-full min-h-[60px] px-8 py-5 text-lg gap-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl shadow-primary/30 active:scale-95 transition-transform touch-manipulation"
               >
-                <Music className="w-5 h-5 sm:w-6 sm:h-6" />
-                🎵 Activar Música
+                <Play className="w-6 h-6 fill-current" />
+                🎵 Reproducir Música
               </Button>
+              
+              {/* Skip Option */}
+              <button
+                onClick={handleSkip}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2 px-4"
+              >
+                Continuar sin música
+              </button>
             </motion.div>
 
             {/* YouTube attribution */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-1"
+              transition={{ delay: 0.6 }}
+              className="mt-6 text-xs text-muted-foreground flex items-center justify-center gap-1"
             >
               <Youtube className="w-3 h-3" />
               La música se reproduce mediante YouTube
             </motion.p>
-
-            {/* Skip Option */}
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              onClick={() => setIsVisible(false)}
-              className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Continuar sin música
-            </motion.button>
           </motion.div>
         </motion.div>
       )}

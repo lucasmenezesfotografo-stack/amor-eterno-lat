@@ -52,39 +52,41 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     ? format(startDate, "dd.MM.yyyy", { locale: es })
     : "";
 
+  // FIXED: Export as JPG with visible background, not transparent PNG
   const handleDownloadCard = async () => {
     if (!cardRef.current) return;
     const html2canvas = (await import("html2canvas")).default;
     
     const canvas = await html2canvas(cardRef.current, {
       scale: 4,
-      backgroundColor: null,
+      backgroundColor: "#FAF9F7", // IMPORTANT: Solid background for JPG
       useCORS: true,
+      logging: false,
     });
 
     const link = document.createElement("a");
-    link.download = `tarjeta-${person1}-${person2}.png`;
-    link.href = canvas.toDataURL("image/png");
+    link.download = `tarjeta-${person1}-${person2}.jpg`; // JPG format
+    link.href = canvas.toDataURL("image/jpeg", 0.95); // High quality JPG
     link.click();
   };
 
   // ============================================
-  // CLASSIC CARD - 10x15cm (2:3 ratio) - Like Image 1
+  // CLASSIC CARD - 10x15cm (2:3 ratio)
   // Photo on top, elegant text below with names, date, QR
   // ============================================
   const renderClassicCard = () => (
     <div
       ref={cardRef}
-      className="overflow-hidden animate-card-entrance"
+      className="overflow-hidden"
       style={{
         width: "300px",
         height: "450px", // 10x15cm ratio (2:3)
-        backgroundColor: "#FFFFFF",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
-        borderRadius: "2px",
+        backgroundColor: "#FAF9F7",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
+        borderRadius: "4px",
       }}
     >
-      {/* Photo section - top half */}
+      {/* Photo section - top 55% */}
       {showPhoto && photoUrl ? (
         <div className="relative overflow-hidden" style={{ height: "55%" }}>
           <img 
@@ -97,11 +99,11 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       ) : (
         <div 
           className="flex items-center justify-center"
-          style={{ height: "55%", backgroundColor: "#F5F4F2" }}
+          style={{ height: "55%", backgroundColor: "#F0EFED" }}
         >
           <div className="text-center">
             <Heart 
-              className="w-12 h-12 mx-auto mb-3 fill-current" 
+              className="w-14 h-14 mx-auto mb-3 fill-current" 
               style={{ color: selectedAccent.color }}
             />
             <p 
@@ -114,12 +116,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </div>
       )}
       
-      {/* Content section - bottom half */}
-      <div className="flex flex-col justify-between p-5" style={{ height: "45%" }}>
+      {/* Content section - bottom 45% */}
+      <div className="flex flex-col justify-between p-6" style={{ height: "45%", backgroundColor: "#FAF9F7" }}>
         <div className="flex-1 flex flex-col justify-center">
           {/* Script word */}
           <p 
-            className={cn("text-3xl mb-2", selectedScriptFont.className)}
+            className={cn("text-3xl mb-3", selectedScriptFont.className)}
             style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
           >
             Forever
@@ -129,13 +131,17 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           <div className="flex items-start justify-between">
             <div>
               <p 
-                className={cn("text-sm font-medium tracking-wide text-[#2D2D2D] uppercase", selectedSerifFont.className)}
-                style={{ fontFamily: selectedSerifFont.fontFamily, letterSpacing: "0.05em" }}
+                className={cn("text-sm font-medium tracking-wide uppercase mb-1", selectedSerifFont.className)}
+                style={{ 
+                  fontFamily: selectedSerifFont.fontFamily, 
+                  letterSpacing: "0.08em",
+                  color: "#2D2D2D",
+                }}
               >
                 {person1} & {person2}
               </p>
               {showDate && formattedDate && (
-                <p className="font-sans text-xs text-[#6B6B6B] mt-0.5">
+                <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "12px", color: "#6B6B6B" }}>
                   {formattedDate}
                 </p>
               )}
@@ -143,18 +149,18 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             
             {/* QR Code */}
             <div className="flex flex-col items-center">
-              <div className="p-1 bg-white" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+              <div className="p-2 bg-white rounded" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
                 <QRCodeSVG 
                   value={qrUrl} 
-                  size={60} 
+                  size={65} 
                   level="H" 
                   fgColor="#2D2D2D"
-                  bgColor="transparent"
+                  bgColor="#FFFFFF"
                   includeMargin={false}
                 />
               </div>
-              <p className="font-sans text-[8px] text-[#6B6B6B] mt-1 uppercase tracking-wider">
-                Share the love
+              <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "8px", color: "#6B6B6B", marginTop: "6px", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                Escanea aquí
               </p>
             </div>
           </div>
@@ -163,8 +169,8 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         {/* Custom message */}
         {customMessage && (
           <p 
-            className={cn("text-xs text-[#6B6B6B] italic mt-2 text-center", selectedSerifFont.className)}
-            style={{ fontFamily: selectedSerifFont.fontFamily }}
+            className={cn("text-xs italic mt-3 text-center", selectedSerifFont.className)}
+            style={{ fontFamily: selectedSerifFont.fontFamily, color: "#6B6B6B" }}
           >
             "{customMessage}"
           </p>
@@ -174,65 +180,65 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   );
 
   // ============================================
-  // MINIMAL CARD - 10x15cm (2:3 ratio) - Like Image 3
+  // MINIMAL CARD - 10x15cm (2:3 ratio)
   // Clean, centered, "Capture the love" style
   // ============================================
   const renderMinimalCard = () => (
     <div
       ref={cardRef}
-      className="overflow-hidden animate-card-entrance flex flex-col items-center justify-center"
+      className="overflow-hidden flex flex-col items-center justify-center"
       style={{
         width: "280px",
         height: "420px", // 10x15cm ratio (2:3)
         backgroundColor: "#FAF9F7",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
-        borderRadius: "2px",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
+        borderRadius: "4px",
       }}
     >
       <div className="flex flex-col items-center justify-center h-full px-8 py-10 text-center">
         {/* Top text */}
-        <p className="font-sans text-xs tracking-[0.3em] uppercase text-[#2D2D2D] mb-4">
-          Capture the
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", color: "#2D2D2D", marginBottom: "16px" }}>
+          Captura el
         </p>
         
         {/* Main script word */}
         <p 
-          className={cn("text-5xl mb-8", selectedScriptFont.className)}
+          className={cn("text-5xl mb-10", selectedScriptFont.className)}
           style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
         >
-          love
+          amor
         </p>
         
         {/* QR Code - PROTAGONIST */}
-        <div className="p-3 bg-white mb-8" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+        <div className="p-4 bg-white rounded-lg mb-10" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}>
           <QRCodeSVG 
             value={qrUrl} 
             size={140} 
             level="H" 
             fgColor="#2D2D2D"
-            bgColor="transparent"
+            bgColor="#FFFFFF"
             includeMargin={false}
           />
         </div>
         
         {/* Instructions */}
-        <p className="font-sans text-[10px] tracking-[0.15em] uppercase text-[#2D2D2D] font-medium mb-1">
-          Share your photos with us!
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#2D2D2D", fontWeight: "500", marginBottom: "6px" }}>
+          ¡Escanea y descubre!
         </p>
-        <p className="font-sans text-[9px] text-[#6B6B6B] leading-relaxed max-w-[180px]">
-          Scan the QR code and upload your favourites for us!
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B", lineHeight: "1.6", maxWidth: "180px" }}>
+          Escanea el código QR para ver nuestra historia de amor
         </p>
         
         {/* Names - subtle at bottom */}
-        <div className="mt-6 pt-4 border-t border-[#E8E6E3] w-full">
+        <div style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid #E8E6E3", width: "100%" }}>
           <p 
-            className={cn("text-sm font-medium text-[#2D2D2D]", selectedSerifFont.className)}
-            style={{ fontFamily: selectedSerifFont.fontFamily }}
+            className={cn("text-sm font-medium", selectedSerifFont.className)}
+            style={{ fontFamily: selectedSerifFont.fontFamily, color: "#2D2D2D" }}
           >
             {person1} & {person2}
           </p>
           {showDate && formattedDate && (
-            <p className="font-sans text-[10px] text-[#6B6B6B] mt-1">
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", color: "#6B6B6B", marginTop: "4px" }}>
               {formattedDate}
             </p>
           )}
@@ -242,19 +248,19 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   );
 
   // ============================================
-  // HORIZONTAL CARD - 15x10cm (3:2 ratio) - Like Image 2
+  // HORIZONTAL CARD - 15x10cm (3:2 ratio)
   // Photo on left, elegant text with message and QR on right
   // ============================================
   const renderHorizontalCard = () => (
     <div
       ref={cardRef}
-      className="overflow-hidden flex animate-card-entrance"
+      className="overflow-hidden flex"
       style={{
         width: "450px",
         height: "280px", // 15x10cm ratio (approximately 3:2)
         backgroundColor: "#FAF9F7",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
-        borderRadius: "2px",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
+        borderRadius: "4px",
       }}
     >
       {/* Left - Photo (50%) */}
@@ -274,7 +280,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         >
           <div className="text-center">
             <Heart 
-              className="w-10 h-10 mx-auto mb-2 fill-current" 
+              className="w-12 h-12 mx-auto mb-3 fill-current" 
               style={{ color: selectedAccent.color }}
             />
             <p 
@@ -288,19 +294,19 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       )}
       
       {/* Right - Content (50%) */}
-      <div className="w-1/2 h-full flex flex-col justify-between p-6">
+      <div className="w-1/2 h-full flex flex-col justify-between p-6" style={{ backgroundColor: "#FAF9F7" }}>
         {/* Message area */}
         <div className="flex-1 flex flex-col justify-center">
           <p 
-            className={cn("text-sm leading-relaxed text-[#4A4A4A] mb-4", selectedSerifFont.className)}
-            style={{ fontFamily: selectedSerifFont.fontFamily }}
+            className={cn("text-sm leading-relaxed mb-5", selectedSerifFont.className)}
+            style={{ fontFamily: selectedSerifFont.fontFamily, color: "#4A4A4A" }}
           >
-            {customMessage || "Our hearts are filled with love and gratitude. Thank you so much for helping to make our special day unforgettable. It would not have been the same without you."}
+            {customMessage || "Nuestros corazones están llenos de amor y gratitud. Gracias por ser parte de nuestra historia y hacerla tan especial."}
           </p>
           
           {/* Signature */}
-          <p className="font-sans text-xs text-[#6B6B6B] mb-1">
-            All our love,
+          <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "11px", color: "#6B6B6B", marginBottom: "4px" }}>
+            Con todo nuestro amor,
           </p>
           <p 
             className={cn("text-xl", selectedScriptFont.className)}
@@ -311,25 +317,25 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </div>
         
         {/* QR Code area */}
-        <div className="flex items-end justify-between mt-4">
+        <div className="flex items-end justify-between mt-5 pt-4 border-t border-[#E8E6E3]">
           <div className="flex flex-col items-start">
-            <div className="p-1.5 bg-white" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+            <div className="p-2 bg-white rounded" style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.06)" }}>
               <QRCodeSVG 
                 value={qrUrl} 
                 size={55} 
                 level="H" 
                 fgColor="#2D2D2D"
-                bgColor="transparent"
+                bgColor="#FFFFFF"
                 includeMargin={false}
               />
             </div>
-            <p className="font-sans text-[8px] text-[#6B6B6B] mt-1.5 leading-tight">
-              Scan to see<br />more memories
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "8px", color: "#6B6B6B", marginTop: "6px", lineHeight: "1.4" }}>
+              Escanea para<br />ver más recuerdos
             </p>
           </div>
           
           {showDate && formattedDate && (
-            <p className="font-sans text-[10px] text-[#6B6B6B]">
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", color: "#6B6B6B" }}>
               {formattedDate}
             </p>
           )}
@@ -339,12 +345,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   );
 
   // ============================================
-  // PHOTO FOCUS CARD - Modern/Digital (preserved)
+  // PHOTO FOCUS CARD - Modern/Digital
   // ============================================
   const renderPhotoFocusCard = () => (
     <div
       ref={cardRef}
-      className="w-72 sm:w-80 rounded-2xl overflow-hidden relative animate-card-entrance"
+      className="w-72 sm:w-80 rounded-2xl overflow-hidden relative"
       style={{
         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.1)",
       }}
@@ -462,7 +468,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       switch (layout.id) {
         case "classic":
           return (
-            <div className="w-full h-full flex flex-col bg-white">
+            <div className="w-full h-full flex flex-col bg-[#FAF9F7]">
               <div className="h-8 bg-[#E8E6E3]" />
               <div className="flex-1 p-1.5 flex flex-col justify-center">
                 <div className="text-[6px] font-script mb-0.5" style={{ color: selectedAccent.color }}>Forever</div>
@@ -479,8 +485,8 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         case "minimal":
           return (
             <div className="w-full h-full flex flex-col items-center justify-center bg-[#FAF9F7] p-1">
-              <div className="text-[5px] text-[#2D2D2D]/60 mb-0.5">CAPTURE THE</div>
-              <div className="text-[8px] font-script mb-1" style={{ color: selectedAccent.color }}>love</div>
+              <div className="text-[5px] text-[#2D2D2D]/60 mb-0.5">CAPTURA EL</div>
+              <div className="text-[8px] font-script mb-1" style={{ color: selectedAccent.color }}>amor</div>
               <div className="w-6 h-6 bg-[#2D2D2D]/10 mb-1" />
               <div className="w-8 h-0.5 bg-[#2D2D2D]/20 rounded-full" />
             </div>
@@ -563,18 +569,18 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     >
       {/* Header */}
       <div className="text-center">
-        <h3 className="font-serif text-lg sm:text-xl font-medium text-foreground mb-2">
-          Elige tu diseño
+        <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
+          Elige tu diseño de tarjeta
         </h3>
-        <p className="font-sans text-xs sm:text-sm text-muted-foreground">
-          Vista previa de tu tarjeta personalizada
+        <p className="text-sm text-muted-foreground">
+          Personaliza y descarga tu tarjeta para imprimir
         </p>
       </div>
 
       {/* Layout Selector */}
       <div>
-        <label className="font-sans text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
-          <LayoutGrid className="w-3.5 h-3.5" /> Selecciona un estilo
+        <label className="text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
+          <LayoutGrid className="w-3.5 h-3.5" /> Estilo de tarjeta
         </label>
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
           {layouts.map((layout, index) => (
@@ -614,7 +620,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
 
       {/* Accent Color Selector */}
       <div>
-        <label className="font-sans text-xs font-medium text-muted-foreground mb-3 block">
+        <label className="text-xs font-medium text-muted-foreground mb-3 block">
           Color de acento
         </label>
         <div className="flex flex-wrap justify-center gap-2">
@@ -623,13 +629,14 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
               key={color.id}
               onClick={() => setSelectedAccent(color)}
               className={cn(
-                "w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200",
+                "w-8 h-8 rounded-full transition-all duration-200 shadow-sm",
                 selectedAccent.id === color.id
                   ? "ring-2 ring-offset-2 ring-foreground scale-110"
                   : "opacity-70 hover:opacity-100 hover:scale-105"
               )}
               style={{ backgroundColor: color.color }}
               title={color.name}
+              aria-label={`Seleccionar color ${color.name}`}
             />
           ))}
         </div>
@@ -637,7 +644,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
 
       {/* Custom Message */}
       <div>
-        <label className="font-sans text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+        <label className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
           <MessageSquare className="w-3.5 h-3.5" /> Mensaje personalizado (opcional)
         </label>
         <Input
@@ -645,9 +652,9 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           value={customMessage}
           onChange={(e) => setCustomMessage(e.target.value.slice(0, 100))}
           maxLength={100}
-          className="text-sm rounded-lg border-border bg-background focus:border-foreground"
+          className="text-sm"
         />
-        <p className="font-sans text-[10px] text-muted-foreground mt-1 text-right">{customMessage.length}/100</p>
+        <p className="text-[10px] text-muted-foreground mt-1 text-right">{customMessage.length}/100</p>
       </div>
 
       {/* Toggle Options */}
@@ -657,7 +664,6 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             variant={showPhoto ? "default" : "outline"}
             size="sm"
             onClick={() => setShowPhoto(!showPhoto)}
-            className="text-xs rounded-lg"
           >
             <ImageIcon className="w-3 h-3 mr-1" />
             Foto
@@ -668,7 +674,6 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             variant={showDate ? "default" : "outline"}
             size="sm"
             onClick={() => setShowDate(!showDate)}
-            className="text-xs rounded-lg"
           >
             <Calendar className="w-3 h-3 mr-1" />
             Fecha
@@ -683,7 +688,6 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="animate-float-gentle"
         >
           {renderCard()}
         </motion.div>
@@ -692,11 +696,11 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       {/* Selected indicator */}
       <div className="text-center">
         <span 
-          className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-sans"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium"
           style={{ backgroundColor: selectedAccent.color + "15", color: selectedAccent.color }}
         >
-          <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-          Seleccionado: {selectedLayout.name}
+          <Check className="w-3 h-3" />
+          Estilo seleccionado: {selectedLayout.name}
         </span>
       </div>
 
@@ -705,15 +709,15 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         <Button 
           onClick={handleDownloadCard} 
           size="lg" 
-          className="gap-2 rounded-lg shadow-md w-full sm:w-auto"
+          className="gap-2 shadow-md w-full sm:w-auto"
         >
-          <Download className="w-4 h-4 sm:w-5 sm:h-5" />
-          Descargar Tarjeta
+          <Download className="w-5 h-5" />
+          Descargar Tarjeta (JPG)
         </Button>
       </div>
 
       {/* Share Section */}
-      <div className="pt-4 sm:pt-6 border-t border-border">
+      <div className="pt-6 border-t border-border">
         <ShareButtons 
           url={qrUrl}
           title={`${person1} & ${person2} - Forever Love`}
