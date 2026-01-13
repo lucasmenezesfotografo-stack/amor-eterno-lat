@@ -71,7 +71,7 @@ const RelationshipCounter = ({
   };
   return <motion.div className={`flex flex-wrap justify-center gap-4 ${className}`} variants={containerVariants} initial="hidden" animate="visible">
       {timeUnits.map(unit => <motion.div key={unit.label} className="counter-unit min-w-[80px] md:min-w-[100px]" variants={itemVariants}>
-          <motion.span className="counter-number block bg-paper" key={`${unit.label}-${unit.value}`} initial={{
+          <motion.span className="counter-number block text-paper bg-paper" key={`${unit.label}-${unit.value}`} initial={{
         scale: 1.1,
         opacity: 0
       }} animate={{
