@@ -2,19 +2,9 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart, Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight, Play, Calendar, MessageSquareHeart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 const Index = () => {
-  const benefits = [
-    "Página individual personalizada",
-    "Música ambiente integrada",
-    "Contador en tiempo real",
-    "Carta generada con IA",
-    "QR Code exclusivo",
-    "Actualizaciones gratuitas",
-  ];
-
-  return (
-    <main className="min-h-screen bg-background overflow-hidden">
+  const benefits = ["Página individual personalizada", "Música ambiente integrada", "Contador en tiempo real", "Carta generada con IA", "QR Code exclusivo", "Actualizaciones gratuitas"];
+  return <main className="min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -47,25 +37,34 @@ const Index = () => {
 
         <div className="relative z-10 container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
+            <motion.div initial={{
+            opacity: 0,
+            y: 30
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            duration: 0.8,
+            ease: [0.25, 0.46, 0.45, 0.94]
+          }}>
               {/* Badge */}
-              <motion.div
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-              >
+              <motion.div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8" initial={{
+              opacity: 0,
+              scale: 0.9
+            }} animate={{
+              opacity: 1,
+              scale: 1
+            }} transition={{
+              delay: 0.2,
+              duration: 0.5
+            }}>
                 <Sparkles className="w-4 h-4" />
                 Eterniza tu amor digitalmente
               </motion.div>
 
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold mb-6 tracking-tight">
                 Tu historia de amor,{" "}
-                <span className="text-gradient-cherry">eternizada digitalmente</span>
+                <span className="text-gradient-cherry text-paper bg-paper">eternizada digitalmente</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
@@ -91,15 +90,22 @@ const Index = () => {
         </div>
 
         {/* Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{ 
-            opacity: { delay: 1, duration: 0.5 },
-            y: { delay: 1.5, duration: 1.5, repeat: Infinity }
-          }}
-        >
+        <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" initial={{
+        opacity: 0
+      }} animate={{
+        opacity: 1,
+        y: [0, 10, 0]
+      }} transition={{
+        opacity: {
+          delay: 1,
+          duration: 0.5
+        },
+        y: {
+          delay: 1.5,
+          duration: 1.5,
+          repeat: Infinity
+        }
+      }}>
           <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center">
             <div className="w-1.5 h-3 bg-muted-foreground/50 rounded-full mt-2" />
           </div>
@@ -115,13 +121,17 @@ const Index = () => {
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-rose-500/10 rounded-full blur-[120px]" />
         
         <div className="container mx-auto relative z-10">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div className="text-center mb-16" initial={{
+          opacity: 0,
+          y: 30
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          duration: 0.6
+        }}>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
               Mira cómo quedará
             </h2>
@@ -130,13 +140,17 @@ const Index = () => {
             </p>
           </motion.div>
 
-          <motion.div
-            className="flex justify-center"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+          <motion.div className="flex justify-center" initial={{
+          opacity: 0,
+          y: 50
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          duration: 0.8
+        }}>
             {/* Premium Phone Mockup */}
             <div className="relative">
               {/* Phone Frame */}
@@ -150,22 +164,19 @@ const Index = () => {
                   <div className="relative bg-gradient-to-b from-background to-card rounded-[2.5rem] overflow-hidden aspect-[9/19]">
                     {/* Background Cover Photo */}
                     <div className="absolute inset-0">
-                      <img 
-                        src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&auto=format&fit=crop"
-                        alt="Couple"
-                        className="w-full h-full object-cover opacity-40"
-                      />
+                      <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&auto=format&fit=crop" alt="Couple" className="w-full h-full object-cover opacity-40" />
                       <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
                     </div>
                     
                     {/* Content */}
                     <div className="relative z-10 h-full flex flex-col p-5 pt-12">
                       {/* Heart Animation */}
-                      <motion.div
-                        className="flex justify-center mb-4"
-                        animate={{ scale: [1, 1.15, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
+                      <motion.div className="flex justify-center mb-4" animate={{
+                      scale: [1, 1.15, 1]
+                    }} transition={{
+                      duration: 1.5,
+                      repeat: Infinity
+                    }}>
                         <div className="w-14 h-14 rounded-full bg-primary/20 backdrop-blur-xl flex items-center justify-center">
                           <Heart className="w-7 h-7 text-primary fill-primary" />
                         </div>
@@ -184,25 +195,24 @@ const Index = () => {
                       
                       {/* Counter Cards */}
                       <div className="grid grid-cols-3 gap-2 mb-4">
-                        {[
-                          { value: "3", label: "Años" },
-                          { value: "6", label: "Meses" },
-                          { value: "24", label: "Días" },
-                        ].map((item) => (
-                          <div key={item.label} className="bg-card/80 backdrop-blur-sm rounded-xl p-2 text-center border border-border/50">
+                        {[{
+                        value: "3",
+                        label: "Años"
+                      }, {
+                        value: "6",
+                        label: "Meses"
+                      }, {
+                        value: "24",
+                        label: "Días"
+                      }].map(item => <div key={item.label} className="bg-card/80 backdrop-blur-sm rounded-xl p-2 text-center border border-border/50">
                             <p className="text-lg sm:text-xl font-bold text-primary">{item.value}</p>
                             <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
                       
                       {/* Photo Preview */}
                       <div className="relative rounded-xl overflow-hidden mb-4 flex-shrink-0">
-                        <img 
-                          src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop"
-                          alt="Couple photo"
-                          className="w-full h-28 object-cover"
-                        />
+                        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop" alt="Couple photo" className="w-full h-28 object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                         <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
                           <MessageSquareHeart className="w-3 h-3 text-primary" />
@@ -217,32 +227,39 @@ const Index = () => {
                             <Music className="w-5 h-5 text-white" />
                           </div>
                           {/* Playing indicator */}
-                          <motion.div
-                            className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full"
-                            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
-                            transition={{ duration: 1, repeat: Infinity }}
-                          />
+                          <motion.div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full" animate={{
+                          scale: [1, 1.3, 1],
+                          opacity: [1, 0.7, 1]
+                        }} transition={{
+                          duration: 1,
+                          repeat: Infinity
+                        }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium text-foreground truncate">Romantic Piano</p>
                           <p className="text-[10px] text-muted-foreground truncate">♪ Reproduciendo</p>
                         </div>
                         <div className="flex items-center gap-1">
-                          <motion.div
-                            className="w-0.5 h-3 bg-primary rounded-full"
-                            animate={{ height: ["30%", "100%", "50%"] }}
-                            transition={{ duration: 0.5, repeat: Infinity }}
-                          />
-                          <motion.div
-                            className="w-0.5 h-3 bg-primary rounded-full"
-                            animate={{ height: ["60%", "30%", "100%"] }}
-                            transition={{ duration: 0.5, repeat: Infinity, delay: 0.1 }}
-                          />
-                          <motion.div
-                            className="w-0.5 h-3 bg-primary rounded-full"
-                            animate={{ height: ["100%", "50%", "30%"] }}
-                            transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }}
-                          />
+                          <motion.div className="w-0.5 h-3 bg-primary rounded-full" animate={{
+                          height: ["30%", "100%", "50%"]
+                        }} transition={{
+                          duration: 0.5,
+                          repeat: Infinity
+                        }} />
+                          <motion.div className="w-0.5 h-3 bg-primary rounded-full" animate={{
+                          height: ["60%", "30%", "100%"]
+                        }} transition={{
+                          duration: 0.5,
+                          repeat: Infinity,
+                          delay: 0.1
+                        }} />
+                          <motion.div className="w-0.5 h-3 bg-primary rounded-full" animate={{
+                          height: ["100%", "50%", "30%"]
+                        }} transition={{
+                          duration: 0.5,
+                          repeat: Infinity,
+                          delay: 0.2
+                        }} />
                         </div>
                       </div>
                     </div>
@@ -254,11 +271,12 @@ const Index = () => {
               </div>
               
               {/* Floating elements around phone */}
-              <motion.div
-                className="absolute -left-16 top-20 hidden lg:block"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
+              <motion.div className="absolute -left-16 top-20 hidden lg:block" animate={{
+              y: [0, -10, 0]
+            }} transition={{
+              duration: 3,
+              repeat: Infinity
+            }}>
                 <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-border/50">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
@@ -272,11 +290,12 @@ const Index = () => {
                 </div>
               </motion.div>
               
-              <motion.div
-                className="absolute -right-16 bottom-32 hidden lg:block"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity }}
-              >
+              <motion.div className="absolute -right-16 bottom-32 hidden lg:block" animate={{
+              y: [0, 10, 0]
+            }} transition={{
+              duration: 2.5,
+              repeat: Infinity
+            }}>
                 <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-border/50">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
@@ -293,13 +312,15 @@ const Index = () => {
           </motion.div>
           
           {/* CTA below preview */}
-          <motion.div
-            className="text-center mt-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
+          <motion.div className="text-center mt-12" initial={{
+          opacity: 0
+        }} whileInView={{
+          opacity: 1
+        }} viewport={{
+          once: true
+        }} transition={{
+          delay: 0.3
+        }}>
             <Link to="/demo">
               <Button variant="outline" size="lg" className="gap-2">
                 <Play className="w-4 h-4" />
@@ -313,13 +334,17 @@ const Index = () => {
       {/* Features Section */}
       <section className="py-24 px-4">
         <div className="container mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div className="text-center mb-16" initial={{
+          opacity: 0,
+          y: 30
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          duration: 0.6
+        }}>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
               Todo lo que necesitas
             </h2>
@@ -329,27 +354,40 @@ const Index = () => {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Clock, title: "Contador en Tiempo Real", description: "Años, meses, días, horas y minutos desde el inicio" },
-              { icon: Music, title: "Música Ambiente", description: "Elige la banda sonora de tu amor" },
-              { icon: FileText, title: "Carta con IA", description: "Genera una carta única y personalizada" },
-              { icon: QrCode, title: "QR Code Exclusivo", description: "Comparte fácilmente el regalo" },
-            ].map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                className="feature-card"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
+            {[{
+            icon: Clock,
+            title: "Contador en Tiempo Real",
+            description: "Años, meses, días, horas y minutos desde el inicio"
+          }, {
+            icon: Music,
+            title: "Música Ambiente",
+            description: "Elige la banda sonora de tu amor"
+          }, {
+            icon: FileText,
+            title: "Carta con IA",
+            description: "Genera una carta única y personalizada"
+          }, {
+            icon: QrCode,
+            title: "QR Code Exclusivo",
+            description: "Comparte fácilmente el regalo"
+          }].map((feature, index) => <motion.div key={feature.title} className="feature-card" initial={{
+            opacity: 0,
+            y: 30
+          }} whileInView={{
+            opacity: 1,
+            y: 0
+          }} viewport={{
+            once: true
+          }} transition={{
+            delay: index * 0.1,
+            duration: 0.5
+          }}>
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm">{feature.description}</p>
-              </motion.div>
-            ))}
+              </motion.div>)}
           </div>
         </div>
       </section>
@@ -357,13 +395,17 @@ const Index = () => {
       {/* Pricing Section */}
       <section className="py-24 px-4">
         <div className="container mx-auto max-w-lg">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div className="text-center mb-12" initial={{
+          opacity: 0,
+          y: 30
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} transition={{
+          duration: 0.6
+        }}>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
               Precio simple
             </h2>
@@ -372,18 +414,22 @@ const Index = () => {
             </p>
           </motion.div>
 
-          <motion.div
-            className="pricing-card"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div className="pricing-card" initial={{
+          opacity: 0,
+          scale: 0.95
+        }} whileInView={{
+          opacity: 1,
+          scale: 1
+        }} viewport={{
+          once: true
+        }} transition={{
+          duration: 0.6
+        }}>
             <div className="relative z-10">
               {/* Price */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-baseline gap-1">
-                  <span className="text-5xl md:text-6xl font-bold text-gradient-cherry">$5</span>
+                  <span className="text-5xl md:text-6xl font-bold text-gradient-cherry bg-paper">$5</span>
                   <span className="text-muted-foreground">/año</span>
                 </div>
                 <p className="text-muted-foreground mt-2">Menos de $0.50 por mes</p>
@@ -391,14 +437,12 @@ const Index = () => {
 
               {/* Benefits */}
               <div className="space-y-4 mb-8">
-                {benefits.map((benefit) => (
-                  <div key={benefit} className="flex items-center gap-3">
+                {benefits.map(benefit => <div key={benefit} className="flex items-center gap-3">
                     <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                       <Check className="w-3 h-3 text-primary" />
                     </div>
                     <span className="text-foreground">{benefit}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
 
               {/* CTA */}
@@ -427,8 +471,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </main>
-  );
+    </main>;
 };
-
 export default Index;
