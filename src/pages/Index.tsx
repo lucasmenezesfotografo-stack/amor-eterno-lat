@@ -451,10 +451,10 @@ const Index = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-primary fill-primary" />
-              <span className="font-semibold">Forever Love</span>
+              <span className="font-semibold">Memory Link </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 Forever Love. Hecho con ❤️ para parejas enamoradas.
+              © 2024 Memory Link. Hecho con ❤️ para parejas enamoradas.
             </p>
           </div>
         </div>
