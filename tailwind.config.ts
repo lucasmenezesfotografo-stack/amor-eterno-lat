@@ -19,7 +19,7 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Montserrat',
+  				'Poppins',
   				'ui-sans-serif',
   				'system-ui',
   				'-apple-system',
@@ -32,7 +32,7 @@ export default {
   				'sans-serif'
   			],
   			serif: [
-  				'Cormorant Garamond',
+  				'Merriweather',
   				'ui-serif',
   				'Georgia',
   				'Cambria',
@@ -53,20 +53,20 @@ export default {
   				'Great Vibes',
   				'cursive'
   			],
-  			'playfair': [
+  			playfair: [
   				'Playfair Display',
   				'Georgia',
   				'serif'
   			],
-  			'dancing': [
+  			dancing: [
   				'Dancing Script',
   				'cursive'
   			],
-  			'pinyon': [
+  			pinyon: [
   				'Pinyon Script',
   				'cursive'
   			],
-  			'tangerine': [
+  			tangerine: [
   				'Tangerine',
   				'cursive'
   			],
@@ -74,20 +74,20 @@ export default {
   				'Alex Brush',
   				'cursive'
   			],
-  			'parisienne': [
+  			parisienne: [
   				'Parisienne',
   				'cursive'
   			],
-  			'sacramento': [
+  			sacramento: [
   				'Sacramento',
   				'cursive'
   			],
-  			'allura': [
+  			allura: [
   				'Allura',
   				'cursive'
   			],
   			mono: [
-  				'IBM Plex Mono',
+  				'JetBrains Mono',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
