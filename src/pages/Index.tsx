@@ -383,7 +383,7 @@ const Index = () => {
             duration: 0.5
           }}>
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-primary" />
+                  <feature.icon className="text-5xl md:text-6xl font-bold text-gradient-cherry" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm">{feature.description}</p>
