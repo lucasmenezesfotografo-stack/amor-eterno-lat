@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight, Play, Calendar, MessageSquareHeart, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import memoryLinkLogo from "@/assets/memory-link-logo.png";
+import memorylInkLogo from "@/assets/memoryl-ink-logo.png";
 
 const Index = () => {
   const benefits = ["Página individual personalizada", "Música ambiente integrada", "Contador en tiempo real", "Carta generada con IA", "QR Code exclusivo", "Actualizaciones gratuitas"];
@@ -10,9 +10,8 @@ const Index = () => {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={memoryLinkLogo} alt="Memory Link" className="w-12 h-12 object-contain" />
-            <span className="text-lg font-semibold">Memory Link </span>
+          <Link to="/" className="flex items-center">
+            <img src={memorylInkLogo} alt="memoryl.ink" className="h-8 object-contain brightness-0 invert" />
           </Link>
           <div className="flex items-center gap-4">
             <Link to="/demo">
