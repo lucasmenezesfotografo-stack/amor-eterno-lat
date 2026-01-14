@@ -396,7 +396,7 @@ const RegaloPage = () => {
             </Button>
 
             {/* Share Buttons */}
-            <ShareButtons url={window.location.href} title={`${pageData.your_name} & ${pageData.partner_name} - Forever Love`} description="Mira nuestra página de amor ❤️" />
+            <ShareButtons url={window.location.href} title={`${pageData.your_name} & ${pageData.partner_name} - Memory Link`} description="Mira nuestra página de amor ❤️" />
           </motion.div>
         </div>
       </section>
@@ -405,7 +405,7 @@ const RegaloPage = () => {
       <footer className="py-6 sm:py-8 px-4 border-t border-border">
         <div className="container mx-auto text-center">
           <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-2">
-            Hecho con <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Forever Love
+            Hecho con <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Memory Link
           </p>
         </div>
       </footer>

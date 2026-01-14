@@ -73,12 +73,12 @@ Sofía ❤️`
         // Subtitle
         ctx.fillStyle = "#888";
         ctx.font = "14px 'Inter', sans-serif";
-        ctx.fillText("Forever Love", 200, 420);
+        ctx.fillText("Memory Link", 200, 420);
       }
       const pngUrl = canvas.toDataURL("image/png");
       const downloadLink = document.createElement("a");
       downloadLink.href = pngUrl;
-      downloadLink.download = `forever-love-${demoData.person1}-${demoData.person2}.png`;
+      downloadLink.download = `memory-link-${demoData.person1}-${demoData.person2}.png`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -337,7 +337,7 @@ Sofía ❤️`
             </Button>
 
             {/* Share Buttons */}
-            <ShareButtons url={currentUrl} title={`${demoData.person1} & ${demoData.person2} - Forever Love`} description="Mira nuestra página de amor ❤️" />
+            <ShareButtons url={currentUrl} title={`${demoData.person1} & ${demoData.person2} - Memory Link`} description="Mira nuestra página de amor ❤️" />
           </motion.div>
         </div>
       </section>
@@ -374,7 +374,7 @@ Sofía ❤️`
       <footer className="py-6 sm:py-8 px-4 border-t border-border">
         <div className="container mx-auto text-center">
           <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-2">
-            Hecho con <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Forever Love
+            Hecho con <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Memory Link
           </p>
         </div>
       </footer>
