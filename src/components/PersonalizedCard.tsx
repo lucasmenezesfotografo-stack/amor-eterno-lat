@@ -86,13 +86,14 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         borderRadius: "4px",
       }}
     >
-      {/* Photo section - top 55% */}
+      {/* Photo section - top 55% with proper aspect ratio */}
       {showPhoto && photoUrl ? (
         <div className="relative overflow-hidden" style={{ height: "55%" }}>
           <img 
             src={photoUrl} 
             alt="Foto de pareja" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
+            style={{ objectPosition: "center 30%" }}
             crossOrigin="anonymous" 
           />
         </div>
@@ -263,13 +264,14 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         borderRadius: "4px",
       }}
     >
-      {/* Left - Photo (50%) */}
+      {/* Left - Photo (50%) with proper aspect ratio */}
       {showPhoto && photoUrl ? (
         <div className="w-1/2 h-full overflow-hidden">
           <img 
             src={photoUrl} 
             alt="Foto de pareja" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
+            style={{ objectPosition: "center 30%" }}
             crossOrigin="anonymous" 
           />
         </div>
@@ -356,11 +358,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       }}
     >
       {photoUrl ? (
-        <div className="relative h-64 sm:h-80 overflow-hidden">
+        <div className="relative h-72 sm:h-96 overflow-hidden">
           <img 
             src={photoUrl} 
             alt="Foto" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
+            style={{ objectPosition: "center 30%" }}
             crossOrigin="anonymous" 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
