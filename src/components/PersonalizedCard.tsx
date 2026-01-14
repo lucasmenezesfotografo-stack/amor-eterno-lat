@@ -720,7 +720,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       <div className="pt-6 border-t border-border">
         <ShareButtons 
           url={qrUrl}
-          title={`${person1} & ${person2} - Forever Love`}
+          title={`${person1} & ${person2} - Memory Link`}
           description="Mira nuestra página de amor ❤️"
         />
       </div>
