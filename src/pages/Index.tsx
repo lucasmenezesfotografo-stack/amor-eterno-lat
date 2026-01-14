@@ -11,7 +11,7 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src={heartCameraLogo} alt="Memory Link" className="w-8 h-8 object-contain" />
+            <img src={heartCameraLogo} alt="Memory Link" className="w-12 h-12 object-contain" />
             <span className="text-lg font-semibold">Memory Link </span>
           </Link>
           <div className="flex items-center gap-4">
