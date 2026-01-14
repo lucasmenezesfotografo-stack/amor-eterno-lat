@@ -33,6 +33,8 @@ interface GiftPageData {
   memories?: Memory[] | null;
 }
 
+import demoCoupleImage from "@/assets/demo-couple.jpg";
+
 // Demo data for /regalo/demo route
 const demoData: GiftPageData = {
   id: "demo",
@@ -40,7 +42,7 @@ const demoData: GiftPageData = {
   your_name: "María",
   partner_name: "Juan",
   start_date: "2022-02-14",
-  cover_photo_url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop",
+  cover_photo_url: demoCoupleImage,
   soundtrack_name: "Perfect",
   soundtrack_url: null,
   youtube_video_id: "2Vv-BfVoq4g",

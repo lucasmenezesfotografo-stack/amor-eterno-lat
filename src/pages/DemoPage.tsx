@@ -10,6 +10,8 @@ import { QRCodeSVG } from "qrcode.react";
 import { useRef, useState } from "react";
 import { romanticTracks } from "@/components/SoundtrackSelector";
 import MusicActivationOverlay from "@/components/MusicActivationOverlay";
+import demoCoupleImage from "@/assets/demo-couple.jpg";
+
 const DemoPage = () => {
   const qrRef = useRef<HTMLDivElement>(null);
   const [musicActivated, setMusicActivated] = useState(false);
@@ -20,7 +22,7 @@ const DemoPage = () => {
     person1: "Sofía",
     person2: "Miguel",
     startDate: new Date("2021-06-15"),
-    coverPhoto: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1400&auto=format&fit=crop&q=80",
+    coverPhoto: demoCoupleImage,
     loveLetter: `Mi querido Miguel,
 
 Cada día a tu lado es un regalo que atesoro con todo mi corazón. Desde aquel 15 de junio cuando nuestros caminos se cruzaron, supe que mi vida había cambiado para siempre.
