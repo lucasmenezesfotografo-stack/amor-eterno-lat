@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight, Play, Calendar, MessageSquareHeart } from "lucide-react";
+import { Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight, Play, Calendar, MessageSquareHeart, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import heartCameraLogo from "@/assets/heart-camera-logo.png";
+
 const Index = () => {
   const benefits = ["Página individual personalizada", "Música ambiente integrada", "Contador en tiempo real", "Carta generada con IA", "QR Code exclusivo", "Actualizaciones gratuitas"];
   return <main className="min-h-screen bg-background overflow-hidden">
@@ -9,7 +11,7 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <Heart className="w-6 h-6 text-primary fill-primary" />
+            <img src={heartCameraLogo} alt="Memory Link" className="w-8 h-8 object-contain" />
             <span className="text-lg font-semibold">Memory Link </span>
           </Link>
           <div className="flex items-center gap-4">
