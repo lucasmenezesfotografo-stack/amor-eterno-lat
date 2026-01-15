@@ -177,6 +177,7 @@ const CrearPage = () => {
         youtube_video_id: finalYoutubeVideoId || null,
         spotify_link: formData.spotifyUrl || null,
         user_id: user?.id || null,
+        names_position: formData.namesPosition,
         memories: formData.memories.length > 0 
           ? JSON.parse(JSON.stringify(formData.memories)) 
           : null,

@@ -101,9 +101,10 @@ const RegaloPage = () => {
         if (!data) {
           setNotFound(true);
         } else {
-          // Parse memories from JSON
+          // Parse memories from JSON and cast names_position
           const parsedData: GiftPageData = {
             ...data,
+            names_position: (data.names_position as "top" | "center" | "bottom") || "center",
             memories: data.memories ? data.memories as unknown as Memory[] : null
           };
           setPageData(parsedData);

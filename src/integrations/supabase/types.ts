@@ -21,6 +21,7 @@ export type Database = {
           id: string
           love_letter: string | null
           memories: Json | null
+          names_position: string | null
           partner_name: string
           slug: string
           soundtrack_name: string | null
@@ -37,6 +38,7 @@ export type Database = {
           id?: string
           love_letter?: string | null
           memories?: Json | null
+          names_position?: string | null
           partner_name: string
           slug: string
           soundtrack_name?: string | null
@@ -53,6 +55,7 @@ export type Database = {
           id?: string
           love_letter?: string | null
           memories?: Json | null
+          names_position?: string | null
           partner_name?: string
           slug?: string
           soundtrack_name?: string | null
