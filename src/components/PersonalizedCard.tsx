@@ -86,14 +86,14 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         borderRadius: "4px",
       }}
     >
-      {/* Photo section - top 55% with proper aspect ratio */}
+      {/* Photo section - top 60% with preserved aspect ratio */}
       {showPhoto && photoUrl ? (
-        <div className="relative overflow-hidden" style={{ height: "55%" }}>
+        <div className="relative overflow-hidden" style={{ height: "60%" }}>
           <img 
             src={photoUrl} 
             alt="Foto de pareja" 
-            className="w-full h-full object-cover object-center"
-            style={{ objectPosition: "center 30%" }}
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center center" }}
             crossOrigin="anonymous" 
           />
         </div>
@@ -117,8 +117,8 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </div>
       )}
       
-      {/* Content section - bottom 45% */}
-      <div className="flex flex-col justify-between p-6" style={{ height: "45%", backgroundColor: "#FAF9F7" }}>
+      {/* Content section - bottom 40% */}
+      <div className="flex flex-col justify-between p-5" style={{ height: "40%", backgroundColor: "#FAF9F7" }}>
         <div className="flex-1 flex flex-col justify-center">
           {/* Script word */}
           <p 
@@ -270,8 +270,8 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           <img 
             src={photoUrl} 
             alt="Foto de pareja" 
-            className="w-full h-full object-cover object-center"
-            style={{ objectPosition: "center 30%" }}
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center center" }}
             crossOrigin="anonymous" 
           />
         </div>
@@ -358,12 +358,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       }}
     >
       {photoUrl ? (
-        <div className="relative h-72 sm:h-96 overflow-hidden">
+        <div className="relative overflow-hidden" style={{ aspectRatio: "4/5" }}>
           <img 
             src={photoUrl} 
             alt="Foto" 
-            className="w-full h-full object-cover object-center"
-            style={{ objectPosition: "center 30%" }}
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center center" }}
             crossOrigin="anonymous" 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
