@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight, Play, Calendar, MessageSquareHeart, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import memoryLinkLogo from "@/assets/memory-link-logo.png";
+import demoCoupleImage from "@/assets/demo-couple.jpg";
 
 const Index = () => {
   const benefits = ["Página individual personalizada", "Música ambiente integrada", "Contador en tiempo real", "Carta generada con IA", "QR Code exclusivo", "Actualizaciones gratuitas"];
@@ -154,7 +155,7 @@ const Index = () => {
                   <div className="relative bg-gradient-to-b from-background to-card rounded-[2.5rem] overflow-hidden aspect-[9/19]">
                     {/* Background Cover Photo */}
                     <div className="absolute inset-0">
-                      <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&auto=format&fit=crop" alt="Couple" className="w-full h-full object-cover opacity-40" />
+                      <img src={demoCoupleImage} alt="Couple" className="w-full h-full object-cover opacity-40" />
                       <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
                     </div>
                     
@@ -202,7 +203,7 @@ const Index = () => {
                       
                       {/* Photo Preview */}
                       <div className="relative rounded-xl overflow-hidden mb-4 flex-shrink-0">
-                        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop" alt="Couple photo" className="w-full h-28 object-cover" />
+                        <img src={demoCoupleImage} alt="Couple photo" className="w-full h-28 object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                         <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
                           <MessageSquareHeart className="w-3 h-3 text-primary" />
