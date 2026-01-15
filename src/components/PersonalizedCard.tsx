@@ -296,22 +296,22 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       )}
       
       {/* Right - Content (50%) */}
-      <div className="w-1/2 h-full flex flex-col justify-between p-6" style={{ backgroundColor: "#FAF9F7" }}>
+      <div className="w-1/2 h-full flex flex-col justify-between p-4" style={{ backgroundColor: "#FAF9F7" }}>
         {/* Message area */}
         <div className="flex-1 flex flex-col justify-center">
           <p 
-            className={cn("text-sm leading-relaxed mb-5", selectedSerifFont.className)}
+            className={cn("text-xs leading-relaxed mb-3", selectedSerifFont.className)}
             style={{ fontFamily: selectedSerifFont.fontFamily, color: "#4A4A4A" }}
           >
-            {customMessage || "Nuestros corazones están llenos de amor y gratitud. Gracias por ser parte de nuestra historia y hacerla tan especial."}
+            {customMessage || "Nuestros corazones están llenos de amor y gratitud. Gracias por ser parte de nuestra historia."}
           </p>
           
           {/* Signature */}
-          <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "11px", color: "#6B6B6B", marginBottom: "4px" }}>
+          <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", color: "#6B6B6B", marginBottom: "2px" }}>
             Con todo nuestro amor,
           </p>
           <p 
-            className={cn("text-xl", selectedScriptFont.className)}
+            className={cn("text-lg", selectedScriptFont.className)}
             style={{ color: selectedAccent.color, fontFamily: selectedScriptFont.fontFamily }}
           >
             {person1} & {person2}
@@ -319,25 +319,25 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </div>
         
         {/* QR Code area */}
-        <div className="flex items-end justify-between mt-5 pt-4 border-t border-[#E8E6E3]">
+        <div className="flex items-center justify-between pt-3 border-t border-[#E8E6E3]">
           <div className="flex flex-col items-start">
-            <div className="p-2 bg-white rounded" style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.06)" }}>
+            <div className="p-1.5 bg-white rounded" style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.06)" }}>
               <QRCodeSVG 
                 value={qrUrl} 
-                size={55} 
+                size={48} 
                 level="H" 
                 fgColor="#2D2D2D"
                 bgColor="#FFFFFF"
                 includeMargin={false}
               />
             </div>
-            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "8px", color: "#6B6B6B", marginTop: "6px", lineHeight: "1.4" }}>
-              Escanea para<br />ver más recuerdos
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "7px", color: "#6B6B6B", marginTop: "4px", lineHeight: "1.3" }}>
+              Escanea aquí
             </p>
           </div>
           
           {showDate && formattedDate && (
-            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", color: "#6B6B6B" }}>
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B" }}>
               {formattedDate}
             </p>
           )}
@@ -430,26 +430,25 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </div>
       )}
       
-      <div className="p-4 sm:p-5 text-center bg-gradient-to-br from-rose-500/90 to-pink-600/90">
+      {/* QR Code Section - Always visible */}
+      <div className="p-4 sm:p-5 text-center" style={{ backgroundColor: "#FAF9F7" }}>
         <div 
-          className="rounded-xl p-2 sm:p-3 mx-auto inline-block"
+          className="rounded-xl p-2 sm:p-3 mx-auto inline-block bg-white"
           style={{
-            background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
-            backdropFilter: "blur(20px)",
-            border: `1px solid ${selectedAccent.color}30`,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
           }}
         >
           <QRCodeSVG 
             value={qrUrl} 
-            size={70} 
+            size={80} 
             level="H" 
-            fgColor="#881337"
-            bgColor="rgba(255,255,255,0.95)"
-            className="rounded-lg block"
-            includeMargin={true}
+            fgColor="#2D2D2D"
+            bgColor="#FFFFFF"
+            className="block"
+            includeMargin={false}
           />
         </div>
-        <p className="text-[9px] sm:text-[10px] mt-2 sm:mt-3 tracking-widest uppercase font-sans text-white/60">
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B", marginTop: "8px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
           Escanea para ver nuestra historia
         </p>
       </div>
