@@ -380,14 +380,11 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         borderRadius: "12px",
       }}
     >
-     {photoUrl ? (
-  <>
+  {photoUrl ? (
+  <div className="relative">
     <div
       className="relative overflow-hidden"
-      style={{
-        width: "100%",
-        aspectRatio: "4 / 3",
-      }}
+      style={{ width: "100%", aspectRatio: "4 / 3" }}
     >
       <img
         src={photoUrl}
@@ -402,14 +399,21 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         crossOrigin="anonymous"
       />
     </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-          
-          <div className={cn(
-            "absolute left-0 right-0 p-4 text-white text-center",
-            namesPosition === "top" ? "top-0 pt-6" :
-            namesPosition === "bottom" ? "bottom-0 pb-4" :
-            "top-1/2 -translate-y-1/2"
-          )}>
+
+    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
+    <div
+      className={cn(
+        "absolute left-0 right-0 p-4 text-white text-center",
+        namesPosition === "top"
+          ? "top-0 pt-6"
+          : namesPosition === "bottom"
+          ? "bottom-0 pb-4"
+          : "top-1/2 -translate-y-1/2"
+      )}
+    >
+      {/* conteúdo */}
+    </div>
             <Heart 
               className="w-4 h-4 fill-current mx-auto mb-2" 
               style={{ 
