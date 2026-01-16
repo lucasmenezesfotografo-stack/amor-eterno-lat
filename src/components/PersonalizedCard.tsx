@@ -88,7 +88,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       className="overflow-hidden"
       style={{
         width: "300px",
-        height: "520px", // 10x15cm ratio (2:3)
+        height: "450px", // 10x15cm ratio (2:3)
         backgroundColor: "#FAF9F7",
         boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
         borderRadius: "4px",
@@ -96,27 +96,15 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     >
       {/* Photo section - top 60% with preserved aspect ratio */}
       {showPhoto && photoUrl ? (
-        <div
-  className="relative overflow-hidden"
-  style={{
-    width: "100%",
-    aspectRatio: "2 / 3", // ⭐ MAIS ALTO (antes era 3/2)
-  }}
->
-  <img
-    src={photoUrl}
-    alt="Foto"
-    style={{
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-      objectPosition: "center bottom", // ⭐ MOSTRA MAIS EMBAIXO
-      display: "block",
-    }}
-    crossOrigin="anonymous"
-  />
-</div>
-      
+        <div className="relative overflow-hidden" style={{ height: "60%" }}>
+          <img 
+            src={photoUrl} 
+            alt="Foto de pareja" 
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center center" }}
+            crossOrigin="anonymous" 
+          />
+        </div>
       ) : (
         <div 
           className="flex items-center justify-center"
@@ -367,135 +355,110 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   );
 
   // ============================================
-// PHOTO FOCUS CARD - Modern/Digital
-// ============================================
-const renderPhotoFocusCard = () => (
-  <div
-    ref={cardRef}
-    className="overflow-hidden relative"
-    style={{
-      width: "300px",
-      backgroundColor: "#FAF9F7",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
-      borderRadius: "12px",
-    }}
-  >
-    {photoUrl ? (
-      <div className="relative">
-        <div
-          className="relative overflow-hidden"
-          style={{ width: "100%", aspectRatio: "4 / 3" }}
-        >
-          <img
-            src={photoUrl}
-            alt="Foto"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "center",
-              display: "block",
-            }}
-            crossOrigin="anonymous"
-          />
-        </div>
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-        {/* 🔥 CONTEÚDO AGORA CORRETAMENTE DENTRO */}
-        <div
-          className={cn(
-            "absolute left-0 right-0 p-4 text-white text-center",
-            namesPosition === "top"
-              ? "top-0 pt-6"
-              : namesPosition === "bottom"
-              ? "bottom-0 pb-4"
-              : "top-1/2 -translate-y-1/2"
-          )}
-        >
-          <Heart
-            className="w-4 h-4 fill-current mx-auto mb-2"
-            style={{ color: selectedAccent.color }}
-          />
-
-          <h2 className="text-lg font-serif font-semibold tracking-wide">
-            {person1} & {person2}
-          </h2>
-
-          {showDate && formattedDate && (
-            <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
-              {formattedDate}
-            </p>
-          )}
-
-          {customMessage && (
-            <p className="text-[10px] italic opacity-90 mt-1.5 font-serif">
-              "{customMessage}"
-            </p>
-          )}
-        </div>
-      </div>
-    ) : (
-      <div
-        style={{ height: "200px" }}
-        className="bg-gradient-to-br from-rose-500/90 to-pink-600/90 flex items-center justify-center relative"
-      >
-        <div className="text-center text-white">
-          <Heart className="w-5 h-5 fill-current mx-auto mb-2" />
-          <h2 className="text-lg font-serif font-semibold tracking-wide">
-            {person1} & {person2}
-          </h2>
-          {showDate && formattedDate && (
-            <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
-              {formattedDate}
-            </p>
-          )}
-        </div>
-      </div>
-    )}
-
-    {/* QR Code Section */}
+  // PHOTO FOCUS CARD - Modern/Digital
+  // ============================================
+  const renderPhotoFocusCard = () => (
     <div
-      className="text-center flex flex-col items-center justify-center"
+      ref={cardRef}
+      className="overflow-hidden relative"
       style={{
+        width: "300px",
         backgroundColor: "#FAF9F7",
-        padding: "16px",
-        minHeight: "130px",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
+        borderRadius: "12px",
       }}
     >
-      <div
-        className="mx-auto inline-block bg-white"
-        style={{
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          borderRadius: "8px",
-          padding: "8px",
+      {photoUrl ? (
+        <div className="relative overflow-hidden" style={{ height: "280px" }}>
+          <img 
+            src={photoUrl} 
+            alt="Foto" 
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center center" }}
+            crossOrigin="anonymous" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+          
+          <div className={cn(
+            "absolute left-0 right-0 p-4 text-white text-center",
+            namesPosition === "top" ? "top-0 pt-6" :
+            namesPosition === "bottom" ? "bottom-0 pb-4" :
+            "top-1/2 -translate-y-1/2"
+          )}>
+            <Heart 
+              className="w-4 h-4 fill-current mx-auto mb-2" 
+              style={{ 
+                color: selectedAccent.color,
+              }}
+            />
+            <h2 className="text-lg font-serif font-semibold tracking-wide">
+              {person1} & {person2}
+            </h2>
+            {showDate && formattedDate && (
+              <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
+                {formattedDate}
+              </p>
+            )}
+            {customMessage && (
+              <p className="text-[10px] italic opacity-90 mt-1.5 font-serif">
+                "{customMessage}"
+              </p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div style={{ height: "200px" }} className="bg-gradient-to-br from-rose-500/90 to-pink-600/90 flex items-center justify-center relative">
+          <div className="text-center text-white">
+            <Heart 
+              className="w-5 h-5 fill-current mx-auto mb-2" 
+              style={{ 
+                color: "white",
+              }}
+            />
+            <h2 className="text-lg font-serif font-semibold tracking-wide">
+              {person1} & {person2}
+            </h2>
+            {showDate && formattedDate && (
+              <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
+                {formattedDate}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* QR Code Section - Always visible with fixed height */}
+      <div 
+        className="text-center flex flex-col items-center justify-center" 
+        style={{ 
+          backgroundColor: "#FAF9F7", 
+          padding: "16px",
+          minHeight: "130px",
         }}
       >
-        <QRCodeSVG
-          value={qrUrl}
-          size={80}
-          level="H"
-          fgColor="#2D2D2D"
-          bgColor="#FFFFFF"
-          includeMargin={false}
-        />
+        <div 
+          className="mx-auto inline-block bg-white"
+          style={{
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            borderRadius: "8px",
+            padding: "8px",
+          }}
+        >
+          <QRCodeSVG 
+            value={qrUrl} 
+            size={80} 
+            level="H" 
+            fgColor="#2D2D2D"
+            bgColor="#FFFFFF"
+            includeMargin={false}
+          />
+        </div>
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B", marginTop: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+          Escanea para ver nuestra historia
+        </p>
       </div>
-
-      <p
-        style={{
-          fontFamily: "system-ui, sans-serif",
-          fontSize: "9px",
-          color: "#6B6B6B",
-          marginTop: "10px",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-        }}
-      >
-        Escanea para ver nuestra historia
-      </p>
     </div>
-  </div>
-);
+  );
 
   const renderCard = () => {
     switch (selectedLayout.id) {
