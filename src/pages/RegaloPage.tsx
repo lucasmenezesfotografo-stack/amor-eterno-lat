@@ -239,7 +239,7 @@ const RegaloPage = () => {
             </motion.div>
 
             {/* Names - Elegant Font */}
-            <div className="flex flex-col items-center justify-center gap-2 sm:gap-4 md:flex-row md:gap-6 mb-4 sm:mb-6">
+            <div className="flex flex-row items-center justify-center gap-4 sm:gap-6 mb-4 sm:mb-6">
               <motion.h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white drop-shadow-lg" style={{
               textShadow: "0 4px 20px rgba(0,0,0,0.5)"
             }} initial={{
