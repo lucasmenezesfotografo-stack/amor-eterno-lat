@@ -88,7 +88,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       className="overflow-hidden"
       style={{
         width: "300px",
-        height: "450px", // 10x15cm ratio (2:3)
+        height: "520px", // 10x15cm ratio (2:3)
         backgroundColor: "#FAF9F7",
         boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
         borderRadius: "4px",
