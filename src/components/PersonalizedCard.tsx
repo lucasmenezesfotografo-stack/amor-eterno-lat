@@ -207,7 +207,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       <div className="flex flex-col items-center justify-center h-full px-8 py-10 text-center">
         {/* Top text */}
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", color: "#2D2D2D", marginBottom: "16px" }}>
-          Captura el
+         
         </p>
         
         {/* Main script word */}
