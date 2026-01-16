@@ -96,15 +96,25 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     >
       {/* Photo section - top 60% with preserved aspect ratio */}
       {showPhoto && photoUrl ? (
-        <div className="relative overflow-hidden" style={{ height: "60%" }}>
-          <img 
-            src={photoUrl} 
-            alt="Foto de pareja" 
-            className="w-full h-full object-cover"
-            style={{ objectPosition: "center center" }}
-            crossOrigin="anonymous" 
-          />
-        </div>
+        <div
+  className="relative overflow-hidden"
+  style={{
+    aspectRatio: "3 / 2", // OU 4 / 3 dependendo da foto
+    width: "100%",
+  }}
+>
+  <img
+    src={photoUrl}
+    alt="Foto de pareja"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      objectPosition: "center",
+    }}
+    crossOrigin="anonymous"
+  />
+</div>
       ) : (
         <div 
           className="flex items-center justify-center"
