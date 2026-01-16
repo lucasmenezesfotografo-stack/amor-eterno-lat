@@ -380,27 +380,28 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         borderRadius: "12px",
       }}
     >
-      {photoUrl ? (
-        <div
-  className="relative overflow-hidden"
-  style={{
-    width: "100%",
-    aspectRatio: "4 / 3", // Con Foto
-  }}
->
-  <img
-    src={photoUrl}
-    alt="Foto"
-    style={{
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-      objectPosition: "center",
-      display: "block",
-    }}
-    crossOrigin="anonymous"
-  />
-</div>
+     {photoUrl ? (
+  <>
+    <div
+      className="relative overflow-hidden"
+      style={{
+        width: "100%",
+        aspectRatio: "4 / 3",
+      }}
+    >
+      <img
+        src={photoUrl}
+        alt="Foto"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center",
+          display: "block",
+        }}
+        crossOrigin="anonymous"
+      />
+    </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
           
           <div className={cn(
