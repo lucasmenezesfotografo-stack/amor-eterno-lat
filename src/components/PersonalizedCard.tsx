@@ -116,7 +116,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     crossOrigin="anonymous"
   />
 </div>
-      </div>
+      
       ) : (
         <div 
           className="flex items-center justify-center"
