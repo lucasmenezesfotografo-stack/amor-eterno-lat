@@ -191,7 +191,7 @@ const RegaloPage = () => {
         </div>
       </main>;
   }
-  const startDate = new Date(pageData.start_date);
+
   const defaultCoverPhoto = "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop";
 
   // Find track info from romanticTracks if available
@@ -283,12 +283,10 @@ const RegaloPage = () => {
               <Calendar className="w-4 h-4 text-primary" />
               <span className="text-sm sm:text-base text-white/80">Juntos desde</span>
               <span className="text-sm sm:text-base font-semibold text-white">
-                {startDate.toLocaleDateString("es-ES", {
-                day: "numeric",
-                month: "long",
-                year: "numeric"
-              })}
-              </span>
+  {format(parseISO(pageData.start_date), "d 'de' MMMM yyyy", {
+    locale: es
+  })}
+</span>
             </motion.div>
             
             {/* Music indicator */}
@@ -337,7 +335,7 @@ const RegaloPage = () => {
             <p className="text-muted-foreground text-sm sm:text-base">Cada segundo cuenta cuando estás enamorado</p>
           </motion.div>
 
-          <RelationshipCounter startDate={startDate} />
+         <RelationshipCounter startDate={pageData.start_date} />
         </div>
       </section>
 
