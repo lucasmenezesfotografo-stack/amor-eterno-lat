@@ -379,14 +379,26 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       }}
     >
       {photoUrl ? (
-        <div className="relative overflow-hidden" style={{ height: "280px" }}>
-          <img 
-            src={photoUrl} 
-            alt="Foto" 
-            className="w-full h-full object-cover"
-            style={{ objectPosition: "center center" }}
-            crossOrigin="anonymous" 
-          />
+        <div
+  className="relative overflow-hidden"
+  style={{
+    width: "100%",
+    aspectRatio: "4 / 3", // ⭐ ESCOLHA AQUI
+  }}
+>
+  <img
+    src={photoUrl}
+    alt="Foto"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      objectPosition: "center",
+      display: "block",
+    }}
+    crossOrigin="anonymous"
+  />
+</div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
           
           <div className={cn(
