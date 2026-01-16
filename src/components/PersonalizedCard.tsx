@@ -430,7 +430,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
               </p>
             )}
           </div>
-        </div>
+      
       ) : (
         <div style={{ height: "200px" }} className="bg-gradient-to-br from-rose-500/90 to-pink-600/90 flex items-center justify-center relative">
           <div className="text-center text-white">
