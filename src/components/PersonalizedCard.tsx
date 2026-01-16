@@ -100,7 +100,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   className="relative overflow-hidden"
   style={{
     width: "100%",
-    aspectRatio: "3 / 2", // Clássico
+    aspectRatio: "2 / 3", // ⭐ MAIS ALTO (antes era 3/2)
   }}
 >
   <img
@@ -110,7 +110,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       width: "100%",
       height: "100%",
       objectFit: "cover",
-      objectPosition: "center",
+      objectPosition: "center bottom", // ⭐ MOSTRA MAIS EMBAIXO
       display: "block",
     }}
     crossOrigin="anonymous"
