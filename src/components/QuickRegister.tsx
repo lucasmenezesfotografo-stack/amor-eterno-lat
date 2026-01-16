@@ -16,7 +16,7 @@ const generateEmail = (name: string) => {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]/g, "");
   const random = Math.random().toString(36).substring(2, 10);
-  return `${sanitized}-${random}@lovepage.app`;
+  return `${sanitized}-${random}@memoryl.ink`;
 };
 
 const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
