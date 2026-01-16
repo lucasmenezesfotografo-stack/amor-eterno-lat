@@ -412,49 +412,46 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           : "top-1/2 -translate-y-1/2"
       )}
     >
-      {/* conteúdo */}
-    </div>
-            <Heart 
-              className="w-4 h-4 fill-current mx-auto mb-2" 
-              style={{ 
-                color: selectedAccent.color,
-              }}
-            />
-            <h2 className="text-lg font-serif font-semibold tracking-wide">
-              {person1} & {person2}
-            </h2>
-            {showDate && formattedDate && (
-              <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
-                {formattedDate}
-              </p>
-            )}
-            {customMessage && (
-              <p className="text-[10px] italic opacity-90 mt-1.5 font-serif">
-                "{customMessage}"
-              </p>
-            )}
-          </div>
-      
-      ) : (
-        <div style={{ height: "200px" }} className="bg-gradient-to-br from-rose-500/90 to-pink-600/90 flex items-center justify-center relative">
-          <div className="text-center text-white">
-            <Heart 
-              className="w-5 h-5 fill-current mx-auto mb-2" 
-              style={{ 
-                color: "white",
-              }}
-            />
-            <h2 className="text-lg font-serif font-semibold tracking-wide">
-              {person1} & {person2}
-            </h2>
-            {showDate && formattedDate && (
-              <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
-                {formattedDate}
-              </p>
-            )}
-          </div>
-        </div>
+      <Heart
+        className="w-4 h-4 fill-current mx-auto mb-2"
+        style={{ color: selectedAccent.color }}
+      />
+
+      <h2 className="text-lg font-serif font-semibold tracking-wide">
+        {person1} & {person2}
+      </h2>
+
+      {showDate && formattedDate && (
+        <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
+          {formattedDate}
+        </p>
       )}
+
+      {customMessage && (
+        <p className="text-[10px] italic opacity-90 mt-1.5 font-serif">
+          "{customMessage}"
+        </p>
+      )}
+    </div>
+  </div>
+) : (
+  <div
+    style={{ height: "200px" }}
+    className="bg-gradient-to-br from-rose-500/90 to-pink-600/90 flex items-center justify-center relative"
+  >
+    <div className="text-center text-white">
+      <Heart className="w-5 h-5 fill-current mx-auto mb-2" />
+      <h2 className="text-lg font-serif font-semibold tracking-wide">
+        {person1} & {person2}
+      </h2>
+      {showDate && formattedDate && (
+        <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
+          {formattedDate}
+        </p>
+      )}
+    </div>
+  </div>
+)}
       
       {/* QR Code Section - Always visible with fixed height */}
       <div 
