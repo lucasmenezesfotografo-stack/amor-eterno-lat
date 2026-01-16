@@ -23,6 +23,11 @@ const YouTubeMusicPlayer = ({
   const [isMuted, setIsMuted] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+    // 🔒 PROTEÇÃO CONTRA videoId INVÁLIDO (evita tela preta)
+  if (typeof videoId !== "string" || videoId.trim() === "") {
+    console.error("YouTubeMusicPlayer: videoId inválido", videoId);
+    return null;
+  }
 
   // Build YouTube embed URL with mobile-optimized parameters
   const getPlayerUrl = useCallback((autoplay: boolean, muted: boolean) => {
