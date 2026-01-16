@@ -99,18 +99,19 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         <div
   className="relative overflow-hidden"
   style={{
-    aspectRatio: "3 / 2", // OU 4 / 3 dependendo da foto
     width: "100%",
+    aspectRatio: "3 / 2", // Clássico
   }}
 >
   <img
     src={photoUrl}
-    alt="Foto de pareja"
+    alt="Foto"
     style={{
       width: "100%",
       height: "100%",
       objectFit: "cover",
       objectPosition: "center",
+      display: "block",
     }}
     crossOrigin="anonymous"
   />
@@ -383,7 +384,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   className="relative overflow-hidden"
   style={{
     width: "100%",
-    aspectRatio: "4 / 3", // ⭐ ESCOLHA AQUI
+    aspectRatio: "4 / 3", // Con Foto
   }}
 >
   <img
