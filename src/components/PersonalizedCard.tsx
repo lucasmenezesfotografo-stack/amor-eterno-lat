@@ -247,7 +247,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             {person1} & {person2}
           </p>
           {showDate && formattedDate && (
-            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", color: "#6B6B6B", marginTop: "4px" }}>
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", color: "#6B6B6B", marginTop: "2px" }}>
               {formattedDate}
             </p>
           )}
