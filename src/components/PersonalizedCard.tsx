@@ -482,7 +482,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           Escanea para ver nuestra historia
         </p>
       </div>
-    </div>
+   
   );
 
   const renderCard = () => {
