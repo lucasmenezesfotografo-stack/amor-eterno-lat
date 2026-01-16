@@ -57,11 +57,19 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
     if (!cardRef.current) return;
     const html2canvas = (await import("html2canvas")).default;
     
+    // Wait a bit for any animations to settle
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     const canvas = await html2canvas(cardRef.current, {
       scale: 4,
       backgroundColor: "#FAF9F7", // IMPORTANT: Solid background for JPG
       useCORS: true,
       logging: false,
+      allowTaint: true,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: cardRef.current.scrollWidth,
+      windowHeight: cardRef.current.scrollHeight,
     });
 
     const link = document.createElement("a");
@@ -352,13 +360,16 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   const renderPhotoFocusCard = () => (
     <div
       ref={cardRef}
-      className="w-72 sm:w-80 rounded-2xl overflow-hidden relative"
+      className="overflow-hidden relative"
       style={{
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.1)",
+        width: "300px",
+        backgroundColor: "#FAF9F7",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
+        borderRadius: "12px",
       }}
     >
       {photoUrl ? (
-        <div className="relative overflow-hidden" style={{ aspectRatio: "4/5" }}>
+        <div className="relative overflow-hidden" style={{ height: "280px" }}>
           <img 
             src={photoUrl} 
             alt="Foto" 
@@ -369,60 +380,46 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
           
           <div className={cn(
-            "absolute left-0 right-0 p-4 sm:p-6 text-white text-center",
-            namesPosition === "top" ? "top-0 pt-6 sm:pt-8" :
-            namesPosition === "bottom" ? "bottom-0" :
+            "absolute left-0 right-0 p-4 text-white text-center",
+            namesPosition === "top" ? "top-0 pt-6" :
+            namesPosition === "bottom" ? "bottom-0 pb-4" :
             "top-1/2 -translate-y-1/2"
           )}>
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="inline-block mb-2 sm:mb-3"
-            >
-              <Heart 
-                className="w-4 h-4 sm:w-5 sm:h-5 fill-current mx-auto" 
-                style={{ 
-                  filter: `drop-shadow(0 0 8px ${selectedAccent.color})`,
-                  color: selectedAccent.color,
-                }}
-              />
-            </motion.div>
-            <h2 className="text-lg sm:text-xl font-serif font-semibold tracking-wide">
+            <Heart 
+              className="w-4 h-4 fill-current mx-auto mb-2" 
+              style={{ 
+                color: selectedAccent.color,
+              }}
+            />
+            <h2 className="text-lg font-serif font-semibold tracking-wide">
               {person1} & {person2}
             </h2>
             {showDate && formattedDate && (
-              <p className="text-[10px] sm:text-xs opacity-80 mt-1.5 sm:mt-2 font-sans tracking-wider">
+              <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
                 {formattedDate}
               </p>
             )}
             {customMessage && (
-              <p className="text-[10px] sm:text-xs italic opacity-90 mt-1.5 sm:mt-2 font-serif">
+              <p className="text-[10px] italic opacity-90 mt-1.5 font-serif">
                 "{customMessage}"
               </p>
             )}
           </div>
         </div>
       ) : (
-        <div className="h-44 sm:h-52 bg-gradient-to-br from-rose-500/90 to-pink-600/90 flex items-center justify-center relative">
+        <div style={{ height: "200px" }} className="bg-gradient-to-br from-rose-500/90 to-pink-600/90 flex items-center justify-center relative">
           <div className="text-center text-white">
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="inline-block mb-2 sm:mb-3"
-            >
-              <Heart 
-                className="w-5 h-5 sm:w-6 sm:h-6 fill-current mx-auto" 
-                style={{ 
-                  filter: `drop-shadow(0 0 8px ${selectedAccent.color})`,
-                  color: "white",
-                }}
-              />
-            </motion.div>
-            <h2 className="text-lg sm:text-xl font-serif font-semibold tracking-wide">
+            <Heart 
+              className="w-5 h-5 fill-current mx-auto mb-2" 
+              style={{ 
+                color: "white",
+              }}
+            />
+            <h2 className="text-lg font-serif font-semibold tracking-wide">
               {person1} & {person2}
             </h2>
             {showDate && formattedDate && (
-              <p className="text-[10px] sm:text-xs opacity-80 mt-1.5 sm:mt-2 font-sans tracking-wider">
+              <p className="text-[10px] opacity-80 mt-1.5 font-sans tracking-wider">
                 {formattedDate}
               </p>
             )}
@@ -430,12 +427,21 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </div>
       )}
       
-      {/* QR Code Section - Always visible */}
-      <div className="p-4 sm:p-5 text-center" style={{ backgroundColor: "#FAF9F7" }}>
+      {/* QR Code Section - Always visible with fixed height */}
+      <div 
+        className="text-center flex flex-col items-center justify-center" 
+        style={{ 
+          backgroundColor: "#FAF9F7", 
+          padding: "16px",
+          minHeight: "130px",
+        }}
+      >
         <div 
-          className="rounded-xl p-2 sm:p-3 mx-auto inline-block bg-white"
+          className="mx-auto inline-block bg-white"
           style={{
             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            borderRadius: "8px",
+            padding: "8px",
           }}
         >
           <QRCodeSVG 
@@ -444,11 +450,10 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             level="H" 
             fgColor="#2D2D2D"
             bgColor="#FFFFFF"
-            className="block"
             includeMargin={false}
           />
         </div>
-        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B", marginTop: "8px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+        <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B", marginTop: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
           Escanea para ver nuestra historia
         </p>
       </div>
@@ -660,14 +665,15 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       </div>
 
       {/* Toggle Options */}
-      <div className="flex flex-wrap justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {photoUrl && (
           <Button
             variant={showPhoto ? "default" : "outline"}
             size="sm"
             onClick={() => setShowPhoto(!showPhoto)}
+            className="min-w-[80px] sm:min-w-[100px] h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4"
           >
-            <ImageIcon className="w-3 h-3 mr-1" />
+            <ImageIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5" />
             Foto
           </Button>
         )}
@@ -676,8 +682,9 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             variant={showDate ? "default" : "outline"}
             size="sm"
             onClick={() => setShowDate(!showDate)}
+            className="min-w-[80px] sm:min-w-[100px] h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4"
           >
-            <Calendar className="w-3 h-3 mr-1" />
+            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5" />
             Fecha
           </Button>
         )}
@@ -707,13 +714,13 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       </div>
 
       {/* Download Button */}
-      <div className="flex justify-center">
+      <div className="flex justify-center px-4 sm:px-0">
         <Button 
           onClick={handleDownloadCard} 
           size="lg" 
-          className="gap-2 shadow-md w-full sm:w-auto"
+          className="gap-2 shadow-md w-full sm:w-auto min-h-[48px] sm:min-h-[52px] text-sm sm:text-base px-6 sm:px-8"
         >
-          <Download className="w-5 h-5" />
+          <Download className="w-5 h-5 sm:w-6 sm:h-6" />
           Descargar Tarjeta (JPG)
         </Button>
       </div>
