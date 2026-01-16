@@ -450,7 +450,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             )}
           </div>
         </div>
-      )}
+      
       
       {/* QR Code Section - Always visible with fixed height */}
       <div 
