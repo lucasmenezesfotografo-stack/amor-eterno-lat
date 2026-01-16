@@ -239,7 +239,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         </p>
         
         {/* Names - subtle at bottom */}
-        <div style={{ marginTop: "08px", paddingTop: "16px", borderTop: "1px solid #E8E6E3", width: "100%" }}>
+        <div style={{ marginTop: "3px", paddingTop: "5px", borderTop: "1px solid #E8E6E3", width: "100%" }}>
           <p 
             className={cn("text-sm font-medium", selectedSerifFont.className)}
             style={{ fontFamily: selectedSerifFont.fontFamily, color: "#2D2D2D" }}
