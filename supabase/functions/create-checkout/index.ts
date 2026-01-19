@@ -32,7 +32,7 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    const origin = req.headers.get("origin") || "https://memoryl.ink";
+    const origin = req.headers.get("origin") || "https://amor-eterno-lat.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
       customer_email: email ?? undefined,
