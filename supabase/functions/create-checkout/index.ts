@@ -1,56 +1,83 @@
-const handlePayment = async () => {
-  setIsSaving(true);
-  setIsRedirectingToPayment(true);
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "content-type",
+};
+
+serve(async (req) => {
+  // ✅ CORS preflight (OBRIGATÓRIO)
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders,
+    });
+  }
 
   try {
-    // 1️⃣ Salva a página (sem ativar)
-    const giftPage = await saveGiftPage();
-    if (!giftPage) return;
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      throw new Error("STRIPE_SECRET_KEY not set");
+    }
 
-    setSavedSlug(giftPage.slug);
-    setSavedGiftPageId(giftPage.id);
+    const { giftPageId, slug, email } = await req.json();
 
-    // 2️⃣ Chama a Edge Function DIRETO (SEM supabase.invoke)
-    const response = await fetch(
-      "https://fiyokldgrzedxyxpgomf.supabase.co/functions/v1/create-checkout",
+    if (!giftPageId || !slug) {
+      throw new Error("giftPageId and slug are required");
+    }
+
+    const stripe = new Stripe(stripeKey, {
+      apiVersion: "2025-08-27.basil",
+    });
+
+    const origin = req.headers.get("origin") || "https://memoryl.ink";
+
+    const session = await stripe.checkout.sessions.create({
+      customer_email: email ?? undefined,
+      mode: "payment",
+      line_items: [
+        {
+          price: "price_1Snl4iCGNOUldBA3nCM16qGk",
+          quantity: 1,
+        },
+      ],
+      success_url: `${origin}/pago-exitoso?session_id={CHECKOUT_SESSION_ID}&slug=${slug}&gift_page_id=${giftPageId}`,
+      cancel_url: `${origin}/crear?cancelled=true`,
+      metadata: {
+        gift_page_id: giftPageId,
+        slug,
+      },
+      payment_intent_data: {
+        metadata: {
+          gift_page_id: giftPageId,
+          slug,
+        },
+      },
+    });
+
+    return new Response(
+      JSON.stringify({ url: session.url }),
       {
-        method: "POST",
+        status: 200,
         headers: {
+          ...corsHeaders,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          giftPageId: giftPage.id,
-          slug: giftPage.slug,
-          email: user?.email,
-        }),
       }
     );
 
-    const data = await response.json();
-
-    // 3️⃣ Tratamento de erro
-    if (!response.ok) {
-      throw new Error(data?.error || "Failed to create checkout");
-    }
-
-    // 4️⃣ Redireciona para o Stripe
-    if (data?.url) {
-      window.location.href = data.url;
-    } else {
-      throw new Error("No checkout URL returned");
-    }
-
   } catch (error) {
-    console.error("Checkout error:", error);
-
-    toast({
-      title: "Error",
-      description: "No se pudo iniciar el pago. Intenta de nuevo.",
-      variant: "destructive",
-    });
-
-  } finally {
-    setIsSaving(false);
-    setIsRedirectingToPayment(false);
+    return new Response(
+      JSON.stringify({ error: String(error) }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
-};
+});
