@@ -14,11 +14,125 @@ export type Database = {
   }
   public: {
     Tables: {
+      activation_code_usage: {
+        Row: {
+          activation_code_id: string
+          created_at: string
+          gift_page_id: string
+          id: string
+        }
+        Insert: {
+          activation_code_id: string
+          created_at?: string
+          gift_page_id: string
+          id?: string
+        }
+        Update: {
+          activation_code_id?: string
+          created_at?: string
+          gift_page_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activation_code_usage_activation_code_id_fkey"
+            columns: ["activation_code_id"]
+            isOneToOne: false
+            referencedRelation: "activation_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activation_code_usage_gift_page_id_fkey"
+            columns: ["gift_page_id"]
+            isOneToOne: true
+            referencedRelation: "gift_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activation_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          uses_remaining: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          uses_remaining?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          uses_remaining?: number | null
+        }
+        Relationships: []
+      }
+      gift_page_subscriptions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          gift_page_id: string
+          id: string
+          paid_at: string
+          status: Database["public"]["Enums"]["payment_status"]
+          stripe_customer_id: string | null
+          stripe_session_id: string | null
+          stripe_subscription_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          gift_page_id: string
+          id?: string
+          paid_at?: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_customer_id?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          gift_page_id?: string
+          id?: string
+          paid_at?: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_customer_id?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_page_subscriptions_gift_page_id_fkey"
+            columns: ["gift_page_id"]
+            isOneToOne: true
+            referencedRelation: "gift_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gift_pages: {
         Row: {
           cover_photo_url: string | null
           created_at: string
           id: string
+          is_active: boolean
           love_letter: string | null
           memories: Json | null
           names_position: string | null
@@ -36,6 +150,7 @@ export type Database = {
           cover_photo_url?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean
           love_letter?: string | null
           memories?: Json | null
           names_position?: string | null
@@ -53,6 +168,7 @@ export type Database = {
           cover_photo_url?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean
           love_letter?: string | null
           memories?: Json | null
           names_position?: string | null
@@ -76,7 +192,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      payment_status: "active" | "expired" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -203,6 +319,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      payment_status: ["active", "expired", "cancelled"],
+    },
   },
 } as const
