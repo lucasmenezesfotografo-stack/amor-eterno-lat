@@ -207,12 +207,12 @@ const CrearPage = () => {
 
   // Handle payment with Stripe
   
-    const handlePayment = async () => {
+   const handlePayment = async () => {
   setIsSaving(true);
   setIsRedirectingToPayment(true);
 
   try {
-    // 1️⃣ Salva a página (isso já funciona conforme você relatou)
+    // 1. Salva os dados da página (Mantendo sua lógica atual)
     const giftPage = await saveGiftPage();
     if (!giftPage) {
       setIsSaving(false);
@@ -223,31 +223,32 @@ const CrearPage = () => {
     setSavedSlug(giftPage.slug);
     setSavedGiftPageId(giftPage.id);
 
-    // 2️⃣ Chama a Edge Function usando o SDK (Resolve o Erro 401 e Headers)
-    // Nota: Usei 'create-checkout-v2' conforme estava no seu código original
+    // 2. Chama a Edge Function usando o SDK oficial
+    // O nome 'create-checkout-v2' deve ser idêntico ao do seu painel
     const { data, error: functionError } = await supabase.functions.invoke('create-checkout-v2', {
-      body: {
-        giftPageId: giftPage.id,
-        slug: giftPage.slug,
-        email: user?.email,
+      body: { 
+        giftPageId: giftPage.id, 
+        slug: giftPage.slug, 
+        email: user?.email 
       },
     });
 
     if (functionError) {
-      throw new Error(functionError.message || "Error al invocar la função");
+      console.error("Erro na função:", functionError);
+      throw new Error(functionError.message || "Error al processar el pago");
     }
 
-    // 3️⃣ Redireciona para o Stripe
+    // 3. Redireciona para o Checkout do Stripe
     if (data?.url) {
       window.location.href = data.url;
     } else {
-      throw new Error("URL de Stripe no retornada por la función");
+      throw new Error("URL de Stripe no retornada.");
     }
 
   } catch (error: any) {
-    console.error("Error completo no checkout:", error);
+    console.error("Erro completo:", error);
     toast({
-      title: "Error de conexión",
+      title: "Error",
       description: error.message || "No se pudo iniciar el pago. Intenta de nuevo.",
       variant: "destructive",
     });
