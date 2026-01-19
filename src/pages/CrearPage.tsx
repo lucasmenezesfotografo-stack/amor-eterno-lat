@@ -221,7 +221,7 @@ const CrearPage = () => {
 
     // 2️⃣ Chama a Edge Function DIRETO (SEM supabase.invoke)
     const response = await fetch(
-      "https://fiyokldgrzedxyxpgomf.supabase.co/functions/v1/create-checkout",
+      "https://fioykldgrzedxyxpgomf.supabase.co/functions/v1/create-checkout-v2",
       {
         method: "POST",
         headers: {
