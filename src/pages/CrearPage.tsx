@@ -207,52 +207,48 @@ const CrearPage = () => {
 
   // Handle payment with Stripe
   
-     const handlePayment = async () => {
+    const handlePayment = async () => {
   setIsSaving(true);
   setIsRedirectingToPayment(true);
 
   try {
-    // 1️⃣ Salva a página
+    // 1️⃣ Salva a página (isso já funciona conforme você relatou)
     const giftPage = await saveGiftPage();
-    if (!giftPage) return;
+    if (!giftPage) {
+      setIsSaving(false);
+      setIsRedirectingToPayment(false);
+      return;
+    }
 
     setSavedSlug(giftPage.slug);
     setSavedGiftPageId(giftPage.id);
 
-    // 2️⃣ Chama a Edge Function DIRETO (SEM supabase.invoke)
-    const response = await fetch(
-      "https://fioykldgrzedxyxpgomf.supabase.co/functions/v1/create-checkout-v2",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          giftPageId: giftPage.id,
-          slug: giftPage.slug,
-          email: user?.email,
-        }),
-      }
-    );
+    // 2️⃣ Chama a Edge Function usando o SDK (Resolve o Erro 401 e Headers)
+    // Nota: Usei 'create-checkout-v2' conforme estava no seu código original
+    const { data, error: functionError } = await supabase.functions.invoke('create-checkout-v2', {
+      body: {
+        giftPageId: giftPage.id,
+        slug: giftPage.slug,
+        email: user?.email,
+      },
+    });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error || "Failed to create checkout");
+    if (functionError) {
+      throw new Error(functionError.message || "Error al invocar la função");
     }
 
     // 3️⃣ Redireciona para o Stripe
     if (data?.url) {
       window.location.href = data.url;
     } else {
-      throw new Error("Stripe URL not returned");
+      throw new Error("URL de Stripe no retornada por la función");
     }
 
-  } catch (error) {
-    console.error("Error creating checkout:", error);
+  } catch (error: any) {
+    console.error("Error completo no checkout:", error);
     toast({
-      title: "Error",
-      description: "No se pudo iniciar el pago. Intenta de nuevo.",
+      title: "Error de conexión",
+      description: error.message || "No se pudo iniciar el pago. Intenta de nuevo.",
       variant: "destructive",
     });
   } finally {
