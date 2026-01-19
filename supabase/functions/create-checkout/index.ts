@@ -1,14 +1,18 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 
+/**
+ * ✅ CORS COMPLETO E CORRETO
+ */
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
-  // ✅ CORS preflight (OBRIGATÓRIO)
+  // ✅ PRE-FLIGHT (OBRIGATÓRIO PARA BROWSER)
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -32,11 +36,13 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    const origin = req.headers.get("origin") || "https://amor-eterno-lat.lovable.app";
+    const origin =
+      req.headers.get("origin") ??
+      "https://memoryl.ink";
 
     const session = await stripe.checkout.sessions.create({
-      customer_email: email ?? undefined,
       mode: "payment",
+      customer_email: email ?? undefined,
       line_items: [
         {
           price: "price_1Snl4iCGNOUldBA3nCM16qGk",
@@ -67,7 +73,6 @@ serve(async (req) => {
         },
       }
     );
-
   } catch (error) {
     return new Response(
       JSON.stringify({ error: String(error) }),
