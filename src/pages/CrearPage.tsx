@@ -206,29 +206,61 @@ const CrearPage = () => {
   };
 
   // Handle payment with Stripe
-  const handlePayment = async () => {
-    setIsSaving(true);
-    setIsRedirectingToPayment(true);
-    
-    try {
-      // First save the gift page
-      const giftPage = await saveGiftPage();
-      if (!giftPage) {
-        setIsRedirectingToPayment(false);
-        return;
-      }
+  
+     const handlePayment = async () => {
+  setIsSaving(true);
+  setIsRedirectingToPayment(true);
 
-      setSavedSlug(giftPage.slug);
-      setSavedGiftPageId(giftPage.id);
+  try {
+    // 1️⃣ Salva a página
+    const giftPage = await saveGiftPage();
+    if (!giftPage) return;
 
-      // Create Stripe checkout session
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { 
-          giftPageId: giftPage.id, 
+    setSavedSlug(giftPage.slug);
+    setSavedGiftPageId(giftPage.id);
+
+    // 2️⃣ Chama a Edge Function DIRETO (SEM supabase.invoke)
+    const response = await fetch(
+      "https://fiyokldgrzedxyxpgomf.supabase.co/functions/v1/create-checkout",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          giftPageId: giftPage.id,
           slug: giftPage.slug,
           email: user?.email,
-        },
-      });
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error || "Failed to create checkout");
+    }
+
+    // 3️⃣ Redireciona para o Stripe
+    if (data?.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error("Stripe URL not returned");
+    }
+
+  } catch (error) {
+    console.error("Error creating checkout:", error);
+    toast({
+      title: "Error",
+      description: "No se pudo iniciar el pago. Intenta de nuevo.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsSaving(false);
+    setIsRedirectingToPayment(false);
+  }
+};
+
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
