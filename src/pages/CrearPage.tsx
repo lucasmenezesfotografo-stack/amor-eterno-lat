@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard, MoveVertical, Camera } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard, MoveVertical, Camera, Gift, Ticket } from "lucide-react";
 import MemoryUploader, { Memory } from "@/components/MemoryUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +53,7 @@ const steps = [
 
 const CrearPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -79,12 +80,19 @@ const CrearPage = () => {
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
+  const [savedGiftPageId, setSavedGiftPageId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [qrGenerated, setQrGenerated] = useState(false);
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
   const [generatedText, setGeneratedText] = useState("");
   const qrRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  
+  // Payment and activation states
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [activationCode, setActivationCode] = useState("");
+  const [isValidatingCode, setIsValidatingCode] = useState(false);
+  const [isRedirectingToPayment, setIsRedirectingToPayment] = useState(false);
 
   // Check authentication status
   useEffect(() => {
@@ -120,6 +128,17 @@ const CrearPage = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Check for cancelled payment
+  useEffect(() => {
+    if (searchParams.get("cancelled") === "true") {
+      toast({
+        title: "Pago cancelado",
+        description: "Puedes intentar de nuevo cuando quieras.",
+        variant: "destructive",
+      });
+    }
+  }, [searchParams, toast]);
+
   const spotifyValidation = useMemo(() => validateSpotifyUrl(formData.spotifyUrl), [formData.spotifyUrl]);
 
   const regaloUrl = savedSlug ? `${window.location.origin}/regalo/${savedSlug}` : "";
@@ -140,6 +159,165 @@ const CrearPage = () => {
     }
   };
 
+  // Save gift page to database (without activating it)
+  const saveGiftPage = async (): Promise<{ id: string; slug: string } | null> => {
+    if (!formData.person1 || !formData.person2 || !formData.startDate) {
+      toast({
+        title: "Campos incompletos",
+        description: "Por favor completa los nombres y la fecha.",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    const slug = generateSlug(formData.person1, formData.person2);
+    
+    // Get the final YouTube video ID - custom URL takes priority
+    let finalYoutubeVideoId = formData.youtubeVideoId;
+    if (formData.customYoutubeUrl && isValidYoutubeUrl(formData.customYoutubeUrl)) {
+      finalYoutubeVideoId = extractYoutubeVideoId(formData.customYoutubeUrl);
+    }
+    
+    // Find track info for name if using preset
+    const selectedTrack = formData.selectedSoundtrack 
+      ? romanticTracks.find(t => t.id === formData.selectedSoundtrack) 
+      : null;
+
+    const { data, error } = await supabase.from("gift_pages").insert({
+      slug,
+      your_name: formData.person1,
+      partner_name: formData.person2,
+      start_date: format(formData.startDate, "yyyy-MM-dd"),
+      cover_photo_url: formData.photoUrl || null,
+      love_letter: formData.loveLetter || null,
+      soundtrack_name: formData.soundtrackName || selectedTrack?.name || null,
+      youtube_video_id: finalYoutubeVideoId || null,
+      spotify_link: formData.spotifyUrl || null,
+      user_id: user?.id || null,
+      names_position: formData.namesPosition,
+      memories: formData.memories.length > 0 
+        ? JSON.parse(JSON.stringify(formData.memories)) 
+        : null,
+      is_active: false, // Not active until paid
+    }).select("id, slug").single();
+
+    if (error) throw error;
+    return data;
+  };
+
+  // Handle payment with Stripe
+  const handlePayment = async () => {
+    setIsSaving(true);
+    setIsRedirectingToPayment(true);
+    
+    try {
+      // First save the gift page
+      const giftPage = await saveGiftPage();
+      if (!giftPage) {
+        setIsRedirectingToPayment(false);
+        return;
+      }
+
+      setSavedSlug(giftPage.slug);
+      setSavedGiftPageId(giftPage.id);
+
+      // Create Stripe checkout session
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { 
+          giftPageId: giftPage.id, 
+          slug: giftPage.slug,
+          email: user?.email,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      // Redirect to Stripe checkout
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL received");
+      }
+    } catch (error) {
+      console.error("Error creating checkout:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo iniciar el pago. Intenta de nuevo.",
+        variant: "destructive",
+      });
+      setIsRedirectingToPayment(false);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle activation code validation
+  const handleActivationCode = async () => {
+    if (!activationCode.trim()) {
+      toast({
+        title: "Código vacío",
+        description: "Por favor ingresa un código de activación.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsValidatingCode(true);
+    setIsSaving(true);
+
+    try {
+      // First save the gift page if not already saved
+      let giftPageId = savedGiftPageId;
+      let slug = savedSlug;
+      
+      if (!giftPageId) {
+        const giftPage = await saveGiftPage();
+        if (!giftPage) {
+          setIsValidatingCode(false);
+          return;
+        }
+        giftPageId = giftPage.id;
+        slug = giftPage.slug;
+        setSavedGiftPageId(giftPage.id);
+        setSavedSlug(giftPage.slug);
+      }
+
+      // Validate the activation code
+      const { data, error } = await supabase.functions.invoke("validate-activation-code", {
+        body: { code: activationCode, giftPageId },
+      });
+
+      if (error) throw error;
+      
+      if (data?.valid) {
+        setQrGenerated(true);
+        setShowPaymentOptions(false);
+        toast({
+          title: "¡Código activado!",
+          description: data.message || "Tu página está activa por 1 año.",
+        });
+      } else {
+        toast({
+          title: "Código inválido",
+          description: data?.error || "El código no es válido.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error validating code:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo validar el código. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsValidatingCode(false);
+      setIsSaving(false);
+    }
+  };
+
+  // Legacy handleGenerate - now shows payment options
   const handleGenerate = async () => {
     if (!formData.person1 || !formData.person2 || !formData.startDate) {
       toast({
@@ -149,58 +327,8 @@ const CrearPage = () => {
       });
       return;
     }
-
-    setIsSaving(true);
     
-    try {
-      const slug = generateSlug(formData.person1, formData.person2);
-      
-      // Get the final YouTube video ID - custom URL takes priority
-      let finalYoutubeVideoId = formData.youtubeVideoId;
-      if (formData.customYoutubeUrl && isValidYoutubeUrl(formData.customYoutubeUrl)) {
-        finalYoutubeVideoId = extractYoutubeVideoId(formData.customYoutubeUrl);
-      }
-      
-      // Find track info for name if using preset
-      const selectedTrack = formData.selectedSoundtrack 
-        ? romanticTracks.find(t => t.id === formData.selectedSoundtrack) 
-        : null;
-
-      const { error } = await supabase.from("gift_pages").insert({
-        slug,
-        your_name: formData.person1,
-        partner_name: formData.person2,
-        start_date: format(formData.startDate, "yyyy-MM-dd"),
-        cover_photo_url: formData.photoUrl || null,
-        love_letter: formData.loveLetter || null,
-        soundtrack_name: formData.soundtrackName || selectedTrack?.name || null,
-        youtube_video_id: finalYoutubeVideoId || null,
-        spotify_link: formData.spotifyUrl || null,
-        user_id: user?.id || null,
-        names_position: formData.namesPosition,
-        memories: formData.memories.length > 0 
-          ? JSON.parse(JSON.stringify(formData.memories)) 
-          : null,
-      });
-
-      if (error) throw error;
-
-      setSavedSlug(slug);
-      setQrGenerated(true);
-      toast({
-        title: "¡Página creada!",
-        description: "Tu QR Code está listo para descargar.",
-      });
-    } catch (error) {
-      console.error("Error saving gift page:", error);
-      toast({
-        title: "Error",
-        description: "No se pudo crear la página. Intenta de nuevo.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
+    setShowPaymentOptions(true);
   };
 
   // Handle photo upload
@@ -687,13 +815,91 @@ const CrearPage = () => {
                     </motion.p>
                   )}
                   
+                  {/* Payment Options Modal */}
+                  {showPaymentOptions && !qrGenerated && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-card border border-border rounded-2xl p-6 mb-6 text-left"
+                    >
+                      <h3 className="text-lg font-semibold mb-4 text-center">Elige cómo activar tu página</h3>
+                      
+                      {/* Payment Button */}
+                      <Button 
+                        variant="romantic" 
+                        size="lg" 
+                        className="w-full mb-4"
+                        onClick={handlePayment}
+                        disabled={isSaving || isRedirectingToPayment}
+                      >
+                        {isRedirectingToPayment ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Redirigiendo al pago...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="w-5 h-5" />
+                            Pagar y Activar (1 año)
+                          </>
+                        )}
+                      </Button>
+                      
+                      <div className="flex items-center gap-4 my-4">
+                        <div className="flex-1 h-px bg-border" />
+                        <span className="text-sm text-muted-foreground">o</span>
+                        <div className="flex-1 h-px bg-border" />
+                      </div>
+                      
+                      {/* Activation Code Input */}
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                          <Ticket className="w-4 h-4" />
+                          ¿Tienes un código de activación?
+                        </label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Ingresa tu código"
+                            value={activationCode}
+                            onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
+                            className="flex-1 uppercase"
+                            disabled={isValidatingCode}
+                          />
+                          <Button 
+                            variant="outline"
+                            onClick={handleActivationCode}
+                            disabled={isValidatingCode || !activationCode.trim()}
+                          >
+                            {isValidatingCode ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Check className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Los códigos de activación son para influencers y colaboradores.
+                        </p>
+                      </div>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="w-full mt-4"
+                        onClick={() => setShowPaymentOptions(false)}
+                      >
+                        Cancelar
+                      </Button>
+                    </motion.div>
+                  )}
+                  
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    {!qrGenerated ? (
+                    {!qrGenerated && !showPaymentOptions ? (
                       <Button variant="default" size="lg" onClick={handleGenerate} disabled={isSaving}>
                         {isSaving ? (
                           <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            Creando página...
+                            Preparando...
                           </>
                         ) : (
                           <>
@@ -702,7 +908,7 @@ const CrearPage = () => {
                           </>
                         )}
                       </Button>
-                    ) : (
+                    ) : qrGenerated ? (
                       <>
                         <Button variant="default" size="lg" onClick={handleDownloadQR}>
                           <Download className="w-5 h-5" />
@@ -714,7 +920,7 @@ const CrearPage = () => {
                           </Button>
                         </Link>
                       </>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </motion.div>

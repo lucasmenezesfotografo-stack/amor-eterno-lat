@@ -1,1 +1,16 @@
 project_id = "vwdhdefnmcfdaekzfizq"
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.activate-gift-page]
+verify_jwt = false
+
+[functions.validate-activation-code]
+verify_jwt = false
+
+[functions.check-expired-subscriptions]
+verify_jwt = false
