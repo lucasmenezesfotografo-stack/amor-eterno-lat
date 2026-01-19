@@ -49,7 +49,7 @@ serve(async (req) => {
       }
     }
 
-    const origin = req.headers.get("origin") || "https://amor-eterno-lat.lovable.app";
+    const origin = req.headers.get("origin") || "https://memoryl.ink";
     
     // Create checkout session with the provided price ID
     const session = await stripe.checkout.sessions.create({
