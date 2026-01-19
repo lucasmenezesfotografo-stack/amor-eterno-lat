@@ -212,7 +212,7 @@ const CrearPage = () => {
   setIsRedirectingToPayment(true);
 
   try {
-    // 1. Salva os dados da página (Mantendo sua lógica atual)
+    // 1. Garante que a página foi salva primeiro
     const giftPage = await saveGiftPage();
     if (!giftPage) {
       setIsSaving(false);
@@ -220,11 +220,8 @@ const CrearPage = () => {
       return;
     }
 
-    setSavedSlug(giftPage.slug);
-    setSavedGiftPageId(giftPage.id);
-
-    // 2. Chama a Edge Function usando o SDK oficial
-    // O nome 'create-checkout-v2' deve ser idêntico ao do seu painel
+    // 2. Chama a Edge Function correta (v2) usando o SDK
+    // O SDK injeta automaticamente a 'apikey' e o 'Authorization' header
     const { data, error: functionError } = await supabase.functions.invoke('create-checkout-v2', {
       body: { 
         giftPageId: giftPage.id, 
@@ -234,19 +231,19 @@ const CrearPage = () => {
     });
 
     if (functionError) {
-      console.error("Erro na função:", functionError);
-      throw new Error(functionError.message || "Error al processar el pago");
+      console.error("Erro na Edge Function:", functionError);
+      throw new Error(functionError.message || "Erro ao processar pagamento");
     }
 
-    // 3. Redireciona para o Checkout do Stripe
+    // 3. Redirecionamento para o Stripe
     if (data?.url) {
       window.location.href = data.url;
     } else {
-      throw new Error("URL de Stripe no retornada.");
+      throw new Error("A função não retornou uma URL de checkout válida.");
     }
 
   } catch (error: any) {
-    console.error("Erro completo:", error);
+    console.error("Erro no fluxo de pagamento:", error);
     toast({
       title: "Error",
       description: error.message || "No se pudo iniciar el pago. Intenta de nuevo.",
