@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[VALIDATE-ACTIVATION-CODE] ${step}${detailsStr}`);
 };
 
@@ -31,70 +31,93 @@ serve(async (req) => {
       throw new Error("code and giftPageId are required");
     }
 
-    // Find the activation code
-    const { data: activationCode, error: findError } = await supabase
+    // 🔎 Buscar código (SEM single)
+    const { data: activationCodes, error: findError } = await supabase
       .from("activation_codes")
       .select("*")
       .eq("code", code.toUpperCase().trim())
       .eq("is_active", true)
-      .single();
+      .limit(1);
+
+    const activationCode = activationCodes?.[0];
 
     if (findError || !activationCode) {
       logStep("Code not found or inactive", { error: findError });
-      return new Response(JSON.stringify({ 
-        valid: false, 
-        error: "Código inválido o inactivo" 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({
+          valid: false,
+          error: "Código inválido o inactivo",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
     }
 
-    logStep("Code found", { codeId: activationCode.id, usesRemaining: activationCode.uses_remaining });
+    logStep("Code found", {
+      codeId: activationCode.id,
+      usesRemaining: activationCode.uses_remaining,
+    });
 
-    // Check if code has expired
-    if (activationCode.expires_at && new Date(activationCode.expires_at) < new Date()) {
+    // ⏰ Verificar expiração
+    if (
+      activationCode.expires_at &&
+      new Date(activationCode.expires_at) < new Date()
+    ) {
       logStep("Code expired");
-      return new Response(JSON.stringify({ 
-        valid: false, 
-        error: "Este código ha expirado" 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({
+          valid: false,
+          error: "Este código ha expirado",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
     }
 
-    // Check if code has remaining uses
-    if (activationCode.uses_remaining !== null && activationCode.uses_remaining <= 0) {
+    // 🔢 Verificar usos restantes (se não for ilimitado)
+    if (
+      activationCode.uses_remaining !== null &&
+      activationCode.uses_remaining <= 0
+    ) {
       logStep("Code has no remaining uses");
-      return new Response(JSON.stringify({ 
-        valid: false, 
-        error: "Este código ya no tiene usos disponibles" 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({
+          valid: false,
+          error: "Este código ya no tiene usos disponibles",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
     }
 
-    // Check if gift page already used a code
+    // 🚫 Verificar se a página já usou um código
     const { data: existingUsage } = await supabase
       .from("activation_code_usage")
       .select("id")
       .eq("gift_page_id", giftPageId)
-      .single();
+      .maybeSingle();
 
     if (existingUsage) {
       logStep("Gift page already used a code");
-      return new Response(JSON.stringify({ 
-        valid: false, 
-        error: "Esta página ya tiene un código activado" 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({
+          valid: false,
+          error: "Esta página ya tiene un código activado",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
     }
 
-    // Record the usage
+    // 📝 Registrar uso do código
     const { error: usageError } = await supabase
       .from("activation_code_usage")
       .insert({
@@ -107,34 +130,39 @@ serve(async (req) => {
       throw usageError;
     }
 
-    // Decrement uses_remaining if it's not null (unlimited)
+    // ➖ Decrementar usos se não for ilimitado
     if (activationCode.uses_remaining !== null) {
       await supabase
         .from("activation_codes")
-        .update({ uses_remaining: activationCode.uses_remaining - 1 })
+        .update({
+          uses_remaining: activationCode.uses_remaining - 1,
+        })
         .eq("id", activationCode.id);
     }
 
-    // Calculate expiration (1 year from now for free activations)
+    // 📅 Expiração: 1 ano
     const expiresAt = new Date();
     expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-    // Create subscription record for the free activation
+    // 📦 Criar/atualizar assinatura gratuita
     const { error: subError } = await supabase
       .from("gift_page_subscriptions")
-      .upsert({
-        gift_page_id: giftPageId,
-        status: "active",
-        paid_at: new Date().toISOString(),
-        expires_at: expiresAt.toISOString(),
-      }, { onConflict: "gift_page_id" });
+      .upsert(
+        {
+          gift_page_id: giftPageId,
+          status: "active",
+          paid_at: new Date().toISOString(),
+          expires_at: expiresAt.toISOString(),
+        },
+        { onConflict: "gift_page_id" }
+      );
 
     if (subError) {
       logStep("Error creating subscription", { error: subError });
       throw subError;
     }
 
-    // Activate the gift page
+    // ✅ Ativar página
     const { error: updateError } = await supabase
       .from("gift_pages")
       .update({ is_active: true })
@@ -147,19 +175,27 @@ serve(async (req) => {
 
     logStep("Gift page activated with code", { giftPageId });
 
-    return new Response(JSON.stringify({ 
-      valid: true, 
-      message: "¡Código activado exitosamente!" 
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({
+        valid: true,
+        message: "¡Código activado exitosamente!",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      }
+    );
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage =
+      error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+
+    return new Response(
+      JSON.stringify({ error: errorMessage }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      }
+    );
   }
 });
