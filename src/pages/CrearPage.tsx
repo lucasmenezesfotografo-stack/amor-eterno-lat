@@ -220,29 +220,34 @@ const CrearPage = () => {
 
   // Save gift page to database (without activating it)
   const saveGiftPage = async (): Promise<{ id: string; slug: string } | null> => {
-    if (!formData.person1 || !formData.person2 || !formData.startDate) {
-      toast({
-        title: "Campos incompletos",
-        description: "Por favor completa los nombres y la fecha.",
-        variant: "destructive",
-      });
-      return null;
-    }
+  // 🔒 SE JÁ EXISTE, NÃO CRIA DE NOVO
+  if (savedGiftPageId && savedSlug) {
+    return { id: savedGiftPageId, slug: savedSlug };
+  }
 
-    const slug = generateSlug(formData.person1, formData.person2);
-    
-    // Get the final YouTube video ID - custom URL takes priority
-    let finalYoutubeVideoId = formData.youtubeVideoId;
-    if (formData.customYoutubeUrl && isValidYoutubeUrl(formData.customYoutubeUrl)) {
-      finalYoutubeVideoId = extractYoutubeVideoId(formData.customYoutubeUrl);
-    }
-    
-    // Find track info for name if using preset
-    const selectedTrack = formData.selectedSoundtrack 
-      ? romanticTracks.find(t => t.id === formData.selectedSoundtrack) 
-      : null;
+  if (!formData.person1 || !formData.person2 || !formData.startDate) {
+    toast({
+      title: "Campos incompletos",
+      description: "Por favor completa los nombres y la fecha.",
+      variant: "destructive",
+    });
+    return null;
+  }
 
-    const { data, error } = await supabase.from("gift_pages").insert({
+  const slug = generateSlug(formData.person1, formData.person2);
+
+  let finalYoutubeVideoId = formData.youtubeVideoId;
+  if (formData.customYoutubeUrl && isValidYoutubeUrl(formData.customYoutubeUrl)) {
+    finalYoutubeVideoId = extractYoutubeVideoId(formData.customYoutubeUrl);
+  }
+
+  const selectedTrack = formData.selectedSoundtrack
+    ? romanticTracks.find(t => t.id === formData.selectedSoundtrack)
+    : null;
+
+  const { data, error } = await supabase
+    .from("gift_pages")
+    .insert({
       slug,
       your_name: formData.person1,
       partner_name: formData.person2,
@@ -254,15 +259,22 @@ const CrearPage = () => {
       spotify_link: formData.spotifyUrl || null,
       user_id: user?.id || null,
       names_position: formData.namesPosition,
-      memories: formData.memories.length > 0 
-        ? JSON.parse(JSON.stringify(formData.memories)) 
+      memories: formData.memories.length > 0
+        ? JSON.parse(JSON.stringify(formData.memories))
         : null,
-      is_active: false, // Not active until paid
-    }).select("id, slug").single();
+      is_active: false,
+    })
+    .select("id, slug")
+    .single();
 
-    if (error) throw error;
-    return data;
-  };
+  if (error) throw error;
+
+  // 🔒 GUARDA NO ESTADO
+  setSavedGiftPageId(data.id);
+  setSavedSlug(data.slug);
+
+  return data;
+};
 
   // Handle payment with Stripe
   
