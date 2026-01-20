@@ -59,7 +59,10 @@ const CrearPage = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState<number>(() => {
+  return giftPageIdFromUrl ? 3 : 1;
+});
+
   const [formData, setFormData] = useState({
     person1: "",
     person2: "",
