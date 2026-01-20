@@ -151,7 +151,7 @@ const CrearPage = () => {
         .select("status")
         .eq("gift_page_id", giftPageIdFromUrl)
         .eq("status", "active")
-        .single();
+        .maybeSingle();
 
       if (!subscription) return;
 
