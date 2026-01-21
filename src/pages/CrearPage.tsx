@@ -51,7 +51,7 @@ const steps = [
   { id: 2, title: "Foto y Música", icon: Upload, description: "Elige una foto y una canción" },
   { id: 3, title: "Carta", icon: FileText, description: "Escribe o genera con IA" },
 ];
-
+const PAYMENT_AMOUNT = 500; // $5.00 USD fixo
 const CrearPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -98,7 +98,7 @@ const CrearPage = () => {
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [paymentAmount] = useState(500);
+ 
   const [appliedPromotion, setAppliedPromotion] = useState<{
     code: string;
     percentOff: number | null;
@@ -380,7 +380,7 @@ const CrearPage = () => {
 
       if (data.appliedPromotion) {
         setAppliedPromotion(data.appliedPromotion);
-        setPaymentAmount(data.amount);
+        
         toast({
           title: "¡Código aplicado!",
           description: `Descuento de ${data.appliedPromotion.percentOff ? `${data.appliedPromotion.percentOff}%` : `$${(data.appliedPromotion.amountOff / 100).toFixed(2)}`}`,
