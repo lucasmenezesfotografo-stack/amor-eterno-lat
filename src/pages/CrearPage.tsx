@@ -198,8 +198,8 @@ const [clientSecret, setClientSecret] = useState<string | null>(null);
         youtubeVideoId: giftPage.youtube_video_id || null,
         soundtrackAlbumCover: null,
         customYoutubeUrl: "",
-        namesPosition: giftPage.names_position || "center",
-        memories: giftPage.memories || [],
+        namesPosition: (giftPage.names_position as "top" | "center" | "bottom") || "center",
+        memories: (Array.isArray(giftPage.memories) ? giftPage.memories : []) as unknown as Memory[],
       });
 
       setSavedGiftPageId(giftPage.id);
