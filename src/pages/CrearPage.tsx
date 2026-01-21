@@ -98,7 +98,7 @@ const CrearPage = () => {
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [paymentAmount, setPaymentAmount] = useState(999);
+  const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
   const [appliedPromotion, setAppliedPromotion] = useState<{
     code: string;
     percentOff: number | null;
@@ -1033,7 +1033,7 @@ if (isCheckingAuth || isRestoring) {
                         size="lg" 
                         className="w-full mb-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold py-6 text-lg shadow-lg shadow-purple-500/25"
                         onClick={handlePayment}
-                        disabled={isSaving}
+                        disabled={isSaving || paymentAmount === null}
                       >
                         {isSaving ? (
                           <>
@@ -1043,7 +1043,9 @@ if (isCheckingAuth || isRestoring) {
                         ) : (
                           <>
                             <CreditCard className="w-5 h-5" />
-                            Pagar ${(paymentAmount / 100).toFixed(2)} USD
+                            {paymentAmount
+  ? `Pagar ${(paymentAmount / 100).toFixed(2)} USD`
+  : "Calculando precio…"}
                           </>
                         )}
                       </Button>
