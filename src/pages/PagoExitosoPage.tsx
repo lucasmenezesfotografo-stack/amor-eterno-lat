@@ -1,137 +1,95 @@
-import { useMemo, useState } from "react";
-import { loadStripe, Stripe } from "@stripe/stripe-js";
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
+import { useEffect, useState } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import { CheckCircle, Loader2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Loader2, X, AlertCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-/**
- * ⚠️ Stripe só pode ser inicializado se a key existir
- */
-const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as
-  | string
-  | undefined;
+export default function PagoExitosoPage() {
+  const [searchParams] = useSearchParams();
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [giftPageId, setGiftPageId] = useState<string | null>(null);
 
-const stripePromise: Promise<Stripe | null> | null = stripePublicKey
-  ? loadStripe(stripePublicKey)
-  : null;
+  useEffect(() => {
+    const verifyPayment = async () => {
+      const sessionId = searchParams.get("session_id");
+      
+      if (!sessionId) {
+        setIsVerifying(false);
+        return;
+      }
 
-/* ------------------------------------------------------------------ */
-/* ------------------------- CHECKOUT FORM --------------------------- */
-/* ------------------------------------------------------------------ */
+      try {
+        // Check if subscription was created
+        const { data: subscription } = await supabase
+          .from("gift_page_subscriptions")
+          .select("gift_page_id, status")
+          .eq("stripe_session_id", sessionId)
+          .maybeSingle();
 
-function CheckoutForm({
-  onClose,
-  onPaid,
-}: {
-  onClose: () => void;
-  onPaid: () => void;
-}) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
+        if (subscription && subscription.status === "active") {
+          setIsSuccess(true);
+          setGiftPageId(subscription.gift_page_id);
+        }
+      } catch (error) {
+        console.error("Error verifying payment:", error);
+      } finally {
+        setIsVerifying(false);
+      }
+    };
 
-  const handlePay = async () => {
-    if (!stripe || !elements) return;
+    verifyPayment();
+  }, [searchParams]);
 
-    setLoading(true);
-
-    const result = await stripe.confirmPayment({
-      elements,
-      redirect: "if_required",
-    });
-
-    setLoading(false);
-
-    if (result.error) {
-      alert(result.error.message);
-      return;
-    }
-
-    onPaid();
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center">
-      <div className="w-full max-w-md bg-background rounded-2xl p-5 border border-border shadow-xl">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Pagar e ativar (1 ano)</h3>
-          <button onClick={onClose}>
-            <X className="w-5 h-5" />
-          </button>
+  if (isVerifying) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto text-primary mb-4" />
+          <p className="text-muted-foreground">Verificando pago...</p>
         </div>
-
-        <PaymentElement />
-
-        <Button
-          className="w-full mt-4"
-          onClick={handlePay}
-          disabled={!stripe || loading}
-        >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            "Pagar agora"
-          )}
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* ---------------------- STRIPE MODAL ROOT -------------------------- */
-/* ------------------------------------------------------------------ */
-
-export default function StripePaymentModal({
-  open,
-  clientSecret,
-  onClose,
-  onPaid,
-}: {
-  open: boolean;
-  clientSecret: string | null;
-  onClose: () => void;
-  onPaid: () => void;
-}) {
-  /**
-   * 🚫 Se não tiver key do Stripe → NÃO renderiza nada
-   */
-  if (!stripePromise) {
-    console.error(
-      "VITE_STRIPE_PUBLISHABLE_KEY não está definida no ambiente"
+      </main>
     );
-
-    return open ? (
-      <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center">
-        <div className="bg-background p-6 rounded-xl text-center max-w-sm">
-          <AlertCircle className="w-8 h-8 text-destructive mx-auto mb-3" />
-          <p className="text-sm">
-            Pagamentos indisponíveis no momento.
-          </p>
-          <Button className="mt-4" onClick={onClose}>
-            Fechar
-          </Button>
-        </div>
-      </div>
-    ) : null;
   }
 
-  const options = useMemo(() => {
-    if (!clientSecret) return null;
-    return { clientSecret };
-  }, [clientSecret]);
-
-  if (!open || !options) return null;
-
   return (
-    <Elements stripe={stripePromise} options={options}>
-      <CheckoutForm onClose={onClose} onPaid={onPaid} />
-    </Elements>
+    <main className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
+      <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full text-center">
+        {isSuccess ? (
+          <>
+            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-8 h-8 text-green-500" />
+            </div>
+            <h1 className="text-2xl font-bold mb-2">¡Pago Exitoso!</h1>
+            <p className="text-muted-foreground mb-6">
+              Tu página de regalo está activa por 1 año. ¡Comparte el amor! 💖
+            </p>
+            {giftPageId && (
+              <Link to={`/crear?gift_page_id=${giftPageId}`}>
+                <Button className="w-full">
+                  <Heart className="w-4 h-4 mr-2" />
+                  Ver mi página
+                </Button>
+              </Link>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Heart className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold mb-2">¡Gracias!</h1>
+            <p className="text-muted-foreground mb-6">
+              Estamos procesando tu pago. Recibirás una confirmación pronto.
+            </p>
+            <Link to="/crear">
+              <Button variant="outline" className="w-full">
+                Volver a crear
+              </Button>
+            </Link>
+          </>
+        )}
+      </div>
+    </main>
   );
 }
