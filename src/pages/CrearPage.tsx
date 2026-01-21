@@ -51,7 +51,8 @@ const steps = [
   { id: 2, title: "Foto y Música", icon: Upload, description: "Elige una foto y una canción" },
   { id: 3, title: "Carta", icon: FileText, description: "Escribe o genera con IA" },
 ];
-const PAYMENT_AMOUNT = 500; // $5.00 USD fixo
+
+const [paymentAmount, setPaymentAmount] = useState<number>(500);
 const CrearPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -339,6 +340,8 @@ const CrearPage = () => {
 
       // 3. Store payment data
       setClientSecret(data.clientSecret);
+setPaymentAmount(data.amount); // 🔥 ISSO AQUI É O CORAÇÃO
+setPaymentModalOpen(true);
       if (data.appliedPromotion) {
         setAppliedPromotion(data.appliedPromotion);
       }
@@ -1223,7 +1226,7 @@ if (isCheckingAuth || isRestoring) {
               description: "Tu página está activa por 1 año 💖",
             });
           }}
-          amount={PAYMENT_AMOUNT}
+          amount={paymentAmount}
           appliedPromotion={appliedPromotion}
         />
       )}
