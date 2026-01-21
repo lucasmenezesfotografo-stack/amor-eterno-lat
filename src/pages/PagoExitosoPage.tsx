@@ -25,8 +25,15 @@ const PagoExitosoPage = () => {
         return;
       }
 
+      // 🛡️ Proteção contra refresh / dupla ativação
+      if (sessionStorage.getItem("payment_processed") === giftPageId) {
+        setLoading(false);
+        navigate(`/crear?gift_page_id=${giftPageId}`);
+        return;
+      }
+
       try {
-        // 1️⃣ Ativa a página
+        // 1️⃣ Ativa a página via Edge Function
         const { error: fnError } = await supabase.functions.invoke(
           "activate-gift-page",
           {
@@ -36,29 +43,21 @@ const PagoExitosoPage = () => {
 
         if (fnError) throw fnError;
 
-        // 2️⃣ Busca o slug da página
-        const { data: page, error: pageError } = await supabase
-          .from("gift_pages")
-          .select("slug")
-          .eq("id", giftPageId)
-          .single();
-
-        if (pageError || !page?.slug) {
-          throw new Error("No se pudo obtener la página");
-        }
+        // 2️⃣ Marca como processado (evita duplicidade)
+        sessionStorage.setItem("payment_processed", giftPageId);
 
         toast({
           title: "¡Pago exitoso!",
           description: "Tu página está activa por 1 año 💖",
         });
 
-        // 3️⃣ REDIRECIONA PARA O EDITOR CORRETO
+        // 3️⃣ Redireciona para o editor
         setTimeout(() => {
           navigate(`/crear?gift_page_id=${giftPageId}`);
         }, 800);
 
       } catch (err) {
-        console.error(err);
+        console.error("Error activando página:", err);
         setError("Error al activar la página");
       } finally {
         setLoading(false);
@@ -68,6 +67,7 @@ const PagoExitosoPage = () => {
     activateAndRedirect();
   }, [sessionId, giftPageId, navigate, toast]);
 
+  // ⏳ Loading
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
@@ -76,13 +76,14 @@ const PagoExitosoPage = () => {
     );
   }
 
+  // ❌ Erro
   if (error) {
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <div className="glass-card p-6 text-center">
+        <div className="glass-card p-6 text-center max-w-sm">
           <AlertCircle className="w-10 h-10 text-destructive mx-auto mb-4" />
-          <p>{error}</p>
-          <Button onClick={() => navigate("/crear")} className="mt-4">
+          <p className="mb-4">{error}</p>
+          <Button onClick={() => navigate("/crear")}>
             Volver
           </Button>
         </div>
@@ -90,6 +91,7 @@ const PagoExitosoPage = () => {
     );
   }
 
+  // ✅ Sucesso intermediário (quase não aparece)
   return (
     <main className="min-h-screen flex items-center justify-center">
       <motion.div
