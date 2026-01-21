@@ -95,6 +95,8 @@ const CrearPage = () => {
   
   // Payment and activation states
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [activationCode, setActivationCode] = useState("");
   const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [isRedirectingToPayment, setIsRedirectingToPayment] = useState(false);
@@ -305,51 +307,42 @@ const CrearPage = () => {
   
    const handlePayment = async () => {
   setIsSaving(true);
-  setIsRedirectingToPayment(true);
 
   try {
-    // 1. Garante que a página foi salva primeiro
+    // 1. Salva a página (igual antes)
     const giftPage = await saveGiftPage();
-    if (!giftPage) {
-      setIsSaving(false);
-      setIsRedirectingToPayment(false);
-      return;
-    }
+    if (!giftPage) return;
 
-    // 2. Chama a Edge Function correta (v2) usando o SDK
-    // O SDK injeta automaticamente a 'apikey' e o 'Authorization' header
-    const { data, error: functionError } = await supabase.functions.invoke('create-checkout-v2', {
-      body: { 
-        giftPageId: giftPage.id, 
-        slug: giftPage.slug, 
-        email: user?.email 
-      },
-    });
+    // 2. Chama NOVA Edge Function
+    const { data, error } = await supabase.functions.invoke(
+      'create-payment-intent',
+      {
+        body: {
+          giftPageId: giftPage.id,
+          email: user?.email,
+        },
+      }
+    );
 
-    if (functionError) {
-      console.error("Erro na Edge Function:", functionError);
-      throw new Error(functionError.message || "Erro ao processar pagamento");
-    }
+    if (error) throw error;
 
-    // 3. Redirecionamento para o Stripe
-    if (data?.url) {
-      window.location.href = data.url;
-    } else {
-      throw new Error("A função não retornou uma URL de checkout válida.");
-    }
+    // 3. Guarda o clientSecret
+    setClientSecret(data.clientSecret);
 
-  } catch (error: any) {
-    console.error("Erro no fluxo de pagamento:", error);
+    // 4. Abre o modal
+    setPaymentModalOpen(true);
+
+  } catch (err) {
     toast({
       title: "Error",
-      description: error.message || "No se pudo iniciar el pago. Intenta de nuevo.",
+      description: "No se pudo iniciar el pago",
       variant: "destructive",
     });
   } finally {
     setIsSaving(false);
-    setIsRedirectingToPayment(false);
   }
 };
+
 
 
   // Handle activation code validation
@@ -1159,6 +1152,20 @@ if (isCheckingAuth || isRestoring) {
           </div>
         </div>
       </section>
+      {paymentModalOpen && clientSecret && (
+  <StripePaymentModal
+    clientSecret={clientSecret}
+    onClose={() => setPaymentModalOpen(false)}
+    onSuccess={() => {
+      setPaymentModalOpen(false);
+      setQrGenerated(true);
+      toast({
+        title: "¡Pago exitoso!",
+        description: "Tu página está activa por 1 año 💖",
+      });
+    }}
+  />
+)}
     </main>
   );
 };
