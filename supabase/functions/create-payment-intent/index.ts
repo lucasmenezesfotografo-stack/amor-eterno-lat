@@ -9,19 +9,13 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: corsHeaders,
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   try {
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) {
-      throw new Error("STRIPE_SECRET_KEY not set");
-    }
+    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY not set");
 
     const { giftPageId, slug, email, promotionCode } = await req.json();
 
@@ -33,88 +27,63 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Base amount in cents (e.g., $9.99 = 999)
-    let amountInCents = 999;
+    // ✅ PREÇO BASE CORRETO → US$ 5.00
+    let amountInCents = 500;
     let appliedPromotion = null;
 
-    // Validate promotion code if provided
-    if (promotionCode && promotionCode.trim()) {
-      try {
-        const promotionCodes = await stripe.promotionCodes.list({
-          code: promotionCode.trim(),
-          active: true,
-          limit: 1,
-        });
+    if (promotionCode?.trim()) {
+      const promoList = await stripe.promotionCodes.list({
+        code: promotionCode.trim(),
+        active: true,
+        limit: 1,
+      });
 
-        if (promotionCodes.data.length > 0) {
-          const promo = promotionCodes.data[0];
-          const coupon = promo.coupon;
+      if (promoList.data.length) {
+        const coupon = promoList.data[0].coupon;
 
-          if (coupon.percent_off) {
-            amountInCents = Math.round(amountInCents * (1 - coupon.percent_off / 100));
-            appliedPromotion = {
-              code: promotionCode,
-              percentOff: coupon.percent_off,
-              amountOff: null,
-            };
-          } else if (coupon.amount_off) {
-            amountInCents = Math.max(0, amountInCents - coupon.amount_off);
-            appliedPromotion = {
-              code: promotionCode,
-              percentOff: null,
-              amountOff: coupon.amount_off,
-            };
-          }
+        if (coupon.percent_off) {
+          amountInCents = Math.round(
+            amountInCents * (1 - coupon.percent_off / 100)
+          );
+        } else if (coupon.amount_off) {
+          amountInCents = Math.max(0, amountInCents - coupon.amount_off);
         }
-      } catch (promoError) {
-        console.log("Promotion code validation failed:", promoError);
-        // Continue without discount
+
+        appliedPromotion = {
+          code: promotionCode,
+          couponId: coupon.id,
+        };
       }
     }
 
-    // Create PaymentIntent for embedded checkout
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
       currency: "usd",
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      automatic_payment_methods: { enabled: true },
       receipt_email: email ?? undefined,
       metadata: {
-        gift_page_id: giftPageId,
+        giftPageId,
         slug,
-        promotion_code: promotionCode ?? "",
+        promotionCode: promotionCode ?? "",
       },
     });
-
-    console.log(`PaymentIntent created: ${paymentIntent.id} for gift_page_id: ${giftPageId}`);
 
     return new Response(
       JSON.stringify({
         clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id,
         amount: amountInCents,
         appliedPromotion,
       }),
       {
         status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
-  } catch (error) {
-    console.error("Error creating PaymentIntent:", error);
+  } catch (err) {
+    console.error(err);
     return new Response(
-      JSON.stringify({ error: String(error) }),
-      {
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      }
+      JSON.stringify({ error: String(err) }),
+      { status: 500, headers: corsHeaders }
     );
   }
 });
