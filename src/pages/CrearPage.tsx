@@ -1155,9 +1155,10 @@ if (isCheckingAuth || isRestoring) {
       </section>
       {paymentModalOpen && clientSecret && (
   <StripePaymentModal
+    open={paymentModalOpen}
     clientSecret={clientSecret}
     onClose={() => setPaymentModalOpen(false)}
-    onSuccess={() => {
+    onPaid={() => {
       setPaymentModalOpen(false);
       setQrGenerated(true);
       toast({
@@ -1167,6 +1168,8 @@ if (isCheckingAuth || isRestoring) {
     }}
   />
 )}
+
+  
     </main>
   );
 };
