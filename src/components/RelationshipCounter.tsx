@@ -34,9 +34,9 @@ const RelationshipCounter = ({
       const years = Math.floor(days / 365.25);
 
       setTimeUnits([
-        { value: years, label: "Anos" },
+        { value: years, label: "Años" },
         { value: months % 12, label: "Meses" },
-        { value: days % 30, label: "Dias" },
+        { value: days % 30, label: "Días" },
         { value: hours % 24, label: "Horas" },
         { value: minutes % 60, label: "Min" }
       ]);
