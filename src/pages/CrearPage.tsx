@@ -2,7 +2,7 @@ import { StripePaymentModal } from "@/components/StripePaymentModal";
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard, MoveVertical, Camera, Gift, Ticket } from "lucide-react";
+import { Heart, ArrowLeft, ArrowRight, Upload, Music, FileText, QrCode, Check, Download, AlertCircle, Sparkles, Loader2, ImagePlus, X, CreditCard, MoveVertical, Camera, Gift, Ticket, Shield } from "lucide-react";
 import MemoryUploader, { Memory } from "@/components/MemoryUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,7 +97,15 @@ const CrearPage = () => {
   // Payment and activation states
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState(999);
+  const [appliedPromotion, setAppliedPromotion] = useState<{
+    code: string;
+    percentOff: number | null;
+    amountOff: number | null;
+  } | null>(null);
+  const [promotionCode, setPromotionCode] = useState("");
+  const [isApplyingPromotion, setIsApplyingPromotion] = useState(false);
   const [activationCode, setActivationCode] = useState("");
   const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [isRedirectingToPayment, setIsRedirectingToPayment] = useState(false);
@@ -306,43 +314,95 @@ const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   // Handle payment with Stripe
   
-   const handlePayment = async () => {
-  setIsSaving(true);
+  const handlePayment = async () => {
+    setIsSaving(true);
 
-  try {
-    // 1. Salva a página (igual antes)
-    const giftPage = await saveGiftPage();
-    if (!giftPage) return;
+    try {
+      // 1. Save the gift page first
+      const giftPage = await saveGiftPage();
+      if (!giftPage) return;
 
-    // 2. Chama NOVA Edge Function
-    const { data, error } = await supabase.functions.invoke(
-      'create-payment-intent',
-      {
-        body: {
-          giftPageId: giftPage.id,
-          email: user?.email,
-        },
+      // 2. Call edge function with optional promotion code
+      const { data, error } = await supabase.functions.invoke(
+        'create-payment-intent',
+        {
+          body: {
+            giftPageId: giftPage.id,
+            slug: giftPage.slug,
+            email: user?.email,
+            promotionCode: promotionCode || undefined,
+          },
+        }
+      );
+
+      if (error) throw error;
+
+      // 3. Store payment data
+      setClientSecret(data.clientSecret);
+      setPaymentAmount(data.amount);
+      if (data.appliedPromotion) {
+        setAppliedPromotion(data.appliedPromotion);
       }
-    );
 
-    if (error) throw error;
+      // 4. Open premium modal
+      setPaymentModalOpen(true);
 
-    // 3. Guarda o clientSecret
-    setClientSecret(data.clientSecret);
+    } catch (err) {
+      console.error("Payment error:", err);
+      toast({
+        title: "Error",
+        description: "No se pudo iniciar el pago. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-    // 4. Abre o modal
-    setPaymentModalOpen(true);
+  // Apply promotion code preview
+  const handleApplyPromotion = async () => {
+    if (!promotionCode.trim()) return;
+    
+    setIsApplyingPromotion(true);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        'create-payment-intent',
+        {
+          body: {
+            giftPageId: savedGiftPageId || "preview",
+            slug: savedSlug || "preview",
+            email: user?.email,
+            promotionCode: promotionCode.trim(),
+          },
+        }
+      );
 
-  } catch (err) {
-    toast({
-      title: "Error",
-      description: "No se pudo iniciar el pago",
-      variant: "destructive",
-    });
-  } finally {
-    setIsSaving(false);
-  }
-};
+      if (error) throw error;
+
+      if (data.appliedPromotion) {
+        setAppliedPromotion(data.appliedPromotion);
+        setPaymentAmount(data.amount);
+        toast({
+          title: "¡Código aplicado!",
+          description: `Descuento de ${data.appliedPromotion.percentOff ? `${data.appliedPromotion.percentOff}%` : `$${(data.appliedPromotion.amountOff / 100).toFixed(2)}`}`,
+        });
+      } else {
+        toast({
+          title: "Código inválido",
+          description: "El código de promoción no es válido.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "No se pudo validar el código.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsApplyingPromotion(false);
+    }
+  };
 
 
 
@@ -919,60 +979,105 @@ if (isCheckingAuth || isRestoring) {
                     </motion.p>
                   )}
                   
-                  {/* Payment Options Modal */}
+                  {/* Payment Options Panel */}
                   {showPaymentOptions && !qrGenerated && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-card border border-border rounded-2xl p-6 mb-6 text-left"
+                      className="bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-800 rounded-2xl p-6 mb-6 text-left shadow-2xl"
                     >
-                      <h3 className="text-lg font-semibold mb-4 text-center">Elige cómo activar tu página</h3>
+                      <div className="text-center mb-6">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-500/10 rounded-xl mb-3">
+                          <Gift className="w-6 h-6 text-purple-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white">Activa tu página de regalo</h3>
+                        <p className="text-sm text-zinc-400 mt-1">Acceso por 1 año completo</p>
+                      </div>
+
+                      {/* Promotion Code Input */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-zinc-300 mb-2">
+                          Código de descuento (opcional)
+                        </label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="PROMO2024"
+                            value={promotionCode}
+                            onChange={(e) => setPromotionCode(e.target.value.toUpperCase())}
+                            className="flex-1 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 uppercase"
+                            disabled={isApplyingPromotion}
+                          />
+                          <Button 
+                            variant="outline"
+                            onClick={handleApplyPromotion}
+                            disabled={isApplyingPromotion || !promotionCode.trim()}
+                            className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
+                          >
+                            {isApplyingPromotion ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              "Aplicar"
+                            )}
+                          </Button>
+                        </div>
+                        {appliedPromotion && (
+                          <div className="mt-2 flex items-center gap-2 text-emerald-400 text-sm">
+                            <Check className="w-4 h-4" />
+                            <span>Descuento aplicado: {appliedPromotion.percentOff ? `${appliedPromotion.percentOff}%` : `$${((appliedPromotion.amountOff || 0) / 100).toFixed(2)}`}</span>
+                          </div>
+                        )}
+                      </div>
                       
                       {/* Payment Button */}
                       <Button 
-                        variant="romantic" 
                         size="lg" 
-                        className="w-full mb-4"
+                        className="w-full mb-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold py-6 text-lg shadow-lg shadow-purple-500/25"
                         onClick={handlePayment}
-                        disabled={isSaving || isRedirectingToPayment}
+                        disabled={isSaving}
                       >
-                        {isRedirectingToPayment ? (
+                        {isSaving ? (
                           <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            Redirigiendo al pago...
+                            Preparando pago...
                           </>
                         ) : (
                           <>
                             <CreditCard className="w-5 h-5" />
-                            Pagar y Activar (1 año)
+                            Pagar ${(paymentAmount / 100).toFixed(2)} USD
                           </>
                         )}
                       </Button>
+
+                      <div className="flex items-center justify-center gap-2 text-zinc-500 text-xs mb-4">
+                        <Shield className="w-3 h-3" />
+                        <span>Pago seguro con Stripe • Apple Pay • Google Pay</span>
+                      </div>
                       
                       <div className="flex items-center gap-4 my-4">
-                        <div className="flex-1 h-px bg-border" />
-                        <span className="text-sm text-muted-foreground">o</span>
-                        <div className="flex-1 h-px bg-border" />
+                        <div className="flex-1 h-px bg-zinc-800" />
+                        <span className="text-sm text-zinc-500">o</span>
+                        <div className="flex-1 h-px bg-zinc-800" />
                       </div>
                       
                       {/* Activation Code Input */}
                       <div className="space-y-3">
-                        <label className="text-sm font-medium text-foreground flex items-center gap-2">
-                          <Ticket className="w-4 h-4" />
+                        <label className="text-sm font-medium text-zinc-300 flex items-center gap-2">
+                          <Ticket className="w-4 h-4 text-purple-400" />
                           ¿Tienes un código de activación?
                         </label>
                         <div className="flex gap-2">
                           <Input
-                            placeholder="Ingresa tu código"
+                            placeholder="Código de influencer"
                             value={activationCode}
                             onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
-                            className="flex-1 uppercase"
+                            className="flex-1 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 uppercase"
                             disabled={isValidatingCode}
                           />
                           <Button 
                             variant="outline"
                             onClick={handleActivationCode}
                             disabled={isValidatingCode || !activationCode.trim()}
+                            className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
                           >
                             {isValidatingCode ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -981,7 +1086,7 @@ if (isCheckingAuth || isRestoring) {
                             )}
                           </Button>
                         </div>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-zinc-500">
                           Los códigos de activación son para influencers y colaboradores.
                         </p>
                       </div>
@@ -989,7 +1094,7 @@ if (isCheckingAuth || isRestoring) {
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="w-full mt-4"
+                        className="w-full mt-4 text-zinc-400 hover:text-white hover:bg-zinc-800"
                         onClick={() => setShowPaymentOptions(false)}
                       >
                         Cancelar
@@ -1154,20 +1259,23 @@ if (isCheckingAuth || isRestoring) {
         </div>
       </section>
       {paymentModalOpen && clientSecret && (
-  <StripePaymentModal
-    open={paymentModalOpen}
-    clientSecret={clientSecret}
-    onClose={() => setPaymentModalOpen(false)}
-    onPaid={() => {
-      setPaymentModalOpen(false);
-      setQrGenerated(true);
-      toast({
-        title: "¡Pago exitoso!",
-        description: "Tu página está activa por 1 año 💖",
-      });
-    }}
-  />
-)}
+        <StripePaymentModal
+          open={paymentModalOpen}
+          clientSecret={clientSecret}
+          onClose={() => setPaymentModalOpen(false)}
+          onPaid={() => {
+            setPaymentModalOpen(false);
+            setQrGenerated(true);
+            setShowPaymentOptions(false);
+            toast({
+              title: "¡Pago exitoso!",
+              description: "Tu página está activa por 1 año 💖",
+            });
+          }}
+          amount={paymentAmount}
+          appliedPromotion={appliedPromotion}
+        />
+      )}
 
   
     </main>
