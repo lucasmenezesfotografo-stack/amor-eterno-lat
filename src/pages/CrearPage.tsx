@@ -358,50 +358,7 @@ const CrearPage = () => {
     }
   };
 
-  // Apply promotion code preview
-  const handleApplyPromotion = async () => {
-    if (!promotionCode.trim()) return;
-    
-    setIsApplyingPromotion(true);
-    try {
-      const { data, error } = await supabase.functions.invoke(
-        'create-payment-intent',
-        {
-          body: {
-            giftPageId: savedGiftPageId || "preview",
-            slug: savedSlug || "preview",
-            email: user?.email,
-            promotionCode: promotionCode.trim(),
-          },
-        }
-      );
-
-      if (error) throw error;
-
-      if (data.appliedPromotion) {
-        setAppliedPromotion(data.appliedPromotion);
-        
-        toast({
-          title: "¡Código aplicado!",
-          description: `Descuento de ${data.appliedPromotion.percentOff ? `${data.appliedPromotion.percentOff}%` : `$${(data.appliedPromotion.amountOff / 100).toFixed(2)}`}`,
-        });
-      } else {
-        toast({
-          title: "Código inválido",
-          description: "El código de promoción no es válido.",
-          variant: "destructive",
-        });
-      }
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "No se pudo validar el código.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsApplyingPromotion(false);
-    }
-  };
+ 
 
 
 
@@ -1006,18 +963,17 @@ if (isCheckingAuth || isRestoring) {
                             className="flex-1 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 uppercase"
                             disabled={isApplyingPromotion}
                           />
-                          <Button 
-                            variant="outline"
-                            onClick={handleApplyPromotion}
-                            disabled={isApplyingPromotion || !promotionCode.trim()}
-                            className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
-                          >
-                            {isApplyingPromotion ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              "Aplicar"
-                            )}
-                          </Button>
+                          <Button
+  variant="outline"
+  onClick={handleApplyPromotion}
+  disabled={isApplyingPromotion || !promotionCode.trim()}
+>
+  {isApplyingPromotion ? (
+    <Loader2 className="w-4 h-4 animate-spin" />
+  ) : (
+    "Aplicar"
+  )}
+</Button>
                         </div>
                         {appliedPromotion && (
                           <div className="mt-2 flex items-center gap-2 text-emerald-400 text-sm">
