@@ -59,9 +59,8 @@ const CrearPage = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   
-  const [currentStep, setCurrentStep] = useState<number>(() => {
-  return giftPageIdFromUrl ? 3 : 1;
-});
+ const [currentStep, setCurrentStep] = useState(1);
+
 
   const [formData, setFormData] = useState({
     person1: "",
@@ -89,6 +88,8 @@ const CrearPage = () => {
   const [qrGenerated, setQrGenerated] = useState(false);
   const [isGeneratingLetter, setIsGeneratingLetter] = useState(false);
   const [generatedText, setGeneratedText] = useState("");
+  const [isRestoring, setIsRestoring] = useState(!!giftPageIdFromUrl);
+
   const qrRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   
@@ -148,49 +149,40 @@ const CrearPage = () => {
 
   const restorePaidPage = async () => {
     try {
-      // 1. Verifica se a página está ativa (já paga)
-      const { data: subscription } = await supabase
-        .from("gift_page_subscriptions")
-        .select("status")
-        .eq("gift_page_id", giftPageIdFromUrl)
-        .eq("status", "active")
-        .maybeSingle();
+// 3. Reconstrói a tela COMPLETA antes de renderizar
+setFormData({
+  person1: giftPage.your_name || "",
+  person2: giftPage.partner_name || "",
+  startDate: giftPage.start_date ? new Date(giftPage.start_date) : undefined,
+  photoUrl: giftPage.cover_photo_url || "",
+  photoFile: null,
+  selectedSong: null,
+  spotifyUrl: giftPage.spotify_link || "",
+  loveLetter: giftPage.love_letter || "",
+  selectedSoundtrack: null,
+  soundtrackName: giftPage.soundtrack_name || null,
+  soundtrackArtist: null,
+  youtubeVideoId: giftPage.youtube_video_id || null,
+  soundtrackAlbumCover: null,
+  customYoutubeUrl: "",
+  namesPosition: giftPage.names_position || "center",
+  memories: giftPage.memories || [],
+});
 
-      if (!subscription) return;
+setSavedGiftPageId(giftPage.id);
+setSavedSlug(giftPage.slug);
 
-      // 2. Busca os dados da página
-      const { data: giftPage } = await supabase
-        .from("gift_pages")
-        .select("*")
-        .eq("id", giftPageIdFromUrl)
-        .single();
+// ⚠️ NÃO gera QR ainda
+setQrGenerated(false);
+setShowPaymentOptions(false);
 
-      if (!giftPage) return;
+// ⚠️ SÓ MUDA DE STEP DEPOIS DE TUDO
+setCurrentStep(3);
 
-      // 3. Reconstrói a tela
-      setFormData(prev => ({
-        ...prev,
-        person1: giftPage.your_name,
-        person2: giftPage.partner_name,
-        startDate: giftPage.start_date ? new Date(giftPage.start_date) : undefined,
-        photoUrl: giftPage.cover_photo_url || "",
-        loveLetter: giftPage.love_letter || "",
-        spotifyUrl: giftPage.spotify_link || "",
-        youtubeVideoId: giftPage.youtube_video_id || null,
-        namesPosition: giftPage.names_position || "center",
-        memories: giftPage.memories || [],
-      }));
-
-      setSavedSlug(giftPage.slug);
-      setSavedGiftPageId(giftPage.id);
-      setQrGenerated(true);
-      setShowPaymentOptions(false);
-      setCurrentStep(3);
-
-      toast({
-        title: "¡Pago exitoso!",
-        description: "Tu página está activa por 1 año 💖",
-      });
+toast({
+  title: "¡Pago exitoso!",
+  description: "Tu página está activa por 1 año 💖",
+});
 
     } catch (error) {
       console.error("Error restoring paid page", error);
@@ -561,7 +553,17 @@ const CrearPage = () => {
     );
   }
 
+  // 🔒 Bloqueia render até auth + restore terminar
+if (isCheckingAuth || isRestoring) {
+  return (
+    <main className="min-h-screen bg-background flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    </main>
+  );
+}
+
   // Show registration if not authenticated
+  
   if (!user) {
     return (
       <main className="min-h-screen bg-background">
