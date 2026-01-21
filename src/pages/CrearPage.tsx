@@ -965,14 +965,10 @@ if (isCheckingAuth || isRestoring) {
                           />
                           <Button
   variant="outline"
-  onClick={handleApplyPromotion}
-  disabled={isApplyingPromotion || !promotionCode.trim()}
+  disabled
+  className="bg-zinc-800 border-zinc-700 text-zinc-400 cursor-not-allowed"
 >
-  {isApplyingPromotion ? (
-    <Loader2 className="w-4 h-4 animate-spin" />
-  ) : (
-    "Aplicar"
-  )}
+  Se aplica al pagar
 </Button>
                         </div>
                         {appliedPromotion && (
