@@ -2,9 +2,13 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "./CheckoutForm";
 
-const stripePromise = loadStripe(
-  import.meta.env.VITE_STRIPE_PUBLIC_KEY
-);
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
+if (!stripeKey) {
+  throw new Error("VITE_STRIPE_PUBLISHABLE_KEY não definida");
+}
+
+const stripePromise = loadStripe(stripeKey);
 
 export function StripePaymentModal({
   open,
