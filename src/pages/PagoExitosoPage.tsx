@@ -1,109 +1,137 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Check, Loader2, AlertCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { Loader2, X, AlertCircle } from "lucide-react";
 
-const PagoExitosoPage = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { toast } = useToast();
+/**
+ * ⚠️ Stripe só pode ser inicializado se a key existir
+ */
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as
+  | string
+  | undefined;
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const stripePromise: Promise<Stripe | null> | null = stripePublicKey
+  ? loadStripe(stripePublicKey)
+  : null;
 
-  const sessionId = searchParams.get("session_id");
-  const giftPageId = searchParams.get("gift_page_id");
+/* ------------------------------------------------------------------ */
+/* ------------------------- CHECKOUT FORM --------------------------- */
+/* ------------------------------------------------------------------ */
 
-  useEffect(() => {
-    const activateAndRedirect = async () => {
-      if (!sessionId || !giftPageId) {
-        setError("Parámetros de pago inválidos");
-        setLoading(false);
-        return;
-      }
+function CheckoutForm({
+  onClose,
+  onPaid,
+}: {
+  onClose: () => void;
+  onPaid: () => void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
 
-      // 🛡️ Proteção contra refresh / dupla ativação
-      if (sessionStorage.getItem("payment_processed") === giftPageId) {
-        setLoading(false);
-        navigate(`/crear?gift_page_id=${giftPageId}`);
-        return;
-      }
+  const handlePay = async () => {
+    if (!stripe || !elements) return;
 
-      try {
-        // 1️⃣ Ativa a página via Edge Function
-        const { error: fnError } = await supabase.functions.invoke(
-          "activate-gift-page",
-          {
-            body: { sessionId, giftPageId },
-          }
-        );
+    setLoading(true);
 
-        if (fnError) throw fnError;
+    const result = await stripe.confirmPayment({
+      elements,
+      redirect: "if_required",
+    });
 
-        // 2️⃣ Marca como processado (evita duplicidade)
-        sessionStorage.setItem("payment_processed", giftPageId);
+    setLoading(false);
 
-        toast({
-          title: "¡Pago exitoso!",
-          description: "Tu página está activa por 1 año 💖",
-        });
+    if (result.error) {
+      alert(result.error.message);
+      return;
+    }
 
-        // 3️⃣ Redireciona para o editor
-        setTimeout(() => {
-          navigate(`/crear?gift_page_id=${giftPageId}`);
-        }, 800);
+    onPaid();
+    onClose();
+  };
 
-      } catch (err) {
-        console.error("Error activando página:", err);
-        setError("Error al activar la página");
-      } finally {
-        setLoading(false);
-      }
-    };
+  return (
+    <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center">
+      <div className="w-full max-w-md bg-background rounded-2xl p-5 border border-border shadow-xl">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">Pagar e ativar (1 ano)</h3>
+          <button onClick={onClose}>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-    activateAndRedirect();
-  }, [sessionId, giftPageId, navigate, toast]);
+        <PaymentElement />
 
-  // ⏳ Loading
-  if (loading) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
-      </main>
+        <Button
+          className="w-full mt-4"
+          onClick={handlePay}
+          disabled={!stripe || loading}
+        >
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            "Pagar agora"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* ---------------------- STRIPE MODAL ROOT -------------------------- */
+/* ------------------------------------------------------------------ */
+
+export default function StripePaymentModal({
+  open,
+  clientSecret,
+  onClose,
+  onPaid,
+}: {
+  open: boolean;
+  clientSecret: string | null;
+  onClose: () => void;
+  onPaid: () => void;
+}) {
+  /**
+   * 🚫 Se não tiver key do Stripe → NÃO renderiza nada
+   */
+  if (!stripePromise) {
+    console.error(
+      "VITE_STRIPE_PUBLISHABLE_KEY não está definida no ambiente"
     );
-  }
 
-  // ❌ Erro
-  if (error) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="glass-card p-6 text-center max-w-sm">
-          <AlertCircle className="w-10 h-10 text-destructive mx-auto mb-4" />
-          <p className="mb-4">{error}</p>
-          <Button onClick={() => navigate("/crear")}>
-            Volver
+    return open ? (
+      <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center">
+        <div className="bg-background p-6 rounded-xl text-center max-w-sm">
+          <AlertCircle className="w-8 h-8 text-destructive mx-auto mb-3" />
+          <p className="text-sm">
+            Pagamentos indisponíveis no momento.
+          </p>
+          <Button className="mt-4" onClick={onClose}>
+            Fechar
           </Button>
         </div>
-      </main>
-    );
+      </div>
+    ) : null;
   }
 
-  // ✅ Sucesso intermediário (quase não aparece)
-  return (
-    <main className="min-h-screen flex items-center justify-center">
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="glass-card p-6 text-center"
-      >
-        <Check className="w-12 h-12 text-primary mx-auto mb-4" />
-        <p>Redirigiendo a tu página…</p>
-      </motion.div>
-    </main>
-  );
-};
+  const options = useMemo(() => {
+    if (!clientSecret) return null;
+    return { clientSecret };
+  }, [clientSecret]);
 
-export default PagoExitosoPage;
+  if (!open || !options) return null;
+
+  return (
+    <Elements stripe={stripePromise} options={options}>
+      <CheckoutForm onClose={onClose} onPaid={onPaid} />
+    </Elements>
+  );
+}
