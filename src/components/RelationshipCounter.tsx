@@ -36,7 +36,7 @@ const RelationshipCounter = ({
       setTimeUnits([
         { value: years, label: "Años" },
         { value: months % 12, label: "Meses" },
-        { value: days % 30, label: "Días" },
+        { value: days % 30, label: "Dias" },
         { value: hours % 24, label: "Horas" },
         { value: minutes % 60, label: "Min" }
       ]);
