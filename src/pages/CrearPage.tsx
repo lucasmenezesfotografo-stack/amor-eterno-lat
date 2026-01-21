@@ -52,8 +52,9 @@ const steps = [
   { id: 3, title: "Carta", icon: FileText, description: "Escribe o genera con IA" },
 ];
 
-const [paymentAmount, setPaymentAmount] = useState<number>(500);
+
 const CrearPage = () => {
+  const [paymentAmount, setPaymentAmount] = useState<number>(500);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const giftPageIdFromUrl = searchParams.get("gift_page_id");
@@ -984,7 +985,7 @@ if (isCheckingAuth || isRestoring) {
                       
                       {/* Payment Button */}
                       <Button 
-  size="lg" 
+  size="lg"
   className="w-full mb-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold py-6 text-lg shadow-lg shadow-purple-500/25"
   onClick={handlePayment}
   disabled={isSaving}
@@ -997,7 +998,7 @@ if (isCheckingAuth || isRestoring) {
   ) : (
     <>
       <CreditCard className="w-5 h-5" />
-      Pagar $5.00 USD
+      Pagar ${(paymentAmount / 100).toFixed(2)} USD
     </>
   )}
 </Button>
