@@ -1,3 +1,4 @@
+import StripePaymentModal from "@/components/StripePaymentModal";
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
