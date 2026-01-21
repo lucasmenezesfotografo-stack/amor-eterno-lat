@@ -98,7 +98,7 @@ const CrearPage = () => {
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
+  const [paymentAmount] = useState(500);
   const [appliedPromotion, setAppliedPromotion] = useState<{
     code: string;
     percentOff: number | null;
@@ -339,7 +339,6 @@ const CrearPage = () => {
 
       // 3. Store payment data
       setClientSecret(data.clientSecret);
-      setPaymentAmount(data.amount);
       if (data.appliedPromotion) {
         setAppliedPromotion(data.appliedPromotion);
       }
@@ -1030,25 +1029,23 @@ if (isCheckingAuth || isRestoring) {
                       
                       {/* Payment Button */}
                       <Button 
-                        size="lg" 
-                        className="w-full mb-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold py-6 text-lg shadow-lg shadow-purple-500/25"
-                        onClick={handlePayment}
-                        disabled={isSaving || paymentAmount === null}
-                      >
-                        {isSaving ? (
-                          <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            Preparando pago...
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="w-5 h-5" />
-                            {paymentAmount
-  ? `Pagar ${(paymentAmount / 100).toFixed(2)} USD`
-  : "Calculando precio…"}
-                          </>
-                        )}
-                      </Button>
+  size="lg" 
+  className="w-full mb-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold py-6 text-lg shadow-lg shadow-purple-500/25"
+  onClick={handlePayment}
+  disabled={isSaving}
+>
+  {isSaving ? (
+    <>
+      <Loader2 className="w-5 h-5 animate-spin" />
+      Preparando pago...
+    </>
+  ) : (
+    <>
+      <CreditCard className="w-5 h-5" />
+      Pagar $5.00 USD
+    </>
+  )}
+</Button>
 
                       <div className="flex items-center justify-center gap-2 text-zinc-500 text-xs mb-4">
                         <Shield className="w-3 h-3" />
@@ -1274,7 +1271,7 @@ if (isCheckingAuth || isRestoring) {
               description: "Tu página está activa por 1 año 💖",
             });
           }}
-          amount={paymentAmount}
+          amount={PAYMENT_AMOUNT}
           appliedPromotion={appliedPromotion}
         />
       )}
