@@ -101,13 +101,7 @@ const CrearPage = () => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
  
-  const [appliedPromotion, setAppliedPromotion] = useState<{
-    code: string;
-    percentOff: number | null;
-    amountOff: number | null;
-  } | null>(null);
-  const [promotionCode, setPromotionCode] = useState("");
-  const [isApplyingPromotion, setIsApplyingPromotion] = useState(false);
+  
   const [activationCode, setActivationCode] = useState("");
   const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [isRedirectingToPayment, setIsRedirectingToPayment] = useState(false);
@@ -332,7 +326,6 @@ const CrearPage = () => {
             giftPageId: giftPage.id,
             slug: giftPage.slug,
             email: user?.email,
-            promotionCode: promotionCode || undefined,
           },
         }
       );
@@ -343,9 +336,7 @@ const CrearPage = () => {
       setClientSecret(data.clientSecret);
 setPaymentAmount(data.amount); // 🔥 ISSO AQUI É O CORAÇÃO
 setPaymentModalOpen(true);
-      if (data.appliedPromotion) {
-        setAppliedPromotion(data.appliedPromotion);
-      }
+      
 
       // 4. Open premium modal
       setPaymentModalOpen(true);
@@ -954,34 +945,7 @@ if (isCheckingAuth || isRestoring) {
                         <p className="text-sm text-zinc-400 mt-1">Acceso por 1 año completo</p>
                       </div>
 
-                      {/* Promotion Code Input */}
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-zinc-300 mb-2">
-                          Código de descuento (opcional)
-                        </label>
-                        <div className="flex gap-2">
-                          <Input
-                            placeholder="PROMO2024"
-                            value={promotionCode}
-                            onChange={(e) => setPromotionCode(e.target.value.toUpperCase())}
-                            className="flex-1 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 uppercase"
-                            disabled={isApplyingPromotion}
-                          />
-                          <Button
-  variant="outline"
-  disabled
-  className="bg-zinc-800 border-zinc-700 text-zinc-400 cursor-not-allowed"
->
-  Se aplica al pagar
-</Button>
-                        </div>
-                        {appliedPromotion && (
-                          <div className="mt-2 flex items-center gap-2 text-emerald-400 text-sm">
-                            <Check className="w-4 h-4" />
-                            <span>Descuento aplicado: {appliedPromotion.percentOff ? `${appliedPromotion.percentOff}%` : `$${((appliedPromotion.amountOff || 0) / 100).toFixed(2)}`}</span>
-                          </div>
-                        )}
-                      </div>
+                      
                       
                       {/* Payment Button */}
                       <Button 
@@ -1228,7 +1192,6 @@ if (isCheckingAuth || isRestoring) {
             });
           }}
           amount={paymentAmount}
-          appliedPromotion={appliedPromotion}
         />
       )}
 
