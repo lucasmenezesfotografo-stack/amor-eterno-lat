@@ -144,53 +144,83 @@ const CrearPage = () => {
     }
   }, [searchParams, toast]);
 
-  useEffect(() => {
-  if (!giftPageIdFromUrl) return;
+ useEffect(() => {
+  if (!giftPageIdFromUrl) {
+    setIsRestoring(false);
+    return;
+  }
 
   const restorePaidPage = async () => {
     try {
-// 3. Reconstrói a tela COMPLETA antes de renderizar
-setFormData({
-  person1: giftPage.your_name || "",
-  person2: giftPage.partner_name || "",
-  startDate: giftPage.start_date ? new Date(giftPage.start_date) : undefined,
-  photoUrl: giftPage.cover_photo_url || "",
-  photoFile: null,
-  selectedSong: null,
-  spotifyUrl: giftPage.spotify_link || "",
-  loveLetter: giftPage.love_letter || "",
-  selectedSoundtrack: null,
-  soundtrackName: giftPage.soundtrack_name || null,
-  soundtrackArtist: null,
-  youtubeVideoId: giftPage.youtube_video_id || null,
-  soundtrackAlbumCover: null,
-  customYoutubeUrl: "",
-  namesPosition: giftPage.names_position || "center",
-  memories: giftPage.memories || [],
-});
+      // 1️⃣ verifica se a página está ativa
+      const { data: subscription } = await supabase
+        .from("gift_page_subscriptions")
+        .select("status")
+        .eq("gift_page_id", giftPageIdFromUrl)
+        .eq("status", "active")
+        .maybeSingle();
 
-setSavedGiftPageId(giftPage.id);
-setSavedSlug(giftPage.slug);
+      if (!subscription) {
+        setIsRestoring(false);
+        return;
+      }
 
-// ⚠️ NÃO gera QR ainda
-setQrGenerated(false);
-setShowPaymentOptions(false);
+      // 2️⃣ busca a gift page REAL
+      const { data: giftPage, error } = await supabase
+        .from("gift_pages")
+        .select("*")
+        .eq("id", giftPageIdFromUrl)
+        .single();
 
-// ⚠️ SÓ MUDA DE STEP DEPOIS DE TUDO
-setCurrentStep(3);
+      if (error || !giftPage) {
+        setIsRestoring(false);
+        return;
+      }
 
-toast({
-  title: "¡Pago exitoso!",
-  description: "Tu página está activa por 1 año 💖",
-});
+      // 3️⃣ restaura estado completo
+      setFormData({
+        person1: giftPage.your_name || "",
+        person2: giftPage.partner_name || "",
+        startDate: giftPage.start_date
+          ? new Date(giftPage.start_date)
+          : undefined,
+        photoUrl: giftPage.cover_photo_url || "",
+        photoFile: null,
+        selectedSong: null,
+        spotifyUrl: giftPage.spotify_link || "",
+        loveLetter: giftPage.love_letter || "",
+        selectedSoundtrack: null,
+        soundtrackName: giftPage.soundtrack_name || null,
+        soundtrackArtist: null,
+        youtubeVideoId: giftPage.youtube_video_id || null,
+        soundtrackAlbumCover: null,
+        customYoutubeUrl: "",
+        namesPosition: giftPage.names_position || "center",
+        memories: giftPage.memories || [],
+      });
 
-    } catch (error) {
-      console.error("Error restoring paid page", error);
+      setSavedGiftPageId(giftPage.id);
+      setSavedSlug(giftPage.slug);
+      setQrGenerated(true);
+      setShowPaymentOptions(false);
+      setCurrentStep(3);
+
+      toast({
+        title: "¡Pago exitoso!",
+        description: "Tu página está activa por 1 año 💖",
+      });
+
+    } catch (err) {
+      console.error("Error restoring paid page:", err);
+    } finally {
+      // 🔴 ESSA LINHA É O QUE ESTAVA FALTANDO
+      setIsRestoring(false);
     }
   };
 
   restorePaidPage();
 }, [giftPageIdFromUrl]);
+
 
 
   const spotifyValidation = useMemo(() => validateSpotifyUrl(formData.spotifyUrl), [formData.spotifyUrl]);
