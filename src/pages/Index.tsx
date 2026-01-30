@@ -691,7 +691,7 @@ const Index = () => {
                   </span>
                   <span className="text-muted-foreground text-lg">/año</span>
                 </div>
-                <p className="text-muted-foreground mt-2">Solo $0.42 por mes</p>
+                <p className="text-muted-foreground mt-2">Solo $0.25 por mes</p>
               </div>
 
               {/* Benefits */}
