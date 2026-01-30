@@ -820,7 +820,7 @@ const Index = () => {
         <Link to="/crear" className="block">
           <Button variant="default" size="lg" className="w-full">
             <Gift className="w-5 h-5 mr-2" />
-            Crear mi página - $5/año
+            Crear mi página - $3/año
           </Button>
         </Link>
       </div>
