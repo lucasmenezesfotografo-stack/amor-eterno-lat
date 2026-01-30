@@ -54,7 +54,7 @@ const steps = [
 
 
 const CrearPage = () => {
-  const [paymentAmount, setPaymentAmount] = useState<number>(500);
+  const [paymentAmount, setPaymentAmount] = useState<number>(300);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const giftPageIdFromUrl = searchParams.get("gift_page_id");
