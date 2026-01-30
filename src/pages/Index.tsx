@@ -149,7 +149,7 @@ const Index = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-primary fill-primary" />
-                  <span>Solo $3/año</span>
+                  <span>Solo $3/para siempre</span>
                 </div>
               </div>
             </motion.div>
@@ -689,9 +689,9 @@ const Index = () => {
                   <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
                     $3
                   </span>
-                  <span className="text-muted-foreground text-lg">/año</span>
+                  <span className="text-muted-foreground text-lg">/para siempre</span>
                 </div>
-                <p className="text-muted-foreground mt-2">Solo $0.25 por mes</p>
+                <p className="text-muted-foreground mt-2">Sin suscripción. Sin pagos recurrentes.</p>
               </div>
 
               {/* Benefits */}
@@ -820,7 +820,7 @@ const Index = () => {
         <Link to="/crear" className="block">
           <Button variant="default" size="lg" className="w-full">
             <Gift className="w-5 h-5 mr-2" />
-            Crear mi página - $3/año
+            Crear mi página - $3 — para siempre
           </Button>
         </Link>
       </div>
