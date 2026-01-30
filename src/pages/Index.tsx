@@ -149,7 +149,7 @@ const Index = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-primary fill-primary" />
-                  <span>Solo $5/año</span>
+                  <span>Solo $3/año</span>
                 </div>
               </div>
             </motion.div>
@@ -687,7 +687,7 @@ const Index = () => {
               <div className="text-center mb-8 pt-4">
                 <div className="inline-flex items-baseline gap-1">
                   <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
-                    $5
+                    $3
                   </span>
                   <span className="text-muted-foreground text-lg">/año</span>
                 </div>
