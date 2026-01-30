@@ -214,7 +214,7 @@ const CrearPage = () => {
 
       toast({
         title: "¡Pago exitoso!",
-        description: "Tu página está activa por 1 año 💖",
+        description: "Tu página está activa 💖",
       });
 
     } catch (err) {
@@ -942,7 +942,7 @@ if (isCheckingAuth || isRestoring) {
                           <Gift className="w-6 h-6 text-purple-400" />
                         </div>
                         <h3 className="text-xl font-bold text-white">Activa tu página de regalo</h3>
-                        <p className="text-sm text-zinc-400 mt-1">Acceso por 1 año completo</p>
+                        <p className="text-sm text-zinc-400 mt-1">Acceso completo</p>
                       </div>
 
                       
