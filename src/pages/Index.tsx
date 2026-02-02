@@ -3,14 +3,49 @@ import { Link } from "react-router-dom";
 import { 
   Sparkles, Clock, Music, FileText, QrCode, Check, ArrowRight, Play, 
   Calendar, MessageSquareHeart, Heart, Shield, Lock, Star, Users,
-  Gift, Share2, Smartphone, Image, ChevronDown, Mail, Instagram
+  Gift, Share2, Smartphone, Image, ChevronDown, Mail, CreditCard,
+  ScanLine, Download
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import memoryLinkLogo from "@/assets/memory-link-logo.png";
 import demoCoupleImage from "@/assets/demo-couple.jpg";
+import { useLanguage, LanguageProvider } from "@/hooks/use-language";
 
-const Index = () => {
+// Language Toggle Component
+const LanguageToggle = () => {
+  const { language, setLanguage } = useLanguage();
+  
+  return (
+    <div className="flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-1 py-0.5 border border-border/50">
+      <button
+        onClick={() => setLanguage('es')}
+        className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
+          language === 'es' 
+            ? 'bg-primary text-primary-foreground' 
+            : 'text-muted-foreground hover:text-foreground'
+        }`}
+      >
+        ES
+      </button>
+      <button
+        onClick={() => setLanguage('en')}
+        className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
+          language === 'en' 
+            ? 'bg-primary text-primary-foreground' 
+            : 'text-muted-foreground hover:text-foreground'
+        }`}
+      >
+        EN
+      </button>
+    </div>
+  );
+};
+
+// Main Index Content with translations
+const IndexContent = () => {
+  const { t, language } = useLanguage();
+  
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
@@ -38,14 +73,15 @@ const Index = () => {
             <span className="text-lg font-semibold tracking-tight">Memory Link</span>
           </Link>
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             <Link to="/demo">
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-                Ver ejemplo
+                {t('nav.example')}
               </Button>
             </Link>
             <Link to="/crear">
               <Button variant="default" size="sm">
-                Crear mi página
+                {t('nav.create')}
               </Button>
             </Link>
           </div>
@@ -88,11 +124,13 @@ const Index = () => {
         </div>
 
         <div className="relative z-10 container mx-auto">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Text Content */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="text-center lg:text-left"
             >
               {/* Trust Badge */}
               <motion.div
@@ -102,55 +140,160 @@ const Index = () => {
                 className="inline-flex items-center gap-2 bg-card/60 backdrop-blur-xl border border-border/50 rounded-full px-4 py-2 mb-8"
               >
                 <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm text-muted-foreground">Miles de historias creadas 💕</span>
+                <span className="text-sm text-muted-foreground">{t('hero.badge')}</span>
               </motion.div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-[1.1]">
-                Crea una página única{" "}
-                <span className="relative">
-                  <span className="bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
-                    para la persona que amas
-                  </span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight leading-[1.1]">
+                <span className="bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
+                  {t('hero.headline')}
                 </span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                Fotos, música, contador de amor y una carta que queda para siempre.
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+                {t('hero.subheadline')}
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-8">
                 <Link to="/crear">
                   <Button variant="default" size="xl" className="group min-w-[220px] h-14 text-base">
                     <Gift className="w-5 h-5 mr-2" />
-                    Crear mi página
+                    {t('hero.cta.primary')}
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
                 <Link to="/demo">
                   <Button variant="outline" size="xl" className="min-w-[180px] h-14 text-base">
                     <Play className="w-5 h-5 mr-2" />
-                    Ver ejemplo
+                    {t('hero.cta.secondary')}
                   </Button>
                 </Link>
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-primary" />
-                  <span>Pago seguro</span>
+                  <span>{t('hero.trust.secure')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-primary" />
-                  <span>Listo en 5 minutos</span>
+                  <span>{t('hero.trust.time')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-primary fill-primary" />
-                  <span>Solo $3/para siempre</span>
+                  <span>{t('hero.trust.price')}</span>
                 </div>
+              </div>
+            </motion.div>
+
+            {/* Right: Hero Mockup - Card + Phone + QR */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative flex justify-center"
+            >
+              {/* Card Mockup with QR */}
+              <div className="relative">
+                {/* Physical Card */}
+                <motion.div
+                  className="relative z-20 w-[280px] sm:w-[320px]"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                >
+                  <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl p-6 border border-border/50 shadow-2xl shadow-primary/10">
+                    {/* Card Header */}
+                    <div className="text-center mb-4">
+                      <div className="flex justify-center mb-3">
+                        <Heart className="w-8 h-8 text-primary fill-primary" />
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground">Sofía & Miguel</h3>
+                      <p className="text-xs text-muted-foreground">Nuestra historia de amor</p>
+                    </div>
+                    
+                    {/* QR Code Preview */}
+                    <div className="bg-white rounded-xl p-3 mb-4 mx-auto w-fit">
+                      <div className="w-24 h-24 grid grid-cols-5 gap-0.5">
+                        {[...Array(25)].map((_, i) => (
+                          <div
+                            key={i}
+                            className={`aspect-square rounded-sm ${
+                              Math.random() > 0.5 ? 'bg-foreground' : 'bg-transparent'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Card Footer */}
+                    <p className="text-center text-xs text-muted-foreground">
+                      {language === 'es' ? 'Escanea para descubrir' : 'Scan to discover'}
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Phone Mockup */}
+                <motion.div
+                  className="absolute -right-16 sm:-right-24 top-12 z-30"
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ duration: 3.5, repeat: Infinity, delay: 0.5 }}
+                >
+                  <div className="w-[140px] sm:w-[160px]">
+                    <div className="bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-[1.5rem] p-1 shadow-xl">
+                      <div className="bg-gradient-to-b from-background to-card rounded-[1.3rem] overflow-hidden aspect-[9/18]">
+                        <div className="relative h-full">
+                          <img src={demoCoupleImage} alt="Couple" className="w-full h-full object-cover opacity-50" />
+                          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background/90" />
+                          <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
+                            <Heart className="w-6 h-6 text-primary fill-primary mb-2" />
+                            <p className="text-[10px] font-semibold text-center">Sofía & Miguel</p>
+                            <div className="flex gap-1 mt-2">
+                              <div className="bg-card/80 rounded px-1.5 py-0.5 text-center">
+                                <p className="text-[8px] font-bold text-primary">3</p>
+                                <p className="text-[6px] text-muted-foreground">años</p>
+                              </div>
+                              <div className="bg-card/80 rounded px-1.5 py-0.5 text-center">
+                                <p className="text-[8px] font-bold text-primary">6</p>
+                                <p className="text-[6px] text-muted-foreground">meses</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Scanning Line Animation */}
+                <motion.div
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: [0, 1, 0], scale: [0.8, 1.2, 0.8] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <div className="w-32 h-32 rounded-full border-2 border-primary/30 flex items-center justify-center">
+                    <ScanLine className="w-8 h-8 text-primary/50" />
+                  </div>
+                </motion.div>
+
+                {/* Floating Badge */}
+                <motion.div
+                  className="absolute -left-8 bottom-4 z-40"
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity }}
+                >
+                  <div className="bg-emerald-500/20 backdrop-blur-sm rounded-xl px-3 py-2 border border-emerald-500/30">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-emerald-500" />
+                      <span className="text-xs font-medium text-emerald-400">
+                        {language === 'es' ? '¡Página activa!' : 'Page active!'}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
@@ -168,10 +311,98 @@ const Index = () => {
             transition={{ duration: 1.5, repeat: Infinity }}
             className="flex flex-col items-center gap-2 cursor-pointer"
           >
-            <span className="text-xs text-muted-foreground">Descubre más</span>
+            <span className="text-xs text-muted-foreground">{t('scroll.discover')}</span>
             <ChevronDown className="w-5 h-5 text-muted-foreground" />
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* ========== VISUAL EXPLANATION SECTION ========== */}
+      <section className="py-20 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
+        
+        <div className="container mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+            {/* Step 1: Hand with Card */}
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+            >
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <Gift className="w-12 h-12 text-primary" />
+              </div>
+              <p className="text-lg font-semibold">{t('visual.step1')}</p>
+            </motion.div>
+
+            {/* Arrow */}
+            <motion.div 
+              className="hidden md:block"
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <ArrowRight className="w-8 h-8 text-muted-foreground" />
+            </motion.div>
+
+            {/* Step 2: QR Scan */}
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <QrCode className="w-12 h-12 text-primary" />
+              </div>
+              <p className="text-lg font-semibold">{t('visual.step2')}</p>
+            </motion.div>
+
+            {/* Arrow */}
+            <motion.div 
+              className="hidden md:block"
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <ArrowRight className="w-8 h-8 text-muted-foreground" />
+            </motion.div>
+
+            {/* Step 3: Discover */}
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <Heart className="w-12 h-12 text-primary fill-primary" />
+              </div>
+              <p className="text-lg font-semibold">{t('visual.step3')}</p>
+            </motion.div>
+          </div>
+
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
+          >
+            <Link to="/crear">
+              <Button variant="default" size="lg">
+                <Gift className="w-5 h-5 mr-2" />
+                {t('hero.cta.primary')}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
       </section>
 
       {/* ========== HOW IT WORKS ========== */}
@@ -181,35 +412,35 @@ const Index = () => {
         <div className="container mx-auto relative z-10">
           <motion.div {...fadeInUp} className="text-center mb-16">
             <span className="inline-block text-primary text-sm font-semibold tracking-wider uppercase mb-4">
-              Así de fácil
+              {t('how.badge')}
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Crea tu regalo en 3 pasos
+              {t('how.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Sin complicaciones. Tu página lista en minutos.
+              {t('how.subtitle')}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 max-w-5xl mx-auto">
             {[
               {
-                icon: Calendar,
+                icon: Smartphone,
                 step: "01",
-                title: "Elige nombres y fecha",
-                description: "Ingresa sus nombres y la fecha especial que quieres celebrar."
+                title: t('how.step1.title'),
+                description: t('how.step1.desc')
               },
               {
-                icon: Image,
+                icon: QrCode,
                 step: "02",
-                title: "Sube fotos y música",
-                description: "Agrega sus fotos favoritas y elige la música perfecta."
+                title: t('how.step2.title'),
+                description: t('how.step2.desc')
               },
               {
-                icon: Share2,
+                icon: Gift,
                 step: "03",
-                title: "Comparte el regalo",
-                description: "Recibe un link único o QR para sorprender a tu amor."
+                title: t('how.step3.title'),
+                description: t('how.step3.desc')
               }
             ].map((item, index) => (
               <motion.div
@@ -239,247 +470,37 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== PHONE PREVIEW SECTION ========== */}
-      <section className="py-24 px-4 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-rose-500/10 rounded-full blur-[120px]" />
-        </div>
-        
-        <div className="container mx-auto relative z-10">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <span className="inline-block text-primary text-sm font-semibold tracking-wider uppercase mb-4">
-              Vista previa
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Mira cómo quedará
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Una página elegante y moderna para celebrar tu amor
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="flex justify-center"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            {/* Premium Phone Mockup */}
-            <div className="relative">
-              <div className="relative w-[280px] sm:w-[320px] md:w-[360px]">
-                <div className="relative bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-[3rem] p-2 shadow-2xl shadow-black/50">
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-20" />
-                  
-                  <div className="relative bg-gradient-to-b from-background to-card rounded-[2.5rem] overflow-hidden aspect-[9/19]">
-                    <div className="absolute inset-0">
-                      <img src={demoCoupleImage} alt="Couple" className="w-full h-full object-cover opacity-40" />
-                      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
-                    </div>
-                    
-                    <div className="relative z-10 h-full flex flex-col p-5 pt-12">
-                      <motion.div
-                        className="flex justify-center mb-4"
-                        animate={{ scale: [1, 1.15, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        <div className="w-14 h-14 rounded-full bg-primary/20 backdrop-blur-xl flex items-center justify-center">
-                          <Heart className="w-7 h-7 text-primary fill-primary" />
-                        </div>
-                      </motion.div>
-                      
-                      <div className="text-center mb-4">
-                        <h3 className="text-xl sm:text-2xl font-bold text-foreground">
-                          Sofía <span className="text-primary">&</span> Miguel
-                        </h3>
-                        <div className="flex items-center justify-center gap-1.5 mt-2 text-xs text-muted-foreground">
-                          <Calendar className="w-3 h-3" />
-                          <span>Juntos desde 15 de junio, 2021</span>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-3 gap-2 mb-4">
-                        {[
-                          { value: "3", label: "Años" },
-                          { value: "6", label: "Meses" },
-                          { value: "24", label: "Días" }
-                        ].map((item) => (
-                          <div
-                            key={item.label}
-                            className="bg-card/80 backdrop-blur-sm rounded-xl p-2 text-center border border-border/50"
-                          >
-                            <p className="text-lg sm:text-xl font-bold text-primary">{item.value}</p>
-                            <p className="text-[10px] text-muted-foreground">{item.label}</p>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="relative rounded-xl overflow-hidden mb-4 flex-shrink-0">
-                        <img src={demoCoupleImage} alt="Couple photo" className="w-full h-28 object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                        <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
-                          <MessageSquareHeart className="w-3 h-3 text-primary" />
-                          <span className="text-[10px] text-foreground/80">Carta de amor incluida</span>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-auto bg-card/90 backdrop-blur-xl rounded-xl p-3 flex items-center gap-3 border border-border/50">
-                        <div className="relative">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
-                            <Music className="w-5 h-5 text-white" />
-                          </div>
-                          <motion.div
-                            className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full"
-                            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
-                            transition={{ duration: 1, repeat: Infinity }}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-foreground truncate">Romantic Piano</p>
-                          <p className="text-[10px] text-muted-foreground truncate">♪ Reproduciendo</p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {[0, 0.1, 0.2].map((delay, i) => (
-                            <motion.div
-                              key={i}
-                              className="w-0.5 h-3 bg-primary rounded-full"
-                              animate={{ height: ["30%", "100%", "50%"] }}
-                              transition={{ duration: 0.5, repeat: Infinity, delay }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="absolute inset-x-4 -bottom-20 h-20 bg-gradient-to-b from-primary/10 to-transparent blur-2xl rounded-full" />
-              </div>
-              
-              {/* Floating cards */}
-              <motion.div
-                className="absolute -left-20 top-20 hidden lg:block"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <QrCode className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">QR Code</p>
-                      <p className="text-xs text-muted-foreground">Listo para compartir</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-              
-              <motion.div
-                className="absolute -right-20 bottom-32 hidden lg:block"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity }}
-              >
-                <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                      <Check className="w-5 h-5 text-emerald-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">100% Personalizable</p>
-                      <p className="text-xs text-muted-foreground">Foto, música y más</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            className="text-center mt-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <Link to="/demo">
-              <Button variant="outline" size="lg" className="gap-2">
-                <Play className="w-4 h-4" />
-                Ver demo interactiva
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ========== BENEFITS SECTION ========== */}
+      {/* ========== FEATURES SECTION ========== */}
       <section className="py-24 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
         
         <div className="container mx-auto relative z-10">
           <motion.div {...fadeInUp} className="text-center mb-16">
             <span className="inline-block text-primary text-sm font-semibold tracking-wider uppercase mb-4">
-              Características
+              {t('features.badge')}
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Todo lo que incluye tu página
+              {t('features.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Herramientas premium para crear el regalo digital perfecto
+              {t('features.subtitle')}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {[
-              {
-                icon: Clock,
-                title: "Contador en tiempo real",
-                description: "Años, meses, días, horas y minutos contando cada segundo juntos."
-              },
-              {
-                icon: FileText,
-                title: "Carta personalizada",
-                description: "Escribe palabras únicas que quedarán para siempre."
-              },
-              {
-                icon: Music,
-                title: "Música integrada",
-                description: "Agrega la canción que define su historia de amor."
-              },
-              {
-                icon: Smartphone,
-                title: "Diseño único y elegante",
-                description: "Página moderna optimizada para cualquier dispositivo."
-              },
-              {
-                icon: Lock,
-                title: "Página privada",
-                description: "Solo las personas con el link pueden verla."
-              },
-              {
-                icon: Share2,
-                title: "Compartible por link",
-                description: "Envía el link por WhatsApp, email o cualquier medio."
-              },
-              {
-                icon: QrCode,
-                title: "QR Code exclusivo",
-                description: "Código QR para imprimir o compartir físicamente."
-              },
-              {
-                icon: Gift,
-                title: "Regalo digital inmediato",
-                description: "Tu página lista en minutos para sorprender hoy."
-              },
-              {
-                icon: Sparkles,
-                title: "Actualizaciones incluidas",
-                description: "Mejoras constantes sin costo adicional."
-              }
+              { icon: QrCode, titleKey: 'features.qr.title', descKey: 'features.qr.desc' },
+              { icon: Download, titleKey: 'features.card.title', descKey: 'features.card.desc' },
+              { icon: Image, titleKey: 'features.photos.title', descKey: 'features.photos.desc' },
+              { icon: Music, titleKey: 'features.music.title', descKey: 'features.music.desc' },
+              { icon: FileText, titleKey: 'features.letter.title', descKey: 'features.letter.desc' },
+              { icon: Clock, titleKey: 'features.counter.title', descKey: 'features.counter.desc' },
+              { icon: Lock, titleKey: 'features.private.title', descKey: 'features.private.desc' },
+              { icon: Share2, titleKey: 'features.share.title', descKey: 'features.share.desc' },
+              { icon: Sparkles, titleKey: 'features.instant.title', descKey: 'features.instant.desc' },
             ].map((feature, index) => (
               <motion.div
-                key={feature.title}
+                key={feature.titleKey}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -489,8 +510,8 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <feature.icon className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm">{feature.description}</p>
+                  <h3 className="text-lg font-semibold mb-2">{t(feature.titleKey)}</h3>
+                  <p className="text-muted-foreground text-sm">{t(feature.descKey)}</p>
                 </Card>
               </motion.div>
             ))}
@@ -515,19 +536,14 @@ const Index = () => {
             <Heart className="w-12 h-12 text-primary fill-primary mx-auto mb-8 animate-heartbeat" />
             
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
-              Imagina enviarle un link...{" "}
               <span className="bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
-                y que al abrirlo vea toda su historia contigo.
+                {t('emotional.text')}
               </span>
             </h2>
             
-            <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-              Las fotos que atesoran, la música que los define, y un contador que marca cada segundo de su amor.
-            </p>
-            
             <Link to="/crear">
               <Button variant="default" size="xl" className="group">
-                Crear esta experiencia
+                {t('emotional.cta')}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -542,34 +558,34 @@ const Index = () => {
         <div className="container mx-auto relative z-10">
           <motion.div {...fadeInUp} className="text-center mb-16">
             <span className="inline-block text-primary text-sm font-semibold tracking-wider uppercase mb-4">
-              Historias reales
+              {t('social.badge')}
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Parejas enamorándose cada día
+              {t('social.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Miles de personas ya crearon su página de amor
+              {t('social.subtitle')}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
             {[
               {
-                name: "María & Carlos",
-                location: "México",
-                text: "Mi novio lloró cuando abrió el link. El mejor regalo que le he dado en 5 años juntos.",
+                text: t('social.testimonial1.text'),
+                name: t('social.testimonial1.name'),
+                location: t('social.testimonial1.location'),
                 rating: 5
               },
               {
-                name: "Valentina & Andrés",
-                location: "Colombia",
-                text: "Lo usamos para nuestro aniversario. La música, las fotos, el contador... ¡todo perfecto!",
+                text: t('social.testimonial2.text'),
+                name: t('social.testimonial2.name'),
+                location: t('social.testimonial2.location'),
                 rating: 5
               },
               {
-                name: "Lucía & Diego",
-                location: "Argentina",
-                text: "Súper fácil de crear y quedó hermoso. Mi esposo lo abre todos los días. 100% recomendado.",
+                text: t('social.testimonial3.text'),
+                name: t('social.testimonial3.name'),
+                location: t('social.testimonial3.location'),
                 rating: 5
               }
             ].map((testimonial, index) => (
@@ -605,26 +621,6 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
-
-          {/* Trust Stats */}
-          <motion.div
-            className="flex flex-wrap justify-center gap-8 md:gap-16"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            {[
-              { value: "5,000+", label: "Páginas creadas" },
-              { value: "4.9/5", label: "Calificación promedio" },
-              { value: "15+", label: "Países" }
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-primary">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
@@ -638,10 +634,10 @@ const Index = () => {
             viewport={{ once: true }}
           >
             {[
-              { icon: Shield, label: "Pago seguro" },
-              { icon: Lock, label: "SSL encriptado" },
-              { icon: Users, label: "Privacidad garantizada" },
-              { icon: Mail, label: "Sin spam" }
+              { icon: Shield, label: t('trust.payment') },
+              { icon: Lock, label: t('trust.ssl') },
+              { icon: Users, label: t('trust.privacy') },
+              { icon: Mail, label: t('trust.nospam') }
             ].map((item) => (
               <div key={item.label} className="flex items-center gap-2 text-muted-foreground">
                 <item.icon className="w-4 h-4" />
@@ -652,81 +648,105 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ========== PRICING SECTION ========== */}
+      {/* ========== PRICING / GIFT SUMMARY SECTION ========== */}
       <section className="py-24 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
         
-        <div className="container mx-auto max-w-lg relative z-10">
+        <div className="container mx-auto max-w-4xl relative z-10">
           <motion.div {...fadeInUp} className="text-center mb-12">
-            <span className="inline-block text-primary text-sm font-semibold tracking-wider uppercase mb-4">
-              Precio único
+            <span className="inline-block bg-primary/20 text-primary text-sm font-semibold tracking-wider px-4 py-2 rounded-full mb-4">
+              {t('pricing.badge')}
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Un regalo que dura todo el año
+              {t('pricing.title')}:
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Menos de lo que cuesta un café al mes
-            </p>
+            <div className="inline-flex items-baseline gap-2">
+              <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
+                {t('pricing.price')}
+              </span>
+              <span className="text-xl text-muted-foreground">— {t('pricing.forever')}</span>
+            </div>
+            <p className="text-muted-foreground mt-2">{t('pricing.micro')}</p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card className="relative p-8 md:p-10 bg-card border-2 border-primary/30 shadow-[0_8px_40px_hsl(var(--primary)/0.15)]">
-              {/* Popular Badge */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="bg-primary text-primary-foreground text-xs font-semibold px-4 py-1.5 rounded-full">
-                  Más popular
-                </span>
-              </div>
-              
-              {/* Price */}
-              <div className="text-center mb-8 pt-4">
-                <div className="inline-flex items-baseline gap-1">
-                  <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
-                    $3
-                  </span>
-                  <span className="text-muted-foreground text-lg">/para siempre</span>
-                </div>
-                <p className="text-muted-foreground mt-2">Sin suscripción. Sin pagos recurrentes.</p>
-              </div>
-
-              {/* Benefits */}
-              <div className="space-y-4 mb-8">
-                {[
-                  "Página individual personalizada",
-                  "Contador de tiempo real",
-                  "Música ambiente integrada",
-                  "Galería de fotos ilimitada",
-                  "Carta personalizada",
-                  "QR Code exclusivo",
-                  "Actualizaciones gratuitas"
-                ].map((benefit) => (
-                  <div key={benefit} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                      <Check className="w-3 h-3 text-primary" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Gift Summary Card */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <Card className="p-8 bg-card/60 backdrop-blur-sm border-border/50 h-full">
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                  <Gift className="w-5 h-5 text-primary" />
+                  {t('summary.title')}
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    t('pricing.benefit1'),
+                    t('pricing.benefit2'),
+                    t('pricing.benefit3'),
+                    t('pricing.benefit4'),
+                    t('pricing.benefit5'),
+                    t('pricing.benefit6'),
+                  ].map((benefit) => (
+                    <div key={benefit} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 text-primary" />
+                      </div>
+                      <span className="text-foreground">{benefit}</span>
                     </div>
-                    <span className="text-foreground">{benefit}</span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
 
-              {/* CTA */}
-              <Link to="/crear" className="block">
-                <Button variant="default" size="xl" className="w-full h-14 text-base">
-                  Crear nuestra página ahora
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
-              
-              {/* Trust text */}
-              <p className="text-center text-xs text-muted-foreground mt-4">
-                Pago seguro con Stripe. Cancelación en cualquier momento.
-              </p>
-            </Card>
+            {/* What Happens After Payment */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <Card className="p-8 bg-card/60 backdrop-blur-sm border-border/50 h-full">
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-primary" />
+                  {t('summary.subtitle')}
+                </h3>
+                <div className="space-y-6">
+                  {[
+                    { num: 1, text: t('summary.step1'), icon: QrCode },
+                    { num: 2, text: t('summary.step2'), icon: Download },
+                    { num: 3, text: t('summary.step3'), icon: Shield },
+                  ].map((step) => (
+                    <div key={step.num} className="flex items-start gap-4">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-primary">{step.num}</span>
+                      </div>
+                      <div className="flex items-center gap-3 pt-1">
+                        <step.icon className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-foreground">{step.text}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
+          </div>
+
+          <motion.div
+            className="text-center mt-10"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <Link to="/crear">
+              <Button variant="default" size="xl" className="group h-14 px-10 text-base">
+                <Gift className="w-5 h-5 mr-2" />
+                {t('hero.cta.primary')}
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -755,20 +775,20 @@ const Index = () => {
             </motion.div>
             
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Haz sonreír a la persona que amas{" "}
+              {t('final.title')}{" "}
               <span className="bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
-                hoy.
+                {t('final.highlight')}
               </span>
             </h2>
             
             <p className="text-xl text-muted-foreground mb-10 max-w-xl mx-auto">
-              Crea una sorpresa que recordarán para siempre.
+              {t('final.subtitle')}
             </p>
             
             <Link to="/crear">
               <Button variant="default" size="xl" className="group h-16 px-12 text-lg">
                 <Gift className="w-6 h-6 mr-3" />
-                Crear mi página ahora
+                {t('final.cta')}
                 <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -785,46 +805,39 @@ const Index = () => {
               <span className="font-semibold">Memory Link</span>
             </div>
             
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-              <Link to="/demo" className="hover:text-foreground transition-colors">
-                Demo
-              </Link>
-              <a href="mailto:hola@memoryl.ink" className="hover:text-foreground transition-colors">
-                Contacto
-              </a>
-              <a href="#" className="hover:text-foreground transition-colors">
-                Términos
-              </a>
-              <a href="#" className="hover:text-foreground transition-colors">
-                Privacidad
-              </a>
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <a href="#" className="hover:text-foreground transition-colors">{t('footer.privacy')}</a>
+              <a href="#" className="hover:text-foreground transition-colors">{t('footer.terms')}</a>
+              <a href="#" className="hover:text-foreground transition-colors">{t('footer.contact')}</a>
             </div>
             
-            <div className="flex items-center gap-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-            </div>
-          </div>
-          
-          <div className="mt-8 pt-6 border-t border-border/30 text-center">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Memory Link. Hecho con ❤️ para parejas enamoradas.
+              © 2025 Memory Link. {t('footer.rights')}
             </p>
           </div>
         </div>
       </footer>
 
       {/* ========== STICKY MOBILE CTA ========== */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-xl border-t border-border/50 md:hidden z-40">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-xl border-t border-border/50 lg:hidden z-50">
         <Link to="/crear" className="block">
-          <Button variant="default" size="lg" className="w-full">
+          <Button variant="default" size="lg" className="w-full h-12">
             <Gift className="w-5 h-5 mr-2" />
-            Crear mi página - $3 — para siempre
+            {t('hero.cta.primary')}
+            <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </Link>
       </div>
     </main>
+  );
+};
+
+// Wrapper component with LanguageProvider
+const Index = () => {
+  return (
+    <LanguageProvider>
+      <IndexContent />
+    </LanguageProvider>
   );
 };
 
