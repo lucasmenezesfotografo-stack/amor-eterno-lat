@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Download, Music, Star, Sparkles, Calendar, Youtube } from "lucide-react";
+import { Heart, Download, Star, Sparkles, Calendar, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import RelationshipCounter from "@/components/RelationshipCounter";
@@ -11,8 +11,10 @@ import { useRef, useState } from "react";
 import { romanticTracks } from "@/components/SoundtrackSelector";
 import MusicActivationOverlay from "@/components/MusicActivationOverlay";
 import demoCoupleImage from "@/assets/demo-couple.jpg";
+import { useLanguage, LanguageToggle } from "@/hooks/use-language";
 
 const DemoPage = () => {
+  const { t, language } = useLanguage();
   const qrRef = useRef<HTMLDivElement>(null);
   const [musicActivated, setMusicActivated] = useState(false);
   const [showMusicOverlay, setShowMusicOverlay] = useState(true);
@@ -23,7 +25,18 @@ const DemoPage = () => {
     person2: "Miguel",
     startDate: new Date("2021-06-15"),
     coverPhoto: demoCoupleImage,
-    loveLetter: `Mi querido Miguel,
+    loveLetter: language === 'en' 
+      ? `My dear Miguel,
+
+Every day by your side is a gift that I treasure with all my heart. Since that June 15th when our paths crossed, I knew my life had changed forever.
+
+You are my best friend, my confidant, my adventure partner. With you I learned that true love is not perfect, but real. It's laughing together until it hurts, it's supporting each other on difficult days, it's building shared dreams.
+
+Thank you for choosing me every day, for loving me as I am, for making our story so beautiful.
+
+I love you beyond words,
+Sofía ❤️`
+      : `Mi querido Miguel,
 
 Cada día a tu lado es un regalo que atesoro con todo mi corazón. Desde aquel 15 de junio cuando nuestros caminos se cruzaron, supe que mi vida había cambiado para siempre.
 
@@ -43,7 +56,6 @@ Sofía ❤️`
     setShowMusicOverlay(false);
   };
 
-  // 🔒 SEGURANÇA: Garante que a URL seja sempre uma string pura
   const currentUrl = typeof window !== "undefined" ? String(window.location.href).split('#')[0] : "";
 
   const handleDownloadQR = () => {
@@ -85,6 +97,22 @@ Sofía ❤️`
     img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
   };
 
+  // Format date according to language
+  const formatDate = (date: Date) => {
+    if (language === 'en') {
+      return date.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+    }
+    return date.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  };
+
   return (
     <main className="min-h-screen bg-background">
       {/* Music Activation Overlay */}
@@ -107,20 +135,23 @@ Sofía ❤️`
         <div className="container mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-xs sm:text-sm">
             <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-            <span className="hidden xs:inline sm:inline">¡Esta es una demostración!</span>
-            <span className="xs:hidden sm:hidden">Demo</span>
+            <span className="hidden xs:inline sm:inline">{t('demo.banner')}</span>
+            <span className="xs:hidden sm:hidden">{t('demo.banner.short')}</span>
           </div>
-          <Link to="/crear">
-            <Button size="sm" variant="secondary" className="text-xs gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 sm:px-3">
-              <span className="hidden sm:inline">Crear la mía</span>
-              <span className="sm:hidden">Crear</span>
-              <Heart className="w-3 h-3 fill-current" />
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <Link to="/crear">
+              <Button size="sm" variant="secondary" className="text-xs gap-1 sm:gap-1.5 h-7 sm:h-8 px-2 sm:px-3">
+                <span className="hidden sm:inline">{t('demo.cta')}</span>
+                <span className="sm:hidden">{t('demo.cta.short')}</span>
+                <Heart className="w-3 h-3 fill-current" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </motion.div>
 
-      {/* YouTube Music Player - PROTEÇÃO: videoId precisa ser string */}
+      {/* YouTube Music Player */}
       {musicActivated && demoTrack?.youtubeVideoId && (
         <YouTubeMusicPlayer 
           videoId={String(demoTrack.youtubeVideoId)} 
@@ -154,35 +185,30 @@ Sofía ❤️`
 
             <motion.div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-card/80 backdrop-blur-xl border border-border" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
               <Calendar className="w-4 h-4 text-primary" />
-              <span className="text-xs sm:text-sm text-muted-foreground">Juntos desde</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{t('regalo.together.since')}</span>
               <span className="font-semibold text-foreground text-xs sm:text-base">
-                {demoData.startDate.toLocaleDateString("es-ES", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric"
-                })}
+                {formatDate(demoData.startDate)}
               </span>
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* Counter Section - 🔒 PROTEÇÃO: startDate enviada como ISO String */}
+      {/* Counter Section */}
       <section className="py-16 sm:py-24 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
         <div className="container mx-auto relative z-10">
           <motion.div className="text-center mb-8 sm:mb-12" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm mb-3 sm:mb-4">
               <Star className="w-3 h-3 sm:w-4 sm:h-4" />
-              Tiempo de amor
+              {t('demo.time.badge')}
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
-              Nuestra historia en números
+              {t('demo.time.title')}
             </h2>
-            <p className="text-muted-foreground text-sm sm:text-lg">Cada segundo cuenta cuando estás enamorado</p>
+            <p className="text-muted-foreground text-sm sm:text-lg">{t('demo.time.subtitle')}</p>
           </motion.div>
 
-          {/* Enviamos a data como string para evitar erro .split no componente */}
           <RelationshipCounter startDate={demoData.startDate.toISOString()} />
         </div>
       </section>
@@ -197,30 +223,34 @@ Sofía ❤️`
       {/* Share & QR Section */}
       <section className="py-16 sm:py-24 px-4">
         <div className="container mx-auto max-w-lg text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6">Comparte el amor</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('demo.share.title')}</h2>
           
-          {/* QR Code - 🔒 PROTEÇÃO: value como String pura */}
+          {/* QR Code */}
           <div ref={qrRef} className="w-40 h-40 sm:w-52 sm:h-52 mx-auto bg-card border border-border rounded-2xl flex items-center justify-center mb-6 p-4 shadow-xl">
             <QRCodeSVG value={String(currentUrl)} size={140} level="H" fgColor="#e11d48" bgColor="transparent" />
           </div>
 
           <Button variant="default" size="lg" onClick={handleDownloadQR} className="mb-8 gap-2 w-full sm:w-auto">
             <Download className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>Descargar QR Code</span>
+            <span>{t('demo.share.download')}</span>
           </Button>
 
-          <ShareButtons url={String(currentUrl)} title={`${demoData.person1} & ${demoData.person2} - Memory Link`} description="Mira nuestra página de amor ❤️" />
+          <ShareButtons 
+            url={String(currentUrl)} 
+            title={`${demoData.person1} & ${demoData.person2} - Memory Link`} 
+            description={language === 'en' ? "Check out our love page ❤️" : "Mira nuestra página de amor ❤️"} 
+          />
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-16 sm:py-20 px-4 bg-gradient-to-b from-primary/10 to-background">
         <div className="container mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8">¿Te gustó? Crea la tuya</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8">{t('demo.like.title')}</h2>
           <Link to="/crear">
             <Button size="lg" className="gap-2 w-full sm:w-auto h-12 sm:h-14 text-lg px-8">
               <Heart className="w-5 h-5 fill-current" />
-              Crear la mía por $5/año
+              {t('demo.cta.price')}
             </Button>
           </Link>
         </div>
@@ -229,7 +259,7 @@ Sofía ❤️`
       <footer className="py-8 px-4 border-t border-border">
         <div className="container mx-auto text-center">
           <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-            Hecho con <Heart className="w-4 h-4 text-primary fill-primary" /> Memory Link
+            {t('regalo.footer')} <Heart className="w-4 h-4 text-primary fill-primary" /> Memory Link
           </p>
         </div>
       </footer>

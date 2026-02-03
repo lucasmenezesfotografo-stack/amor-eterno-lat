@@ -10,37 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import memoryLinkLogo from "@/assets/memory-link-logo.png";
 import demoCoupleImage from "@/assets/demo-couple.jpg";
-import { useLanguage, LanguageProvider } from "@/hooks/use-language";
-
-// Language Toggle Component
-const LanguageToggle = () => {
-  const { language, setLanguage } = useLanguage();
-  
-  return (
-    <div className="flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-1 py-0.5 border border-border/50">
-      <button
-        onClick={() => setLanguage('es')}
-        className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
-          language === 'es' 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-muted-foreground hover:text-foreground'
-        }`}
-      >
-        ES
-      </button>
-      <button
-        onClick={() => setLanguage('en')}
-        className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
-          language === 'en' 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-muted-foreground hover:text-foreground'
-        }`}
-      >
-        EN
-      </button>
-    </div>
-  );
-};
+import { useLanguage, LanguageToggle } from "@/hooks/use-language";
 
 // Main Index Content with translations
 const IndexContent = () => {
@@ -832,13 +802,4 @@ const IndexContent = () => {
   );
 };
 
-// Wrapper component with LanguageProvider
-const Index = () => {
-  return (
-    <LanguageProvider>
-      <IndexContent />
-    </LanguageProvider>
-  );
-};
-
-export default Index;
+export default IndexContent;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { parseISO } from "date-fns";
+import { useLanguage } from "@/hooks/use-language";
 
 interface TimeUnit {
   value: number;
@@ -8,7 +9,7 @@ interface TimeUnit {
 }
 
 interface RelationshipCounterProps {
-  startDate: string; // 👈 agora é STRING
+  startDate: string;
   className?: string;
 }
 
@@ -16,10 +17,10 @@ const RelationshipCounter = ({
   startDate,
   className = ""
 }: RelationshipCounterProps) => {
+  const { t } = useLanguage();
   const [timeUnits, setTimeUnits] = useState<TimeUnit[]>([]);
 
   useEffect(() => {
-    // Converte UMA vez, sem fuso
     const start = parseISO(startDate);
 
     const calculateTime = () => {
@@ -34,18 +35,18 @@ const RelationshipCounter = ({
       const years = Math.floor(days / 365.25);
 
       setTimeUnits([
-        { value: years, label: "Años" },
-        { value: months % 12, label: "Meses" },
-        { value: days % 30, label: "Dias" },
-        { value: hours % 24, label: "Horas" },
-        { value: minutes % 60, label: "Min" }
+        { value: years, label: t('counter.years') },
+        { value: months % 12, label: t('counter.months') },
+        { value: days % 30, label: t('counter.days') },
+        { value: hours % 24, label: t('counter.hours') },
+        { value: minutes % 60, label: t('counter.min') }
       ]);
     };
 
     calculateTime();
     const interval = setInterval(calculateTime, 1000);
     return () => clearInterval(interval);
-  }, [startDate]);
+  }, [startDate, t]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
