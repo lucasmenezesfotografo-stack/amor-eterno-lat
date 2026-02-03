@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { Share2, MessageCircle, Facebook, Twitter, Link, Check, Instagram } from "lucide-react";
+import { Share2, MessageCircle, Facebook, Twitter, Link, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 interface ShareButtonsProps {
   url: string;
@@ -10,14 +11,21 @@ interface ShareButtonsProps {
   description?: string;
 }
 
-const ShareButtons = ({ url, title = "Mira nuestra página de amor", description = "Te comparto algo especial ❤️" }: ShareButtonsProps) => {
+const ShareButtons = ({ url, title, description }: ShareButtonsProps) => {
+  const { t, language } = useLanguage();
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
+  const defaultTitle = language === 'en' ? "Check out our love page" : "Mira nuestra página de amor";
+  const defaultDesc = language === 'en' ? "I'm sharing something special ❤️" : "Te comparto algo especial ❤️";
+  
+  const shareTitle = title || defaultTitle;
+  const shareDesc = description || defaultDesc;
+
   const shareData = {
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${title}\n${description}\n${url}`)}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`,
-    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${title} ❤️`)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareTitle}\n${shareDesc}\n${url}`)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(shareTitle)}`,
+    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${shareTitle} ❤️`)}`,
   };
 
   const handleCopyLink = async () => {
@@ -25,14 +33,14 @@ const ShareButtons = ({ url, title = "Mira nuestra página de amor", description
       await navigator.clipboard.writeText(url);
       setCopied(true);
       toast({
-        title: "¡Enlace copiado!",
-        description: "Ya puedes compartirlo donde quieras",
+        title: t('regalo.share.copied'),
+        description: t('regalo.share.copied.desc'),
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: "Error",
-        description: "No se pudo copiar el enlace",
+        title: t('toast.share.error.title'),
+        description: t('toast.share.error.desc'),
         variant: "destructive",
       });
     }
@@ -42,8 +50,8 @@ const ShareButtons = ({ url, title = "Mira nuestra página de amor", description
     if (navigator.share) {
       try {
         await navigator.share({
-          title,
-          text: description,
+          title: shareTitle,
+          text: shareDesc,
           url,
         });
       } catch (err) {
@@ -81,7 +89,7 @@ const ShareButtons = ({ url, title = "Mira nuestra página de amor", description
     >
       <div className="flex items-center gap-2 justify-center text-sm text-muted-foreground mb-4">
         <Share2 className="w-4 h-4" />
-        <span>Compartir en redes</span>
+        <span>{t('regalo.share.title')}</span>
       </div>
 
       <div className="flex flex-wrap justify-center gap-3">
@@ -112,12 +120,12 @@ const ShareButtons = ({ url, title = "Mira nuestra página de amor", description
           {copied ? (
             <>
               <Check className="w-4 h-4 text-green-500" />
-              ¡Copiado!
+              {t('regalo.share.copied').replace('!', '')}
             </>
           ) : (
             <>
               <Link className="w-4 h-4" />
-              Copiar enlace
+              {t('regalo.share.copy')}
             </>
           )}
         </Button>
@@ -131,7 +139,7 @@ const ShareButtons = ({ url, title = "Mira nuestra página de amor", description
             className="gap-2"
           >
             <Share2 className="w-4 h-4" />
-            Más opciones
+            {t('regalo.share.more')}
           </Button>
         )}
       </div>

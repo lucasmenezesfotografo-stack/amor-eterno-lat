@@ -1,7 +1,7 @@
 import { parseISO, format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { Heart, Download, Loader2, Music, Calendar, Youtube } from "lucide-react";
+import { Heart, Download, Loader2, Calendar, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RelationshipCounter from "@/components/RelationshipCounter";
 import LoveLetter from "@/components/LoveLetter";
@@ -15,10 +15,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { romanticTracks } from "@/components/SoundtrackSelector";
 import { cn } from "@/lib/utils";
+import { useLanguage, FooterLanguageToggle } from "@/hooks/use-language";
+
 interface Memory {
   imageUrl: string;
   caption: string;
 }
+
 interface GiftPageData {
   id: string;
   slug: string;
@@ -48,7 +51,6 @@ const demoData: GiftPageData = {
   soundtrack_name: "Perfect",
   soundtrack_url: null,
   youtube_video_id: "2Vv-BfVoq4g",
-  // Ed Sheeran - Perfect
   spotify_link: null,
   love_letter: `Mi amor Juan,
 
@@ -68,12 +70,10 @@ María`,
     caption: "El día que dijimos sí"
   }]
 };
+
 const RegaloPage = () => {
-  const {
-    id
-  } = useParams<{
-    id: string;
-  }>();
+  const { t, language } = useLanguage();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const qrRef = useRef<HTMLDivElement>(null);
   const [pageData, setPageData] = useState<GiftPageData | null>(null);
@@ -81,6 +81,9 @@ const RegaloPage = () => {
   const [notFound, setNotFound] = useState(false);
   const [musicActivated, setMusicActivated] = useState(false);
   const [showMusicOverlay, setShowMusicOverlay] = useState(false);
+
+  const dateLocale = language === 'en' ? enUS : es;
+
   useEffect(() => {
     const fetchGiftPage = async () => {
       // If demo route, use demo data
@@ -95,15 +98,11 @@ const RegaloPage = () => {
         return;
       }
       try {
-        const {
-          data,
-          error
-        } = await supabase.from("gift_pages").select("*").eq("slug", id).maybeSingle();
+        const { data, error } = await supabase.from("gift_pages").select("*").eq("slug", id).maybeSingle();
         if (error) throw error;
         if (!data) {
           setNotFound(true);
         } else {
-          // Parse memories from JSON and cast names_position
           const parsedData: GiftPageData = {
             ...data,
             names_position: (data.names_position as "top" | "center" | "bottom") || "center",
@@ -124,17 +123,18 @@ const RegaloPage = () => {
   // Show music overlay when page loads and has YouTube video
   useEffect(() => {
     if (pageData?.youtube_video_id && !musicActivated) {
-      // Small delay to let the page load
       const timer = setTimeout(() => {
         setShowMusicOverlay(true);
       }, 500);
       return () => clearTimeout(timer);
     }
   }, [pageData, musicActivated]);
+
   const handleMusicActivate = useCallback(() => {
     setMusicActivated(true);
     setShowMusicOverlay(false);
   }, []);
+
   const handleDownloadQR = () => {
     if (!qrRef.current || !pageData) return;
     const svg = qrRef.current.querySelector("svg");
@@ -170,28 +170,32 @@ const RegaloPage = () => {
 
   // Loading state
   if (isLoading) {
-    return <main className="min-h-screen bg-background flex items-center justify-center">
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Cargando tu regalo...</p>
+          <p className="text-muted-foreground">{t('regalo.loading')}</p>
         </div>
-      </main>;
+      </main>
+    );
   }
 
   // Not found state
   if (notFound || !pageData) {
-    return <main className="min-h-screen bg-background flex items-center justify-center px-4">
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-6" />
-          <h1 className="text-2xl font-semibold mb-2">Página no encontrada</h1>
+          <h1 className="text-2xl font-semibold mb-2">{t('regalo.notfound.title')}</h1>
           <p className="text-muted-foreground mb-6">
-            Este regalo no existe o el enlace ha expirado.
+            {t('regalo.notfound.desc')}
           </p>
           <Button onClick={() => navigate("/crear")}>
-            Crear mi regalo
+            {t('regalo.notfound.cta')}
           </Button>
         </div>
-      </main>;
+      </main>
+    );
   }
 
   const defaultCoverPhoto = "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&auto=format&fit=crop";
@@ -201,12 +205,38 @@ const RegaloPage = () => {
 
   // Get album cover from YouTube thumbnail if no track found
   const albumCover = currentTrack?.albumCover || (pageData.youtube_video_id ? `https://i.ytimg.com/vi/${pageData.youtube_video_id}/hqdefault.jpg` : undefined);
-  return <main className="min-h-screen bg-background">
+
+  // Format date according to language
+  const formatDateString = (dateStr: string) => {
+    const date = parseISO(dateStr);
+    if (language === 'en') {
+      return format(date, "MMMM d, yyyy", { locale: enUS });
+    }
+    return format(date, "d 'de' MMMM yyyy", { locale: es });
+  };
+
+  return (
+    <main className="min-h-screen bg-background">
       {/* Music Activation Overlay - shown on first load for pages with YouTube video */}
-      {showMusicOverlay && pageData.youtube_video_id && <MusicActivationOverlay trackName={currentTrack?.name || pageData.soundtrack_name || "Nuestra Canción"} artistName={currentTrack?.artist} albumCover={albumCover} onActivate={handleMusicActivate} />}
+      {showMusicOverlay && pageData.youtube_video_id && (
+        <MusicActivationOverlay 
+          trackName={currentTrack?.name || pageData.soundtrack_name || (language === 'en' ? "Our Song" : "Nuestra Canción")}
+          artistName={currentTrack?.artist}
+          albumCover={albumCover}
+          onActivate={handleMusicActivate}
+        />
+      )}
 
       {/* YouTube Music Player - only after activation */}
-      {pageData.youtube_video_id && musicActivated && <YouTubeMusicPlayer videoId={pageData.youtube_video_id} trackName={currentTrack?.name || pageData.soundtrack_name || "Nuestra Canción"} artistName={currentTrack?.artist} albumCover={albumCover} autoPlay={true} />}
+      {pageData.youtube_video_id && musicActivated && (
+        <YouTubeMusicPlayer 
+          videoId={pageData.youtube_video_id}
+          trackName={currentTrack?.name || pageData.soundtrack_name || (language === 'en' ? "Our Song" : "Nuestra Canción")}
+          artistName={currentTrack?.artist}
+          albumCover={albumCover}
+          autoPlay={true}
+        />
+      )}
 
       {/* Hero Section with Cover Photo */}
       <section className="relative min-h-[80vh] sm:min-h-screen flex overflow-hidden">
@@ -218,100 +248,89 @@ const RegaloPage = () => {
         </div>
 
         {/* Content - position based on names_position */}
-        <div className={cn("relative z-10 flex flex-col w-full px-4 py-16 sm:py-20", pageData.names_position === "top" ? "justify-start pt-24 sm:pt-32" : pageData.names_position === "bottom" ? "justify-end pb-24 sm:pb-32" : "justify-center items-center")}>
-          <motion.div initial={{
-          opacity: 0,
-          y: 30
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8
-        }} className={cn("text-center", pageData.names_position === "top" || pageData.names_position === "bottom" ? "self-center" : "")}>
+        <div className={cn(
+          "relative z-10 flex flex-col w-full px-4 py-16 sm:py-20",
+          pageData.names_position === "top" ? "justify-start pt-24 sm:pt-32" :
+          pageData.names_position === "bottom" ? "justify-end pb-24 sm:pb-32" :
+          "justify-center items-center"
+        )}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className={cn(
+              "text-center",
+              pageData.names_position === "top" || pageData.names_position === "bottom" ? "self-center" : ""
+            )}
+          >
             {/* Heart */}
-            <motion.div className="mb-6 sm:mb-8" animate={{
-            scale: [1, 1.15, 1]
-          }} transition={{
-            duration: 1.5,
-            repeat: Infinity
-          }}>
-              
+            <motion.div
+              className="mb-6 sm:mb-8"
+              animate={{ scale: [1, 1.15, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
             </motion.div>
 
             {/* Names - Elegant Font */}
             <div className="flex flex-row items-center justify-center gap-4 sm:gap-6 mb-4 sm:mb-6">
-              <motion.h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white drop-shadow-lg" style={{
-              textShadow: "0 4px 20px rgba(0,0,0,0.5)"
-            }} initial={{
-              opacity: 0,
-              x: -30
-            }} animate={{
-              opacity: 1,
-              x: 0
-            }} transition={{
-              delay: 0.3,
-              duration: 0.6
-            }}>
+              <motion.h1
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white drop-shadow-lg"
+                style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+              >
                 {pageData.your_name}
               </motion.h1>
 
               <span className="text-primary text-3xl sm:text-4xl md:text-5xl font-romantic drop-shadow-lg">&</span>
 
-              <motion.h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white drop-shadow-lg" style={{
-              textShadow: "0 4px 20px rgba(0,0,0,0.5)"
-            }} initial={{
-              opacity: 0,
-              x: 30
-            }} animate={{
-              opacity: 1,
-              x: 0
-            }} transition={{
-              delay: 0.3,
-              duration: 0.6
-            }}>
+              <motion.h1
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white drop-shadow-lg"
+                style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+              >
                 {pageData.partner_name}
               </motion.h1>
             </div>
 
             {/* Date Badge */}
-            <motion.div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-black/50 backdrop-blur-xl border border-white/20" initial={{
-            opacity: 0
-          }} animate={{
-            opacity: 1
-          }} transition={{
-            delay: 0.6,
-            duration: 0.5
-          }}>
+            <motion.div
+              className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-black/50 backdrop-blur-xl border border-white/20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
               <Calendar className="w-4 h-4 text-primary" />
-              <span className="text-sm sm:text-base text-white/80">Juntos desde</span>
+              <span className="text-sm sm:text-base text-white/80">{t('regalo.together.since')}</span>
               <span className="text-sm sm:text-base font-semibold text-white">
-  {format(parseISO(pageData.start_date), "d 'de' MMMM yyyy", {
-    locale: es
-  })}
-</span>
+                {formatDateString(pageData.start_date)}
+              </span>
             </motion.div>
             
             {/* Music indicator */}
-            {pageData.soundtrack_name && <motion.div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70" initial={{
-            opacity: 0
-          }} animate={{
-            opacity: 1
-          }} transition={{
-            delay: 0.8
-          }}>
+            {pageData.soundtrack_name && (
+              <motion.div
+                className="mt-4 inline-flex items-center gap-2 text-sm text-white/70"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
                 <Youtube className="w-4 h-4" />
                 <span>♪ {pageData.soundtrack_name}</span>
-              </motion.div>}
+              </motion.div>
+            )}
           </motion.div>
         </div>
         
         {/* Scroll indicator */}
-        <motion.div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2" animate={{
-        y: [0, 10, 0]
-      }} transition={{
-        duration: 1.5,
-        repeat: Infinity
-      }}>
+        <motion.div
+          className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
           <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full flex justify-center">
             <div className="w-1 h-2 sm:w-1.5 sm:h-3 bg-white/50 rounded-full mt-1.5 sm:mt-2" />
           </div>
@@ -322,96 +341,101 @@ const RegaloPage = () => {
       <section className="py-16 sm:py-24 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
         <div className="container mx-auto relative z-10">
-          <motion.div className="text-center mb-8 sm:mb-12" initial={{
-          opacity: 0,
-          y: 20
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }}>
+          <motion.div
+            className="text-center mb-8 sm:mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
-              Tiempo juntos
+              {t('regalo.time.title')}
             </h2>
-            <p className="text-muted-foreground text-sm sm:text-base">Cada segundo cuenta cuando estás enamorado</p>
+            <p className="text-muted-foreground text-sm sm:text-base">{t('regalo.time.subtitle')}</p>
           </motion.div>
 
-         <RelationshipCounter startDate={pageData.start_date} />
+          <RelationshipCounter startDate={pageData.start_date} />
         </div>
       </section>
 
       {/* Love Letter */}
-      {pageData.love_letter && <section className="py-16 sm:py-24 px-4">
+      {pageData.love_letter && (
+        <section className="py-16 sm:py-24 px-4">
           <div className="container mx-auto max-w-2xl">
-            <motion.div className="text-center mb-8 sm:mb-12" initial={{
-          opacity: 0,
-          y: 20
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }}>
+            <motion.div
+              className="text-center mb-8 sm:mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
-                Carta de Amor
+                {t('regalo.letter.title')}
               </h2>
-              <p className="text-muted-foreground text-sm sm:text-base">Palabras del corazón</p>
+              <p className="text-muted-foreground text-sm sm:text-base">{t('regalo.letter.subtitle')}</p>
             </motion.div>
 
             <LoveLetter content={pageData.love_letter} author={pageData.your_name} />
           </div>
-        </section>}
+        </section>
+      )}
 
       {/* Memories Gallery */}
-      {pageData.memories && pageData.memories.length > 0 && <section className="py-16 sm:py-24 px-4">
+      {pageData.memories && pageData.memories.length > 0 && (
+        <section className="py-16 sm:py-24 px-4">
           <div className="container mx-auto max-w-2xl">
             <MemoryGallery memories={pageData.memories} designStyle="classic" />
           </div>
-        </section>}
+        </section>
+      )}
 
       {/* QR Code Download Section */}
       <section className="py-16 sm:py-24 px-4 border-t border-border">
         <div className="container mx-auto max-w-md text-center">
-          <motion.div initial={{
-          opacity: 0,
-          y: 20
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
             <h2 className="text-xl sm:text-2xl font-semibold mb-2">
-              Descarga el QR Code
+              {t('regalo.qr.title')}
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8">
-              Comparte este regalo especial
+              {t('regalo.qr.subtitle')}
             </p>
 
-            <div ref={qrRef} className="w-40 h-40 sm:w-48 sm:h-48 mx-auto bg-card border border-border rounded-2xl flex items-center justify-center mb-4 sm:mb-6 p-3 sm:p-4">
+            <div
+              ref={qrRef}
+              className="w-40 h-40 sm:w-48 sm:h-48 mx-auto bg-card border border-border rounded-2xl flex items-center justify-center mb-4 sm:mb-6 p-3 sm:p-4"
+            >
               <QRCodeSVG value={window.location.href} size={140} level="H" fgColor="#e11d48" bgColor="transparent" />
             </div>
 
             <Button variant="default" size="lg" onClick={handleDownloadQR} className="mb-6 w-full sm:w-auto">
               <Download className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Descargar mi QR Code</span>
+              <span className="text-sm sm:text-base">{t('regalo.qr.download')}</span>
             </Button>
 
             {/* Share Buttons */}
-            <ShareButtons url={window.location.href} title={`${pageData.your_name} & ${pageData.partner_name} - Memory Link`} description="Mira nuestra página de amor ❤️" />
+            <ShareButtons
+              url={window.location.href}
+              title={`${pageData.your_name} & ${pageData.partner_name} - Memory Link`}
+              description={language === 'en' ? "Check out our love page ❤️" : "Mira nuestra página de amor ❤️"}
+            />
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer with subtle language toggle */}
       <footer className="py-6 sm:py-8 px-4 border-t border-border">
-        <div className="container mx-auto text-center">
+        <div className="container mx-auto text-center space-y-4">
           <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center gap-2">
-            Hecho con <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Memory Link
+            {t('regalo.footer')} <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-primary" /> Memory Link
           </p>
+          {/* Subtle language toggle */}
+          <FooterLanguageToggle />
         </div>
       </footer>
-    </main>;
+    </main>
+  );
 };
+
 export default RegaloPage;

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Music, Heart, Youtube, Play } from "lucide-react";
+import { Heart, Youtube, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/use-language";
 
 interface MusicActivationOverlayProps {
   trackName?: string;
@@ -16,11 +17,11 @@ const MusicActivationOverlay = ({
   albumCover,
   onActivate,
 }: MusicActivationOverlayProps) => {
+  const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(true);
 
   const handleActivate = () => {
     setIsVisible(false);
-    // Small delay to ensure user interaction is registered before playing
     setTimeout(() => {
       onActivate();
     }, 100);
@@ -81,7 +82,7 @@ const MusicActivationOverlay = ({
                 <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-2xl overflow-hidden shadow-2xl ring-4 ring-primary/20">
                   <img 
                     src={albumCover} 
-                    alt={trackName || "Portada del álbum"}
+                    alt={trackName || "Album cover"}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
@@ -91,7 +92,7 @@ const MusicActivationOverlay = ({
                 </div>
               ) : (
                 <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-2xl shadow-primary/30">
-                  <Music className="w-14 h-14 sm:w-16 sm:h-16 text-primary-foreground" />
+                  <Heart className="w-14 h-14 sm:w-16 sm:h-16 text-primary-foreground" />
                 </div>
               )}
               
@@ -134,14 +135,14 @@ const MusicActivationOverlay = ({
             >
               <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3 flex items-center justify-center gap-2">
                 <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-primary fill-primary" />
-                Este regalo tiene música
+                {t('music.title')}
               </h2>
               <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                Toca el botón para escuchar la canción elegida especialmente para ti
+                {t('music.subtitle')}
               </p>
             </motion.div>
 
-            {/* Activation Button - CRITICAL: Large touch target for iOS/Safari */}
+            {/* Activation Button */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -154,7 +155,7 @@ const MusicActivationOverlay = ({
                 className="w-full min-h-[60px] px-8 py-5 text-lg gap-3 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl shadow-primary/30 active:scale-95 transition-transform touch-manipulation"
               >
                 <Play className="w-6 h-6 fill-current" />
-                🎵 Reproducir Música
+                {t('music.play')}
               </Button>
               
               {/* Skip Option */}
@@ -162,7 +163,7 @@ const MusicActivationOverlay = ({
                 onClick={handleSkip}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2 px-4"
               >
-                Continuar sin música
+                {t('music.skip')}
               </button>
             </motion.div>
 
@@ -174,7 +175,7 @@ const MusicActivationOverlay = ({
               className="mt-6 text-xs text-muted-foreground flex items-center justify-center gap-1"
             >
               <Youtube className="w-3 h-3" />
-              La música se reproduce mediante YouTube
+              {t('music.youtube')}
             </motion.p>
           </motion.div>
         </motion.div>

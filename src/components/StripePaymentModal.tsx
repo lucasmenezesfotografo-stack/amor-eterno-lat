@@ -16,8 +16,8 @@ import {
   Shield,
   Lock,
   CreditCard,
-  CheckCircle2,
 } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 /* =========================
    STRIPE INIT
@@ -70,6 +70,7 @@ function CheckoutForm({
   amount,
   appliedPromotion,
 }: CheckoutFormProps) {
+  const { t, language } = useLanguage();
   const stripe = useStripe();
   const elements = useElements();
 
@@ -94,7 +95,7 @@ function CheckoutForm({
     });
 
     if (result.error) {
-      setError(result.error.message || "Error al procesar el pago");
+      setError(result.error.message || (language === 'en' ? "Payment error" : "Error al procesar el pago"));
       setProcessing(false);
     } else {
       onPaid();
@@ -102,7 +103,7 @@ function CheckoutForm({
   };
 
   const formatPrice = (cents: number) =>
-    new Intl.NumberFormat("es-ES", {
+    new Intl.NumberFormat(language === 'en' ? "en-US" : "es-ES", {
       style: "currency",
       currency: "USD",
     }).format(cents / 100);
@@ -113,7 +114,7 @@ function CheckoutForm({
       <div className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3">
         <Shield className="h-4 w-4 text-emerald-400" />
         <span className="text-sm text-emerald-400 font-medium">
-          Pago seguro procesado por Stripe
+          {t('stripe.powered')}
         </span>
       </div>
 
@@ -121,7 +122,7 @@ function CheckoutForm({
       {appliedPromotion && (
         <div className="flex justify-between items-center rounded-xl bg-purple-500/10 border border-purple-500/20 px-4 py-3">
           <span className="text-sm text-purple-300">
-            Código aplicado: <b>{appliedPromotion.code}</b>
+            {t('stripe.promo.discount')}: <b>{appliedPromotion.code}</b>
           </span>
           <span className="text-sm text-purple-400 font-semibold">
             {appliedPromotion.percentOff
@@ -135,7 +136,7 @@ function CheckoutForm({
       <div className="text-center">
         <div className="text-4xl font-bold">{formatPrice(amount)}</div>
         <p className="text-zinc-400 text-sm">
-          Pago único • Acceso de por vida
+          {language === 'en' ? 'One-time payment • Lifetime access' : 'Pago único • Acceso de por vida'}
         </p>
       </div>
 
@@ -170,7 +171,7 @@ function CheckoutForm({
         disabled={!stripe || !ready || processing}
         className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 py-4 font-semibold text-white disabled:opacity-50"
       >
-        {processing ? "Procesando…" : "Pagar ahora"}
+        {processing ? t('stripe.processing') : t('stripe.pay')}
       </button>
 
       <button
@@ -178,13 +179,13 @@ function CheckoutForm({
         onClick={onClose}
         className="w-full rounded-xl border border-zinc-800 py-3 text-zinc-400 hover:text-white"
       >
-        Cancelar
+        {t('crear.cancel')}
       </button>
 
       {/* Footer */}
       <div className="pt-3 border-t border-zinc-800 text-xs text-zinc-500 flex justify-center gap-4">
         <span className="flex items-center gap-1">
-          <CreditCard className="h-4 w-4" /> Tarjetas
+          <CreditCard className="h-4 w-4" /> {language === 'en' ? 'Cards' : 'Tarjetas'}
         </span>
         <span>Apple Pay</span>
         <span>Google Pay</span>
@@ -218,12 +219,13 @@ export function StripePaymentModal({
   amount = 500,
   appliedPromotion = null,
 }: StripePaymentModalProps) {
+  const { t, language } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     if (open && clientSecret) {
-      const t = setTimeout(() => setMounted(true), 50);
-      return () => clearTimeout(t);
+      const timer = setTimeout(() => setMounted(true), 50);
+      return () => clearTimeout(timer);
     }
     setMounted(false);
   }, [open, clientSecret]);
@@ -233,7 +235,7 @@ export function StripePaymentModal({
   const options: StripeElementsOptions = {
     clientSecret,
     appearance,
-    locale: "es",
+    locale: language === 'en' ? 'en' : 'es',
   };
 
   return (
@@ -256,9 +258,9 @@ export function StripePaymentModal({
           {/* Header */}
           <div className="text-center mb-6">
             <Lock className="mx-auto mb-3 h-10 w-10 text-purple-400" />
-            <h2 className="text-2xl font-bold">Completar pago</h2>
+            <h2 className="text-2xl font-bold">{t('stripe.title')}</h2>
             <p className="text-zinc-400 text-sm">
-              Activa tu página de regalo personalizada
+              {language === 'en' ? 'Activate your personalized gift page' : 'Activa tu página de regalo personalizada'}
             </p>
           </div>
 
