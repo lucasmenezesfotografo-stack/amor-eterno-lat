@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import ShareButtons from "@/components/ShareButtons";
 import FontSelector, { fontOptions, serifFontOptions, FontOption } from "@/components/FontSelector";
 import NamePositionSelector, { NamePosition } from "@/components/NamePositionSelector";
+import { useLanguage } from "@/hooks/use-language";
 
 interface PersonalizedCardProps {
   person1: string;
@@ -21,23 +22,24 @@ interface PersonalizedCardProps {
 
 // Premium romantic color accents
 const accentColors = [
-  { id: "charcoal", name: "Carbón", color: "#2D2D2D", hex: "#2D2D2D" },
-  { id: "rose", name: "Rosa", color: "#e11d48", hex: "#e11d48" },
-  { id: "blush", name: "Rubor", color: "#f472b6", hex: "#f472b6" },
-  { id: "burgundy", name: "Borgoña", color: "#881337", hex: "#881337" },
-  { id: "gold", name: "Dorado", color: "#d4af37", hex: "#d4af37" },
-  { id: "sage", name: "Salvia", color: "#84a98c", hex: "#84a98c" },
-  { id: "navy", name: "Marino", color: "#1e3a5f", hex: "#1e3a5f" },
-];
-
-const layouts = [
-  { id: "classic", name: "Clásico", description: "Foto superior, texto elegante" },
-  { id: "minimal", name: "Minimalista", description: "QR Code como protagonista" },
-  { id: "horizontal", name: "Horizontal", description: "Formato paisaje elegante" },
-  { id: "photo-focus", name: "Con Foto", description: "Estilo moderno digital" },
+  { id: "charcoal", name: "Charcoal", color: "#2D2D2D", hex: "#2D2D2D" },
+  { id: "rose", name: "Rose", color: "#e11d48", hex: "#e11d48" },
+  { id: "blush", name: "Blush", color: "#f472b6", hex: "#f472b6" },
+  { id: "burgundy", name: "Burgundy", color: "#881337", hex: "#881337" },
+  { id: "gold", name: "Gold", color: "#d4af37", hex: "#d4af37" },
+  { id: "sage", name: "Sage", color: "#84a98c", hex: "#84a98c" },
+  { id: "navy", name: "Navy", color: "#1e3a5f", hex: "#1e3a5f" },
 ];
 
 const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: PersonalizedCardProps) => {
+  const { t, language } = useLanguage();
+  
+  const layouts = [
+    { id: "classic", name: t('card.layout.classic'), description: "Foto superior, texto elegante" },
+    { id: "minimal", name: t('card.layout.minimal'), description: "QR Code como protagonista" },
+    { id: "horizontal", name: t('card.layout.horizontal'), description: "Formato paisaje elegante" },
+    { id: "photo-focus", name: t('card.layout.photofocus'), description: "Estilo moderno digital" },
+  ];
   const [selectedAccent, setSelectedAccent] = useState(accentColors[0]);
   const [selectedLayout, setSelectedLayout] = useState(layouts[0]);
   const [showPhoto, setShowPhoto] = useState(!!photoUrl);
@@ -48,21 +50,25 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
   const [namesPosition, setNamesPosition] = useState<NamePosition>("center");
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const dateLocale = language === 'en' ? enUS : es;
   const formattedDate = startDate 
-    ? format(startDate, "dd.MM.yyyy", { locale: es })
+    ? format(startDate, "dd.MM.yyyy", { locale: dateLocale })
     : "";
 
-  // FIXED: Export as JPG with visible background, not transparent PNG
+  // A5 size export dimensions: 148mm x 210mm at 300 DPI = 1748 x 2480 pixels
+  // For screen preview, we use a scaled version
+  // A5 Export: 148mm x 210mm at 300 DPI
   const handleDownloadCard = async () => {
     if (!cardRef.current) return;
     const html2canvas = (await import("html2canvas")).default;
     
-    // Wait a bit for any animations to settle
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Wait for any animations to settle
+    await new Promise(resolve => setTimeout(resolve, 150));
     
+    // High-resolution export for print quality (scale 4 = ~300 DPI for our preview sizes)
     const canvas = await html2canvas(cardRef.current, {
       scale: 4,
-      backgroundColor: "#FAF9F7", // IMPORTANT: Solid background for JPG
+      backgroundColor: "#FAF9F7",
       useCORS: true,
       logging: false,
       allowTaint: true,
@@ -70,11 +76,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       scrollY: 0,
       windowWidth: cardRef.current.scrollWidth,
       windowHeight: cardRef.current.scrollHeight,
+      imageTimeout: 5000,
     });
 
     const link = document.createElement("a");
-    link.download = `tarjeta-${person1}-${person2}.jpg`; // JPG format
-    link.href = canvas.toDataURL("image/jpeg", 0.95); // High quality JPG
+    link.download = `card-${person1}-${person2}.jpg`;
+    link.href = canvas.toDataURL("image/jpeg", 0.95);
     link.click();
   };
 
@@ -168,8 +175,8 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
                   includeMargin={false}
                 />
               </div>
-              <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "8px", color: "#6B6B6B", marginTop: "6px", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                Escanea aquí
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "8px", color: "#6B6B6B", marginTop: "6px", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                {t('card.qr.scan')}
               </p>
             </div>
           </div>
@@ -232,10 +239,10 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         
         {/* Instructions */}
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#2D2D2D", fontWeight: "500", marginBottom: "6px" }}>
-          ¡Escanea y descubre!
+          {t('card.qr.discover')}
         </p>
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B", lineHeight: "1.6", maxWidth: "180px" }}>
-          Escanea el código QR para ver nuestra historia de amor
+          {t('card.qr.story')}
         </p>
         
         {/* Names - subtle at bottom */}
@@ -311,12 +318,12 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             className={cn("text-xs leading-relaxed mb-3", selectedSerifFont.className)}
             style={{ fontFamily: selectedSerifFont.fontFamily, color: "#4A4A4A" }}
           >
-            {customMessage || "Nuestros corazones están llenos de amor y gratitud. Gracias por ser parte de nuestra historia."}
+            {customMessage || t('card.default.message')}
           </p>
           
           {/* Signature */}
           <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "10px", color: "#6B6B6B", marginBottom: "2px" }}>
-            Con todo nuestro amor,
+            {t('card.signature')}
           </p>
           <p 
             className={cn("text-lg", selectedScriptFont.className)}
@@ -340,7 +347,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
               />
             </div>
             <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "7px", color: "#6B6B6B", marginTop: "4px", lineHeight: "1.3" }}>
-              Escanea aquí
+              {t('card.qr.scan')}
             </p>
           </div>
           
@@ -454,7 +461,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           />
         </div>
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "9px", color: "#6B6B6B", marginTop: "10px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-          Escanea para ver nuestra historia
+          {t('card.qr.see')}
         </p>
       </div>
     </div>
@@ -577,17 +584,17 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       {/* Header */}
       <div className="text-center">
         <h3 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
-          Elige tu diseño de tarjeta
+          {t('card.header.title')}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Personaliza y descarga tu tarjeta para imprimir
+          {t('card.header.subtitle')}
         </p>
       </div>
 
       {/* Layout Selector */}
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
-          <LayoutGrid className="w-3.5 h-3.5" /> Estilo de tarjeta
+          <LayoutGrid className="w-3.5 h-3.5" /> {t('card.layout.label')}
         </label>
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
           {layouts.map((layout, index) => (
@@ -606,13 +613,13 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         <FontSelector 
           selectedFont={selectedScriptFont}
           onFontChange={setSelectedScriptFont}
-          label="Fuente romántica"
+          label={t('card.font.romantic')}
           fonts={fontOptions}
         />
         <FontSelector 
           selectedFont={selectedSerifFont}
           onFontChange={setSelectedSerifFont}
-          label="Fuente para nombres"
+          label={t('card.font.names')}
           fonts={serifFontOptions}
         />
       </div>
@@ -628,7 +635,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       {/* Accent Color Selector */}
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-3 block">
-          Color de acento
+          {t('card.accent.label')}
         </label>
         <div className="flex flex-wrap justify-center gap-2">
           {accentColors.map((color) => (
@@ -643,7 +650,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
               )}
               style={{ backgroundColor: color.color }}
               title={color.name}
-              aria-label={`Seleccionar color ${color.name}`}
+              aria-label={`Select ${color.name} color`}
             />
           ))}
         </div>
@@ -652,10 +659,10 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
       {/* Custom Message */}
       <div>
         <label className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
-          <MessageSquare className="w-3.5 h-3.5" /> Mensaje personalizado (opcional)
+          <MessageSquare className="w-3.5 h-3.5" /> {t('card.message.label')}
         </label>
         <Input
-          placeholder="Ej: Te amo con todo mi corazón..."
+          placeholder={t('card.message.placeholder')}
           value={customMessage}
           onChange={(e) => setCustomMessage(e.target.value.slice(0, 100))}
           maxLength={100}
@@ -674,7 +681,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             className="min-w-[80px] sm:min-w-[100px] h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4"
           >
             <ImageIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5" />
-            Foto
+            {t('card.toggle.photo')}
           </Button>
         )}
         {startDate && (
@@ -685,7 +692,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             className="min-w-[80px] sm:min-w-[100px] h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4"
           >
             <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5" />
-            Fecha
+            {t('card.toggle.date')}
           </Button>
         )}
       </div>
@@ -709,7 +716,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           style={{ backgroundColor: selectedAccent.color + "15", color: selectedAccent.color }}
         >
           <Check className="w-3 h-3" />
-          Estilo seleccionado: {selectedLayout.name}
+          {t('card.selected')} {selectedLayout.name}
         </span>
       </div>
 
@@ -721,7 +728,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
           className="gap-2 shadow-md w-full sm:w-auto min-h-[48px] sm:min-h-[52px] text-sm sm:text-base px-6 sm:px-8"
         >
           <Download className="w-5 h-5 sm:w-6 sm:h-6" />
-          Descargar Tarjeta (JPG)
+          {t('card.download')}
         </Button>
       </div>
 
@@ -730,7 +737,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
         <ShareButtons 
           url={qrUrl}
           title={`${person1} & ${person2} - Memory Link`}
-          description="Mira nuestra página de amor ❤️"
+          description={language === 'en' ? "Check out our love page ❤️" : "Mira nuestra página de amor ❤️"}
         />
       </div>
     </motion.div>
