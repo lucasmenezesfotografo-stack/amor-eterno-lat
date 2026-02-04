@@ -1,6 +1,6 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import Stripe from "npm:stripe@12.0.0";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@17.7.0?target=deno";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") as string, {
   apiVersion: "2024-11-20",
@@ -13,7 +13,7 @@ const supabaseAdmin = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") as string
 );
 
-Deno.serve(async (request) => {
+serve(async (request) => {
   const signature = request.headers.get("Stripe-Signature");
   const body = await request.text();
 

@@ -16,9 +16,10 @@ import DatePickerWithYearMonth from "@/components/DatePickerWithYearMonth";
 import PersonalizedCard from "@/components/PersonalizedCard";
 import QuickRegister from "@/components/QuickRegister";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import { useLanguage, LanguageToggle } from "@/hooks/use-language";
 
 // Validate Spotify URL
 const validateSpotifyUrl = (url: string): { isValid: boolean; type?: string; id?: string } => {
@@ -46,14 +47,16 @@ const generateSlug = (person1: string, person2: string) => {
   return `${names}-${timestamp}-${random}`;
 };
 
-const steps = [
-  { id: 1, title: "Nombres", icon: Heart, description: "¿Quiénes son ustedes?" },
-  { id: 2, title: "Foto y Música", icon: Upload, description: "Elige una foto y una canción" },
-  { id: 3, title: "Carta", icon: FileText, description: "Escribe o genera con IA" },
-];
-
-
 const CrearPage = () => {
+  const { t, language } = useLanguage();
+  const dateLocale = language === 'en' ? enUS : es;
+  
+  const steps = [
+    { id: 1, title: t('crear.step1.title'), icon: Heart, description: t('crear.step1.desc') },
+    { id: 2, title: t('crear.step2.title'), icon: Upload, description: t('crear.step2.desc') },
+    { id: 3, title: t('crear.step3.title'), icon: FileText, description: t('crear.step3.desc') },
+  ];
+  
   const [paymentAmount, setPaymentAmount] = useState<number>(300);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -144,8 +147,8 @@ const CrearPage = () => {
   useEffect(() => {
     if (searchParams.get("cancelled") === "true") {
       toast({
-        title: "Pago cancelado",
-        description: "Puedes intentar de nuevo cuando quieras.",
+        title: t('toast.payment.cancelled'),
+        description: t('toast.payment.cancelled.desc'),
         variant: "destructive",
       });
     }
@@ -626,10 +629,10 @@ if (isCheckingAuth || isRestoring) {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Tu nombre
+                {t('crear.form.yourname')}
               </label>
               <Input
-                placeholder="Ej: María"
+                placeholder={t('crear.form.yourname.placeholder')}
                 value={formData.person1}
                 onChange={(e) => setFormData({ ...formData, person1: e.target.value })}
                 className="input-premium"
@@ -637,10 +640,10 @@ if (isCheckingAuth || isRestoring) {
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Nombre de tu amor
+                {t('crear.form.partnername')}
               </label>
               <Input
-                placeholder="Ej: Juan"
+                placeholder={t('crear.form.partnername.placeholder')}
                 value={formData.person2}
                 onChange={(e) => setFormData({ ...formData, person2: e.target.value })}
                 className="input-premium"
@@ -648,12 +651,12 @@ if (isCheckingAuth || isRestoring) {
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-3">
-                Fecha de inicio de la relación
+                {t('crear.form.date')}
               </label>
               <DatePickerWithYearMonth
                 date={formData.startDate}
                 onDateChange={(date) => setFormData({ ...formData, startDate: date })}
-                placeholder="Selecciona la fecha especial..."
+                placeholder={t('crear.form.date.placeholder')}
                 disabled={(date) => date > new Date()}
                 fromYear={1970}
                 toYear={new Date().getFullYear()}
@@ -670,9 +673,9 @@ if (isCheckingAuth || isRestoring) {
                       <Heart className="w-6 h-6 text-primary fill-primary" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Su historia de amor comenzó</p>
+                      <p className="text-sm text-muted-foreground">{t('crear.form.date.started')}</p>
                       <p className="text-lg font-semibold text-foreground">
-                        {format(formData.startDate, "d 'de' MMMM, yyyy", { locale: es })}
+                        {format(formData.startDate, language === 'en' ? "MMMM d, yyyy" : "d 'de' MMMM, yyyy", { locale: dateLocale })}
                       </p>
                     </div>
                   </div>
@@ -688,7 +691,7 @@ if (isCheckingAuth || isRestoring) {
             {/* Photo Upload */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-3">
-                Foto de portada
+                {t('crear.photo.title')}
               </label>
               
               {formData.photoUrl ? (
@@ -699,7 +702,7 @@ if (isCheckingAuth || isRestoring) {
                 >
                   <img
                     src={formData.photoUrl}
-                    alt="Foto de portada"
+                    alt="Cover photo"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
@@ -713,7 +716,7 @@ if (isCheckingAuth || isRestoring) {
                   )}>
                     <div className="text-center">
                       <p className="text-lg sm:text-xl font-display font-semibold text-white drop-shadow-lg">
-                        {formData.person1 || "Tu"} & {formData.person2 || "Tu amor"}
+                        {formData.person1 || (language === 'en' ? "You" : "Tu")} & {formData.person2 || (language === 'en' ? "Your love" : "Tu amor")}
                       </p>
                     </div>
                   </div>
@@ -723,7 +726,7 @@ if (isCheckingAuth || isRestoring) {
                       <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-sm font-medium text-foreground">Foto subida</span>
+                      <span className="text-sm font-medium text-foreground">{t('crear.photo.uploaded')}</span>
                     </div>
                     <Button
                       variant="outline"
@@ -732,7 +735,7 @@ if (isCheckingAuth || isRestoring) {
                       className="bg-background/80 hover:bg-background"
                     >
                       <X className="w-4 h-4 mr-1" />
-                      Cambiar
+                      {t('crear.photo.change')}
                     </Button>
                   </div>
                 </motion.div>
@@ -749,7 +752,7 @@ if (isCheckingAuth || isRestoring) {
                   {isUploadingPhoto ? (
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                      <p className="text-foreground font-medium">Subiendo foto...</p>
+                      <p className="text-foreground font-medium">{t('crear.photo.uploading')}</p>
                     </div>
                   ) : (
                     <>
@@ -757,10 +760,10 @@ if (isCheckingAuth || isRestoring) {
                         <ImagePlus className="w-8 h-8 text-primary" />
                       </div>
                       <p className="text-foreground font-medium mb-1">
-                        Haz clic para subir tu foto
+                        {t('crear.photo.upload')}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        JPG, PNG o WEBP (máx. 5MB)
+                        {t('crear.photo.formats')}
                       </p>
                     </>
                   )}
@@ -784,13 +787,13 @@ if (isCheckingAuth || isRestoring) {
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <MoveVertical className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-medium text-foreground">Posición de los nombres</span>
+                    <span className="text-sm font-medium text-foreground">{t('crear.photo.position')}</span>
                   </div>
                   <div className="flex gap-2">
                     {[
-                      { value: "top", label: "Arriba" },
-                      { value: "center", label: "Centro" },
-                      { value: "bottom", label: "Abajo" },
+                      { value: "top", label: t('crear.photo.position.top') },
+                      { value: "center", label: t('crear.photo.position.center') },
+                      { value: "bottom", label: t('crear.photo.position.bottom') },
                     ].map((position) => (
                       <button
                         key={position.value}
@@ -862,12 +865,12 @@ if (isCheckingAuth || isRestoring) {
                 {isGeneratingLetter ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Generando carta mágica...
+                    {t('crear.ai.generating')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    Generar carta mágica con IA
+                    {t('crear.ai.generate')}
                   </>
                 )}
               </Button>
@@ -875,17 +878,17 @@ if (isCheckingAuth || isRestoring) {
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Tu carta de amor
+                {t('crear.letter.title')}
               </label>
               <Textarea
-                placeholder="Escribe tu carta aquí o usa la IA para generar..."
+                placeholder={t('crear.letter.placeholder')}
                 value={isGeneratingLetter ? generatedText : formData.loveLetter}
                 onChange={(e) => setFormData({ ...formData, loveLetter: e.target.value })}
                 className="min-h-[300px] text-base bg-secondary border-border rounded-xl resize-none"
                 disabled={isGeneratingLetter}
               />
               <p className="mt-3 text-sm text-muted-foreground">
-                {formData.loveLetter.length} caracteres
+                {formData.loveLetter.length} {t('crear.letter.chars')}
               </p>
             </div>
 
@@ -915,7 +918,7 @@ if (isCheckingAuth || isRestoring) {
                     ) : (
                       <div className="text-center">
                         <QrCode className="w-16 h-16 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Tu QR Code</p>
+                        <p className="text-sm text-muted-foreground">{t('crear.qr.title')}</p>
                       </div>
                     )}
                   </motion.div>
@@ -941,8 +944,8 @@ if (isCheckingAuth || isRestoring) {
                         <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-500/10 rounded-xl mb-3">
                           <Gift className="w-6 h-6 text-purple-400" />
                         </div>
-                        <h3 className="text-xl font-bold text-white">Activa tu página de regalo</h3>
-                        <p className="text-sm text-zinc-400 mt-1">Acceso completo</p>
+                        <h3 className="text-xl font-bold text-white">{t('crear.generate.title')}</h3>
+                        <p className="text-sm text-zinc-400 mt-1">{t('crear.generate.subtitle')}</p>
                       </div>
 
                       
@@ -957,24 +960,24 @@ if (isCheckingAuth || isRestoring) {
   {isSaving ? (
     <>
       <Loader2 className="w-5 h-5 animate-spin" />
-      Preparando pago...
+      {t('crear.payment.preparing')}
     </>
   ) : (
     <>
       <CreditCard className="w-5 h-5" />
-      Pagar ${(paymentAmount / 100).toFixed(2)} USD
+      {t('crear.payment.button')} ${(paymentAmount / 100).toFixed(2)} USD
     </>
   )}
 </Button>
 
                       <div className="flex items-center justify-center gap-2 text-zinc-500 text-xs mb-4">
                         <Shield className="w-3 h-3" />
-                        <span>Pago seguro con Stripe • Apple Pay • Google Pay</span>
+                        <span>{t('crear.payment.secure')}</span>
                       </div>
                       
                       <div className="flex items-center gap-4 my-4">
                         <div className="flex-1 h-px bg-zinc-800" />
-                        <span className="text-sm text-zinc-500">o</span>
+                        <span className="text-sm text-zinc-500">{t('crear.payment.or')}</span>
                         <div className="flex-1 h-px bg-zinc-800" />
                       </div>
                       
@@ -982,11 +985,11 @@ if (isCheckingAuth || isRestoring) {
                       <div className="space-y-3">
                         <label className="text-sm font-medium text-zinc-300 flex items-center gap-2">
                           <Ticket className="w-4 h-4 text-purple-400" />
-                          ¿Tienes un código de activación?
+                          {t('crear.code.title')}
                         </label>
                         <div className="flex gap-2">
                           <Input
-                            placeholder="Código de influencer"
+                            placeholder={t('crear.code.placeholder')}
                             value={activationCode}
                             onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
                             className="flex-1 bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 uppercase"
@@ -1006,7 +1009,7 @@ if (isCheckingAuth || isRestoring) {
                           </Button>
                         </div>
                         <p className="text-xs text-zinc-500">
-                          Los códigos de activación son para influencers y colaboradores.
+                          {t('crear.code.info')}
                         </p>
                       </div>
                       
@@ -1016,7 +1019,7 @@ if (isCheckingAuth || isRestoring) {
                         className="w-full mt-4 text-zinc-400 hover:text-white hover:bg-zinc-800"
                         onClick={() => setShowPaymentOptions(false)}
                       >
-                        Cancelar
+                        {t('crear.cancel')}
                       </Button>
                     </motion.div>
                   )}
@@ -1027,12 +1030,12 @@ if (isCheckingAuth || isRestoring) {
                         {isSaving ? (
                           <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            Preparando...
+                            {t('crear.qr.preparing')}
                           </>
                         ) : (
                           <>
                             <QrCode className="w-5 h-5" />
-                            Generar QR Code
+                            {t('crear.qr.generate')}
                           </>
                         )}
                       </Button>
@@ -1040,11 +1043,11 @@ if (isCheckingAuth || isRestoring) {
                       <>
                         <Button variant="default" size="lg" onClick={handleDownloadQR}>
                           <Download className="w-5 h-5" />
-                          Descargar QR Code
+                          {t('crear.qr.download')}
                         </Button>
                         <Link to={`/regalo/${savedSlug}`}>
                           <Button variant="outline" size="lg">
-                            Ver página
+                            {t('crear.qr.view')}
                           </Button>
                         </Link>
                       </>
@@ -1088,6 +1091,7 @@ if (isCheckingAuth || isRestoring) {
             <Heart className="w-5 h-5 text-primary fill-primary" />
             <span className="font-semibold">Memory Link</span>
           </Link>
+          <LanguageToggle />
         </div>
       </header>
 
@@ -1165,12 +1169,12 @@ if (isCheckingAuth || isRestoring) {
               className={currentStep === 1 ? "invisible" : ""}
             >
               <ArrowLeft className="w-4 h-4" />
-              Anterior
+              {t('crear.nav.prev')}
             </Button>
 
             {currentStep < steps.length && (
               <Button variant="default" onClick={handleNext}>
-                Próximo
+                {t('crear.nav.next')}
                 <ArrowRight className="w-4 h-4" />
               </Button>
             )}
@@ -1187,8 +1191,8 @@ if (isCheckingAuth || isRestoring) {
             setQrGenerated(true);
             setShowPaymentOptions(false);
             toast({
-              title: "¡Pago exitoso!",
-              description: "Tu página está activa por 1 año 💖",
+              title: t('toast.payment.success'),
+              description: t('toast.payment.success.desc'),
             });
           }}
           amount={paymentAmount}
