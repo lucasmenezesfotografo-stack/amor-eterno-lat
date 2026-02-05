@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 export interface Memory {
   imageUrl: string;
@@ -27,6 +28,7 @@ const MemoryUploader = ({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,8 +36,8 @@ const MemoryUploader = ({
 
     if (memories.length >= maxMemories) {
       toast({
-        title: "Límite alcanzado",
-        description: `Solo puedes agregar ${maxMemories} recuerdos.`,
+        title: t('memories.limit.title'),
+        description: `${t('memories.limit.desc')} ${maxMemories} ${t('memories.limit.suffix')}`,
         variant: "destructive",
       });
       return;
@@ -43,8 +45,8 @@ const MemoryUploader = ({
 
     if (!file.type.startsWith("image/")) {
       toast({
-        title: "Archivo no válido",
-        description: "Por favor selecciona un archivo de imagen.",
+        title: t('memories.invalid.title'),
+        description: t('memories.invalid.desc'),
         variant: "destructive",
       });
       return;
@@ -52,8 +54,8 @@ const MemoryUploader = ({
 
     if (file.size > 5 * 1024 * 1024) {
       toast({
-        title: "Archivo muy grande",
-        description: "La imagen debe ser menor a 5MB.",
+        title: t('memories.size.title'),
+        description: t('memories.size.desc'),
         variant: "destructive",
       });
       return;
@@ -83,20 +85,20 @@ const MemoryUploader = ({
       const newMemory: Memory = {
         imageUrl: urlData.publicUrl,
         caption: "",
-        title: `Recuerdo especial ${memoryNumber}`,
+        title: `${t('memories.default.title')} ${memoryNumber}`,
       };
 
       onMemoriesChange([...memories, newMemory]);
 
       toast({
-        title: "¡Foto subida!",
-        description: "Ahora puedes personalizar el nombre del recuerdo.",
+        title: t('memories.uploaded.title'),
+        description: t('memories.uploaded.desc'),
       });
     } catch (error) {
       console.error("Error uploading memory:", error);
       toast({
-        title: "Error al subir",
-        description: "No se pudo subir la foto. Intenta de nuevo.",
+        title: t('memories.error.title'),
+        description: t('memories.error.desc'),
         variant: "destructive",
       });
     } finally {
@@ -105,7 +107,7 @@ const MemoryUploader = ({
         fileInputRef.current.value = "";
       }
     }
-  }, [memories, maxMemories, onMemoriesChange, toast]);
+  }, [memories, maxMemories, onMemoriesChange, toast, t]);
 
   const handleRemoveMemory = (index: number) => {
     const newMemories = memories.filter((_, i) => i !== index);
@@ -134,10 +136,10 @@ const MemoryUploader = ({
       <div className="text-center">
         <div className="inline-flex items-center gap-2 mb-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">Recuerdos Especiales</h3>
+          <h3 className="text-lg font-semibold text-foreground">{t('memories.title')}</h3>
         </div>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Agrega hasta 4 fotos con pequeños mensajes para guardar momentos importantes de su historia.
+          {t('memories.subtitle')}
         </p>
       </div>
 
@@ -185,10 +187,10 @@ const MemoryUploader = ({
                 {/* Title input - EDITABLE */}
                 <div>
                   <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1 block">
-                    Nombre del momento
+                    {t('memories.name.label')}
                   </label>
                   <Input
-                    placeholder="Ej: Nuestra primera cita"
+                    placeholder={t('memories.name.placeholder')}
                     value={memory.title || ""}
                     onChange={(e) => handleTitleChange(index, e.target.value)}
                     maxLength={50}
@@ -199,10 +201,10 @@ const MemoryUploader = ({
                 {/* Caption input */}
                 <div>
                   <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1 block">
-                    Descripción (opcional)
+                    {t('memories.desc.label')}
                   </label>
                   <Input
-                    placeholder="Escribe un mensaje corto..."
+                    placeholder={t('memories.desc.placeholder')}
                     value={memory.caption}
                     onChange={(e) => handleCaptionChange(index, e.target.value)}
                     maxLength={120}
@@ -232,7 +234,7 @@ const MemoryUploader = ({
             {isUploading ? (
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                <p className="text-sm font-medium text-foreground">Subiendo foto...</p>
+                <p className="text-sm font-medium text-foreground">{t('memories.uploading')}</p>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-3 p-6 text-center">
@@ -241,10 +243,10 @@ const MemoryUploader = ({
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground mb-1">
-                    Agregar recuerdo
+                    {t('memories.add')}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {memories.length} de {maxMemories} fotos
+                    {memories.length} {t('memories.of')} {maxMemories} {t('memories.photos')}
                   </p>
                 </div>
               </div>
@@ -260,7 +262,7 @@ const MemoryUploader = ({
           animate={{ opacity: 1 }}
           className="text-center text-sm text-muted-foreground italic"
         >
-          Aún no has agregado recuerdos. ¡Sube tu primera foto para comenzar!
+          {t('memories.empty')}
         </motion.p>
       )}
 
