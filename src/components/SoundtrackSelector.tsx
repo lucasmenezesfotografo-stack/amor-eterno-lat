@@ -3,6 +3,7 @@ import { Music, Check, Play, Pause, Youtube, Loader2, Search, Link, AlertCircle 
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/hooks/use-language";
 
 export interface YouTubeTrack {
   id: string;
@@ -127,15 +128,16 @@ const SoundtrackSelector = ({
   const [previewingTrack, setPreviewingTrack] = useState<string | null>(null);
   const [customUrlError, setCustomUrlError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { t } = useLanguage();
 
   // Validate custom URL when it changes
   useEffect(() => {
     if (customYoutubeUrl && !isValidYoutubeUrl(customYoutubeUrl)) {
-      setCustomUrlError("Por favor, ingresa un enlace válido de YouTube");
+      setCustomUrlError(t('soundtrack.custom.error'));
     } else {
       setCustomUrlError(null);
     }
-  }, [customYoutubeUrl]);
+  }, [customYoutubeUrl, t]);
 
   const handlePreview = (track: YouTubeTrack, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -166,7 +168,7 @@ const SoundtrackSelector = ({
       if (videoId) {
         // Deselect any preset track
         onSelect("custom", {
-          name: "Canción personalizada",
+          name: t('soundtrack.custom.name'),
           artist: "YouTube",
           youtubeVideoId: videoId,
           albumCover: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
@@ -193,11 +195,11 @@ const SoundtrackSelector = ({
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <Youtube className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-medium text-foreground">Elige tu Canción</h3>
+        <h3 className="text-lg font-medium text-foreground">{t('soundtrack.title')}</h3>
       </div>
 
       <p className="text-sm text-muted-foreground mb-4">
-        La música se reproduce mediante YouTube
+        {t('soundtrack.subtitle')}
       </p>
 
       {/* YouTube Preview Player */}
@@ -322,12 +324,12 @@ const SoundtrackSelector = ({
         <div className="flex items-center gap-2 mb-3">
           <Link className="w-4 h-4 text-muted-foreground" />
           <label className="text-sm font-medium text-foreground">
-            ¿Quieres otra canción? Pega aquí el enlace de YouTube
+            {t('soundtrack.custom.label')}
           </label>
         </div>
         
         <Input
-          placeholder="https://www.youtube.com/watch?v=..."
+          placeholder={t('soundtrack.custom.placeholder')}
           value={customYoutubeUrl}
           onChange={(e) => onCustomUrlChange(e.target.value)}
           onBlur={handleCustomUrlBlur}
@@ -358,8 +360,8 @@ const SoundtrackSelector = ({
               />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground">Canción personalizada</p>
-              <p className="text-xs text-muted-foreground">Esta canción tendrá prioridad</p>
+              <p className="text-sm font-medium text-foreground">{t('soundtrack.custom.name')}</p>
+              <p className="text-xs text-muted-foreground">{t('soundtrack.custom.priority')}</p>
             </div>
             <Check className="w-5 h-5 text-primary" />
           </motion.div>
