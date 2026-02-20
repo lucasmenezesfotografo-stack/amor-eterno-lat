@@ -28,11 +28,25 @@ const MemoryUploader = ({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      // In-app browsers may silently fail file selection
+      const ua = navigator.userAgent || "";
+      const isInApp = /tiktok|BytedanceWebview|musical_ly|FBAN|FBAV|Instagram/i.test(ua);
+      if (isInApp) {
+        toast({
+          title: t('memories.error.title'),
+          description: language === 'es'
+            ? 'El navegador de la app puede bloquear la selección de fotos. Abre en Chrome o Safari.'
+            : "This app's browser may block photo selection. Open in Chrome or Safari.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
 
     if (memories.length >= maxMemories) {
       toast({
