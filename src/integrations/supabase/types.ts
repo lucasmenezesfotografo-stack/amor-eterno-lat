@@ -131,17 +131,20 @@ export type Database = {
         Row: {
           cover_photo_url: string | null
           created_at: string
+          expires_at: string | null
           id: string
           is_active: boolean
           love_letter: string | null
           memories: Json | null
           names_position: string | null
+          paid_at: string | null
           partner_name: string
           slug: string
           soundtrack_name: string | null
           soundtrack_url: string | null
           spotify_link: string | null
           start_date: string
+          stripe_payment_intent_id: string | null
           user_id: string | null
           your_name: string
           youtube_video_id: string | null
@@ -149,17 +152,20 @@ export type Database = {
         Insert: {
           cover_photo_url?: string | null
           created_at?: string
+          expires_at?: string | null
           id?: string
           is_active?: boolean
           love_letter?: string | null
           memories?: Json | null
           names_position?: string | null
+          paid_at?: string | null
           partner_name: string
           slug: string
           soundtrack_name?: string | null
           soundtrack_url?: string | null
           spotify_link?: string | null
           start_date: string
+          stripe_payment_intent_id?: string | null
           user_id?: string | null
           your_name: string
           youtube_video_id?: string | null
@@ -167,17 +173,20 @@ export type Database = {
         Update: {
           cover_photo_url?: string | null
           created_at?: string
+          expires_at?: string | null
           id?: string
           is_active?: boolean
           love_letter?: string | null
           memories?: Json | null
           names_position?: string | null
+          paid_at?: string | null
           partner_name?: string
           slug?: string
           soundtrack_name?: string | null
           soundtrack_url?: string | null
           spotify_link?: string | null
           start_date?: string
+          stripe_payment_intent_id?: string | null
           user_id?: string | null
           your_name?: string
           youtube_video_id?: string | null
