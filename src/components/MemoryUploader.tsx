@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
+import { compressImage } from "@/lib/image-compression";
 
 export interface Memory {
   imageUrl: string;
@@ -78,12 +79,14 @@ const MemoryUploader = ({
     setIsUploading(true);
 
     try {
-      const fileExt = file.name.split(".").pop();
+      // Compress the image before upload
+      const compressed = await compressImage(file);
+      const fileExt = compressed.name.split(".").pop() || "webp";
       const fileName = `memories/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
       const { error } = await supabase.storage
         .from("gift-photos")
-        .upload(fileName, file, {
+        .upload(fileName, compressed, {
           cacheControl: "3600",
           upsert: false,
         });
