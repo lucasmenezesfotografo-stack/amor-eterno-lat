@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { parseISO } from "date-fns";
+import { DateTime } from "luxon";
 import { useLanguage } from "@/hooks/use-language";
 
 interface TimeUnit {
@@ -21,25 +21,31 @@ const RelationshipCounter = ({
   const [timeUnits, setTimeUnits] = useState<TimeUnit[]>([]);
 
   useEffect(() => {
-    const start = parseISO(startDate);
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Mexico_City";
+
+    // Parse the start date as a local calendar date at noon to avoid DST edge cases
+    let start: DateTime;
+    if (startDate.includes("T")) {
+      // ISO string like "2025-02-26T00:00:00"
+      const [datePart] = startDate.split("T");
+      const [y, m, d] = datePart.split("-").map(Number);
+      start = DateTime.fromObject({ year: y, month: m, day: d, hour: 12 }, { zone: tz });
+    } else {
+      // Plain date "2025-02-26"
+      const [y, m, d] = startDate.split("-").map(Number);
+      start = DateTime.fromObject({ year: y, month: m, day: d, hour: 12 }, { zone: tz });
+    }
 
     const calculateTime = () => {
-      const now = new Date();
-      const diff = now.getTime() - start.getTime();
-
-      const seconds = Math.floor(diff / 1000);
-      const minutes = Math.floor(seconds / 60);
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-      const months = Math.floor(days / 30.44);
-      const years = Math.floor(days / 365.25);
+      const now = DateTime.now().setZone(tz);
+      const diff = now.diff(start, ["years", "months", "days", "hours", "minutes"]);
 
       setTimeUnits([
-        { value: years, label: t('counter.years') },
-        { value: months % 12, label: t('counter.months') },
-        { value: days % 30, label: t('counter.days') },
-        { value: hours % 24, label: t('counter.hours') },
-        { value: minutes % 60, label: t('counter.min') }
+        { value: Math.floor(diff.years), label: t('counter.years') },
+        { value: Math.floor(diff.months), label: t('counter.months') },
+        { value: Math.floor(diff.days), label: t('counter.days') },
+        { value: Math.floor(diff.hours), label: t('counter.hours') },
+        { value: Math.floor(diff.minutes), label: t('counter.min') }
       ]);
     };
 
