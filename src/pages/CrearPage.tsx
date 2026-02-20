@@ -1,4 +1,5 @@
 import { StripePaymentModal } from "@/components/StripePaymentModal";
+import { compressImage } from "@/lib/image-compression";
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -467,15 +468,18 @@ setPaymentModalOpen(true);
     setIsUploadingPhoto(true);
 
     try {
-      // Generate unique filename
-      const fileExt = file.name.split(".").pop();
+      // Compress the image before upload
+      const compressed = await compressImage(file);
+      const fileExt = compressed.name.split(".").pop() || "webp";
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `uploads/${fileName}`;
+      const filePath = savedGiftPageId
+        ? `uploads/${savedGiftPageId}/cover_${Date.now()}.${fileExt}`
+        : `uploads/${fileName}`;
 
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
         .from("gift-photos")
-        .upload(filePath, file, {
+        .upload(filePath, compressed, {
           cacheControl: "3600",
           upsert: false,
         });
@@ -1186,6 +1190,7 @@ if (isCheckingAuth || isRestoring) {
           open={paymentModalOpen}
           clientSecret={clientSecret}
           onClose={() => setPaymentModalOpen(false)}
+          giftPageId={savedGiftPageId || undefined}
           onPaid={() => {
             setPaymentModalOpen(false);
             setQrGenerated(true);

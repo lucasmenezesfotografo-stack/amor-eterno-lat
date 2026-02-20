@@ -17,3 +17,12 @@ verify_jwt = false
 
 [functions.check-expired-subscriptions]
 verify_jwt = false
+
+[functions.verify-payment-intent]
+verify_jwt = false
+
+[functions.reconcile-payments]
+verify_jwt = false
+
+[functions.cleanup-expired-drafts]
+verify_jwt = false

@@ -55,8 +55,9 @@ const appearance: Appearance = {
 
 type CheckoutFormProps = {
   onClose: () => void;
-  onPaid: () => void;
+  onPaid: (paymentIntentId?: string) => void;
   amount: number;
+  giftPageId?: string;
   appliedPromotion: {
     code: string;
     percentOff: number | null;
@@ -68,6 +69,7 @@ function CheckoutForm({
   onClose,
   onPaid,
   amount,
+  giftPageId,
   appliedPromotion,
 }: CheckoutFormProps) {
   const { t, language } = useLanguage();
@@ -97,6 +99,28 @@ function CheckoutForm({
     if (result.error) {
       setError(result.error.message || (language === 'en' ? "Payment error" : "Error al procesar el pago"));
       setProcessing(false);
+    } else if (result.paymentIntent) {
+      // Server-side verification (fallback, doesn't depend on webhook)
+      if (giftPageId) {
+        try {
+          const verifyRes = await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment-intent`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                giftPageId,
+                paymentIntentId: result.paymentIntent.id,
+              }),
+            }
+          );
+          const verifyData = await verifyRes.json();
+          console.log("[payment] verify-payment-intent result:", verifyData);
+        } catch (e) {
+          console.warn("[payment] verify-payment-intent failed, webhook will handle:", e);
+        }
+      }
+      onPaid(result.paymentIntent.id);
     } else {
       onPaid();
     }
@@ -202,8 +226,9 @@ type StripePaymentModalProps = {
   open: boolean;
   clientSecret: string;
   onClose: () => void;
-  onPaid: () => void;
+  onPaid: (paymentIntentId?: string) => void;
   amount?: number;
+  giftPageId?: string;
   appliedPromotion?: {
     code: string;
     percentOff: number | null;
@@ -217,6 +242,7 @@ export function StripePaymentModal({
   onClose,
   onPaid,
   amount = 500,
+  giftPageId,
   appliedPromotion = null,
 }: StripePaymentModalProps) {
   const { t, language } = useLanguage();
@@ -269,6 +295,7 @@ export function StripePaymentModal({
               onClose={onClose}
               onPaid={onPaid}
               amount={amount}
+              giftPageId={giftPageId}
               appliedPromotion={appliedPromotion}
             />
           </Elements>
