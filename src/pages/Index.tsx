@@ -126,7 +126,7 @@ const IndexContent = () => {
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-6">
                 <Link to="/crear">
                   <Button variant="default" size="xl" className="group min-w-[220px] h-14 text-base">
                     <Gift className="w-5 h-5 mr-2" />
@@ -142,12 +142,18 @@ const IndexContent = () => {
                 </Link>
               </div>
 
-              {/* Trust Indicators */}
+              {/* Trust Line */}
+              <p className="text-sm text-muted-foreground text-center lg:text-left mb-2">
+                {t('hero.trust.secure')}
+              </p>
+
+              {/* Urgency */}
+              <p className="text-sm text-primary font-medium text-center lg:text-left mb-8">
+                {t('hero.urgency')}
+              </p>
+
+              {/* Additional Trust Indicators */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-primary" />
-                  <span>{t('hero.trust.secure')}</span>
-                </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-primary" />
                   <span>{t('hero.trust.time')}</span>
@@ -285,6 +291,31 @@ const IndexContent = () => {
             <ChevronDown className="w-5 h-5 text-muted-foreground" />
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* ========== BENEFITS SECTION ========== */}
+      <section className="py-16 px-4 relative">
+        <div className="container mx-auto max-w-3xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              t('benefits.1'),
+              t('benefits.2'),
+              t('benefits.3'),
+              t('benefits.4'),
+            ].map((benefit, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.4 }}
+                className="flex items-center gap-3 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl px-5 py-4"
+              >
+                <span className="text-lg leading-relaxed text-foreground">{benefit}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ========== VISUAL EXPLANATION SECTION ========== */}
@@ -762,6 +793,10 @@ const IndexContent = () => {
                 <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
+            
+            <p className="text-sm text-muted-foreground mt-4">
+              {t('hero.trust.secure')}
+            </p>
           </motion.div>
         </div>
       </section>

@@ -16,13 +16,20 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Hero Section
     'hero.badge': 'Miles de historias de amor creadas 💕',
-    'hero.headline': 'Regala una historia de amor que se abre con un QR.',
-    'hero.subheadline': 'Diseña una tarjeta personalizada que revela una página única para tu pareja.',
-    'hero.cta.primary': 'Crear mi tarjeta',
+    'hero.headline': '🎁 El regalo que hará que tu novia se emocione (solo $3 USD)',
+    'hero.subheadline': 'Sube sus fotos, agrega sus nombres y la fecha en que comenzó su historia. Creamos una página romántica que calcula en tiempo real cuánto llevan juntos.',
+    'hero.cta.primary': 'Crear mi regalo ahora 💖 (solo $3)',
     'hero.cta.secondary': 'Ver ejemplo',
-    'hero.trust.secure': 'Pago seguro',
+    'hero.trust.secure': '🔒 Pago seguro con Stripe · Acepta tarjetas internacionales',
     'hero.trust.time': 'Menos de 3 min',
     'hero.trust.price': '$3 USD para siempre',
+    'hero.urgency': 'Precio promocional por tiempo limitado',
+    
+    // Benefits Section
+    'benefits.1': '💞 Calcula automáticamente el tiempo que llevan juntos',
+    'benefits.2': '📸 Personaliza con fotos especiales',
+    'benefits.3': '💌 Agrega una carta romántica',
+    'benefits.4': '🎶 Incluye una canción significativa',
     
     // Visual Steps
     'visual.step1': 'Entrega la tarjeta.',
@@ -69,13 +76,13 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Social Proof
     'social.badge': 'Historias reales',
-    'social.title': 'Personas enamorando todos los días',
+    'social.title': 'Parejas que ya lo sorprendieron ❤️',
     'social.subtitle': 'Miles de parejas ya crearon su página de amor.',
-    'social.testimonial1.text': 'Mi novia lloró de emoción cuando escaneó el QR. El mejor regalo que le he dado.',
-    'social.testimonial1.name': 'Carlos & María',
+    'social.testimonial1.text': 'Lo hice para nuestro aniversario y le encantó 😭',
+    'social.testimonial1.name': 'Carlos M.',
     'social.testimonial1.location': 'México',
-    'social.testimonial2.text': 'Sorprendí a mi esposo en nuestro aniversario. La música comenzó a sonar y fue mágico.',
-    'social.testimonial2.name': 'Ana & Pedro',
+    'social.testimonial2.text': 'Es simple, rápido y súper romántico.',
+    'social.testimonial2.name': 'Valeria R.',
     'social.testimonial2.location': 'Colombia',
     'social.testimonial3.text': 'Pensé que sería difícil pero en 5 minutos tenía todo listo. Súper fácil y hermoso.',
     'social.testimonial3.name': 'Lucía & Diego',
@@ -108,10 +115,10 @@ const translations: Record<Language, Record<string, string>> = {
     'summary.step3': 'Tu página queda activa para siempre',
     
     // Final CTA
-    'final.title': 'Haz sonreír a',
-    'final.highlight': 'la persona que amas hoy.',
+    'final.title': 'No esperes más para',
+    'final.highlight': 'sorprenderla.',
     'final.subtitle': 'Toma menos de 3 minutos.',
-    'final.cta': 'Crear mi tarjeta ahora',
+    'final.cta': 'Quiero mi página romántica 💘',
     
     // Footer
     'footer.terms': 'Términos',
@@ -336,13 +343,20 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Hero Section
     'hero.badge': 'Thousands of love stories created 💕',
-    'hero.headline': 'Gift a love story that opens with a QR code.',
-    'hero.subheadline': 'Design a personalized card that reveals a unique page for your partner.',
-    'hero.cta.primary': 'Create my card',
+    'hero.headline': '🎁 The gift that will make your girlfriend emotional (only $3 USD)',
+    'hero.subheadline': 'Upload your photos, add your names and your anniversary date. We create a romantic page that calculates in real time how long you\'ve been together.',
+    'hero.cta.primary': 'Create my romantic gift 💖 (only $3)',
     'hero.cta.secondary': 'See example',
-    'hero.trust.secure': 'Secure payment',
+    'hero.trust.secure': '🔒 Secure payment via Stripe · International cards accepted',
     'hero.trust.time': 'Less than 3 min',
     'hero.trust.price': '$3 USD forever',
+    'hero.urgency': 'Limited-time promotional price',
+    
+    // Benefits Section
+    'benefits.1': '💞 Automatically calculates your time together',
+    'benefits.2': '📸 Personalize with special photos',
+    'benefits.3': '💌 Add a romantic letter',
+    'benefits.4': '🎶 Include a meaningful song',
     
     // Visual Steps
     'visual.step1': 'Give the card.',
@@ -389,14 +403,14 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Social Proof
     'social.badge': 'Real stories',
-    'social.title': 'People falling in love every day',
+    'social.title': 'Couples who already surprised their partners ❤️',
     'social.subtitle': 'Thousands of couples have created their love page.',
-    'social.testimonial1.text': 'My girlfriend cried with emotion when she scanned the QR. The best gift I have ever given her.',
-    'social.testimonial1.name': 'Carlos & María',
-    'social.testimonial1.location': 'Mexico',
-    'social.testimonial2.text': 'I surprised my husband on our anniversary. The music started playing and it was magical.',
-    'social.testimonial2.name': 'Ana & Pedro',
-    'social.testimonial2.location': 'Colombia',
+    'social.testimonial1.text': 'I made this for our anniversary and she loved it 😭',
+    'social.testimonial1.name': 'Daniel R.',
+    'social.testimonial1.location': 'USA',
+    'social.testimonial2.text': "It's simple, fast and incredibly romantic.",
+    'social.testimonial2.name': 'Amanda S.',
+    'social.testimonial2.location': 'Canada',
     'social.testimonial3.text': 'I thought it would be hard but in 5 minutes I had everything ready. Super easy and beautiful.',
     'social.testimonial3.name': 'Lucía & Diego',
     'social.testimonial3.location': 'Argentina',
@@ -428,10 +442,10 @@ const translations: Record<Language, Record<string, string>> = {
     'summary.step3': 'Your page is activated forever',
     
     // Final CTA
-    'final.title': 'Make',
-    'final.highlight': 'the person you love smile today.',
+    'final.title': "Don't wait to",
+    'final.highlight': 'surprise her.',
     'final.subtitle': 'Takes less than 3 minutes.',
-    'final.cta': 'Create my card now',
+    'final.cta': 'I want my romantic page 💘',
     
     // Footer
     'footer.terms': 'Terms',
