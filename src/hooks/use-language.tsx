@@ -12,20 +12,21 @@ const translations: Record<Language, Record<string, string>> = {
   es: {
     // Navigation
     'nav.example': 'Ver ejemplo',
-    'nav.create': 'Crear mi tarjeta',
+    'nav.create': 'Crear mi regalo',
     
     // Hero Section
-    'hero.badge': 'Miles de historias de amor creadas 💕',
-    'hero.headline': '🎁 El regalo que hará que tu novia se emocione (solo $3 USD)',
+    'hero.badge': 'Un regalo romántico digital listo en minutos 💕',
+    'hero.headline': '🎁 El regalo romántico que sorprenderá a tu pareja (solo $3 USD)',
     'hero.subheadline': 'Sube sus fotos, agrega sus nombres y la fecha en que comenzó su historia. Creamos una página romántica que calcula en tiempo real cuánto llevan juntos.',
-    'hero.cta.primary': 'Crear mi regalo ahora 💖 (solo $3)',
+    'hero.cta.primary': 'Crear mi regalo ahora 💖',
     'hero.cta.secondary': 'Ver ejemplo',
-    'hero.trust.secure': '🔒 Pago seguro con Stripe · Acepta tarjetas internacionales',
-    'hero.trust.time': 'Menos de 3 min',
-    'hero.trust.price': '$3 USD para siempre',
+    'hero.trust.secure': '🔒 Pago seguro con Stripe · Acepta tarjetas internacionales · Pago único $3 USD',
+    'hero.trust.time': 'Listo en 2 minutos',
+    'hero.trust.price': 'Pago único $3 USD',
     'hero.urgency': 'Precio promocional por tiempo limitado',
     
     // Benefits Section
+    'benefits.title': '¿Qué incluye tu regalo?',
     'benefits.1': '💞 Calcula automáticamente el tiempo que llevan juntos',
     'benefits.2': '📸 Personaliza con fotos especiales',
     'benefits.3': '💌 Agrega una carta romántica',
@@ -40,12 +41,12 @@ const translations: Record<Language, Record<string, string>> = {
     'how.badge': 'Simple y mágico',
     'how.title': '¿Cómo funciona?',
     'how.subtitle': 'En 3 simples pasos creas un regalo inolvidable.',
-    'how.step1.title': 'Crea la página',
-    'how.step1.desc': 'Sube fotos, elige música, escribe tu carta de amor.',
+    'how.step1.title': 'Personaliza la página',
+    'how.step1.desc': 'Sube fotos, elige música y escribe una carta de amor.',
     'how.step2.title': 'Genera el QR',
     'how.step2.desc': 'Obtienes un código QR único y una tarjeta para imprimir.',
-    'how.step3.title': 'Regala el momento',
-    'how.step3.desc': 'Tu pareja escanea el QR y descubre la sorpresa.',
+    'how.step3.title': 'Regala la sorpresa',
+    'how.step3.desc': 'Tu pareja escanea el QR y descubre una experiencia única.',
     
     // Features
     'features.badge': 'Todo incluido',
@@ -76,26 +77,42 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Social Proof
     'social.badge': 'Historias reales',
-    'social.title': 'Parejas que ya lo sorprendieron ❤️',
-    'social.subtitle': 'Miles de parejas ya crearon su página de amor.',
-    'social.testimonial1.text': 'Lo hice para nuestro aniversario y le encantó 😭',
+    'social.title': 'Parejas que ya sorprendieron a su amor ❤️',
+    'social.subtitle': 'Miles de parejas ya crearon su página romántica.',
+    'social.testimonial1.text': 'Lo hice para nuestro aniversario y la reacción fue increíble 😭',
     'social.testimonial1.name': 'Carlos M.',
     'social.testimonial1.location': 'México',
-    'social.testimonial2.text': 'Es simple, rápido y súper romántico.',
+    'social.testimonial2.text': 'Es simple, rápido y súper romántico. Lo mejor que he regalado.',
     'social.testimonial2.name': 'Valeria R.',
     'social.testimonial2.location': 'Colombia',
-    'social.testimonial3.text': 'Pensé que sería difícil pero en 5 minutos tenía todo listo. Súper fácil y hermoso.',
+    'social.testimonial3.text': 'En 5 minutos tenía todo listo. Fácil, hermoso y muy especial.',
     'social.testimonial3.name': 'Lucía & Diego',
     'social.testimonial3.location': 'Argentina',
     
-    // Trust badges
+    // Trust & Security
     'trust.payment': 'Pago seguro',
     'trust.ssl': 'Conexión SSL',
     'trust.privacy': 'Privacidad',
-    'trust.nospam': 'Sin spam',
+    'trust.nospam': 'Sin suscripción',
+    'trust.section.title': 'Seguridad y confianza',
+    'trust.item1': '🔒 Pago seguro procesado por Stripe',
+    'trust.item2': '🚫 Sin suscripción ni cargos ocultos',
+    'trust.item3': '⚡ Creación instantánea en menos de 2 minutos',
+    'trust.item4': '💳 Pago único de $3 USD',
+    
+    // FAQ
+    'faq.title': 'Preguntas frecuentes',
+    'faq.q1': '¿Es seguro el pago?',
+    'faq.a1': 'Sí, usamos Stripe, la plataforma de pagos más segura del mundo. Tu información está completamente protegida.',
+    'faq.q2': '¿Por qué cuesta solo $3?',
+    'faq.a2': 'Queremos que sea accesible para todos. Es un precio promocional que incluye todo: página, QR, fotos, música y carta de amor.',
+    'faq.q3': '¿Necesito tarjeta internacional?',
+    'faq.a3': 'Aceptamos tarjetas de débito y crédito de cualquier país. También Apple Pay y Google Pay.',
+    'faq.q4': '¿Cuánto dura mi página?',
+    'faq.a4': 'Tu página queda activa de forma permanente. Acceso de por vida con un solo pago.',
     
     // Pricing
-    'pricing.badge': 'Promoción San Valentín',
+    'pricing.badge': 'Oferta especial',
     'pricing.title': 'Todo esto por solo',
     'pricing.price': '$3 USD',
     'pricing.forever': 'para siempre',
@@ -115,9 +132,9 @@ const translations: Record<Language, Record<string, string>> = {
     'summary.step3': 'Tu página queda activa para siempre',
     
     // Final CTA
-    'final.title': 'No esperes más para',
-    'final.highlight': 'sorprenderla.',
-    'final.subtitle': 'Toma menos de 3 minutos.',
+    'final.title': 'No esperes más para sorprender',
+    'final.highlight': 'a tu pareja.',
+    'final.subtitle': 'Toma menos de 2 minutos. Solo $3 USD.',
     'final.cta': 'Quiero mi página romántica 💘',
     
     // Footer
@@ -342,17 +359,18 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.create': 'Create my card',
     
     // Hero Section
-    'hero.badge': 'Thousands of love stories created 💕',
-    'hero.headline': '🎁 The gift that will make your girlfriend emotional (only $3 USD)',
+    'hero.badge': 'A romantic digital gift ready in minutes 💕',
+    'hero.headline': '🎁 The romantic gift that will surprise your partner (only $3 USD)',
     'hero.subheadline': 'Upload your photos, add your names and your anniversary date. We create a romantic page that calculates in real time how long you\'ve been together.',
-    'hero.cta.primary': 'Create my romantic gift 💖 (only $3)',
+    'hero.cta.primary': 'Create my romantic gift 💖',
     'hero.cta.secondary': 'See example',
-    'hero.trust.secure': '🔒 Secure payment via Stripe · International cards accepted',
-    'hero.trust.time': 'Less than 3 min',
-    'hero.trust.price': '$3 USD forever',
+    'hero.trust.secure': '🔒 Secure payment via Stripe · International cards accepted · One-time payment $3 USD',
+    'hero.trust.time': 'Ready in 2 minutes',
+    'hero.trust.price': 'One-time payment $3 USD',
     'hero.urgency': 'Limited-time promotional price',
     
     // Benefits Section
+    'benefits.title': 'What\'s included in your gift?',
     'benefits.1': '💞 Automatically calculates your time together',
     'benefits.2': '📸 Personalize with special photos',
     'benefits.3': '💌 Add a romantic letter',
@@ -367,12 +385,12 @@ const translations: Record<Language, Record<string, string>> = {
     'how.badge': 'Simple and magical',
     'how.title': 'How does it work?',
     'how.subtitle': 'In 3 simple steps you create an unforgettable gift.',
-    'how.step1.title': 'Create the page',
-    'how.step1.desc': 'Upload photos, choose music, write your love letter.',
+    'how.step1.title': 'Personalize the page',
+    'how.step1.desc': 'Upload photos, choose music and write a love letter.',
     'how.step2.title': 'Generate the QR',
     'how.step2.desc': 'Get a unique QR code and a card to print.',
-    'how.step3.title': 'Gift the moment',
-    'how.step3.desc': 'Your partner scans the QR and discovers the surprise.',
+    'how.step3.title': 'Gift the surprise',
+    'how.step3.desc': 'Your partner scans the QR and discovers a unique experience.',
     
     // Features
     'features.badge': 'All included',
@@ -403,26 +421,42 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Social Proof
     'social.badge': 'Real stories',
-    'social.title': 'Couples who already surprised their partners ❤️',
-    'social.subtitle': 'Thousands of couples have created their love page.',
-    'social.testimonial1.text': 'I made this for our anniversary and she loved it 😭',
+    'social.title': 'Couples who already surprised their partner ❤️',
+    'social.subtitle': 'Thousands of couples have created their romantic page.',
+    'social.testimonial1.text': 'I made this for our anniversary and the reaction was priceless 😭',
     'social.testimonial1.name': 'Daniel R.',
     'social.testimonial1.location': 'USA',
-    'social.testimonial2.text': "It's simple, fast and incredibly romantic.",
+    'social.testimonial2.text': "Simple, fast and incredibly romantic. Best gift I've ever given.",
     'social.testimonial2.name': 'Amanda S.',
     'social.testimonial2.location': 'Canada',
-    'social.testimonial3.text': 'I thought it would be hard but in 5 minutes I had everything ready. Super easy and beautiful.',
+    'social.testimonial3.text': 'In 5 minutes I had everything ready. Easy, beautiful and very special.',
     'social.testimonial3.name': 'Lucía & Diego',
     'social.testimonial3.location': 'Argentina',
     
-    // Trust badges
+    // Trust & Security
     'trust.payment': 'Secure payment',
     'trust.ssl': 'SSL connection',
     'trust.privacy': 'Privacy',
-    'trust.nospam': 'No spam',
+    'trust.nospam': 'No subscription',
+    'trust.section.title': 'Security & trust',
+    'trust.item1': '🔒 Secure payment processed by Stripe',
+    'trust.item2': '🚫 No subscription or hidden fees',
+    'trust.item3': '⚡ Instant creation in under 2 minutes',
+    'trust.item4': '💳 One-time payment of $3 USD',
+    
+    // FAQ
+    'faq.title': 'Frequently asked questions',
+    'faq.q1': 'Is the payment secure?',
+    'faq.a1': 'Yes, we use Stripe, the world\'s most trusted payment platform. Your information is completely protected.',
+    'faq.q2': 'Why is it only $3?',
+    'faq.a2': 'We want it to be accessible to everyone. It\'s a promotional price that includes everything: page, QR, photos, music and love letter.',
+    'faq.q3': 'Do I need an international card?',
+    'faq.a3': 'We accept debit and credit cards from any country. Also Apple Pay and Google Pay.',
+    'faq.q4': 'How long does my page last?',
+    'faq.a4': 'Your page stays active permanently. Lifetime access with a single payment.',
     
     // Pricing
-    'pricing.badge': "Valentine's Promotion",
+    'pricing.badge': 'Special offer',
     'pricing.title': 'All this for only',
     'pricing.price': '$3 USD',
     'pricing.forever': 'forever',
@@ -442,9 +476,9 @@ const translations: Record<Language, Record<string, string>> = {
     'summary.step3': 'Your page is activated forever',
     
     // Final CTA
-    'final.title': "Don't wait to",
-    'final.highlight': 'surprise her.',
-    'final.subtitle': 'Takes less than 3 minutes.',
+    'final.title': "Don't wait to surprise",
+    'final.highlight': 'your partner.',
+    'final.subtitle': 'Takes less than 2 minutes. Only $3 USD.',
     'final.cta': 'I want my romantic page 💘',
     
     // Footer
