@@ -330,6 +330,8 @@ const CrearPage = () => {
             giftPageId: giftPage.id,
             slug: giftPage.slug,
             email: user?.email,
+            country: country || undefined,
+            language,
           },
         }
       );
