@@ -973,7 +973,7 @@ if (isCheckingAuth || isRestoring) {
   ) : (
     <>
       <CreditCard className="w-5 h-5" />
-      {t('crear.payment.button')} ${(paymentAmount / 100).toFixed(2)} USD
+      {t('crear.payment.button')} {paymentCurrency === 'brl' ? `R$${(paymentAmount / 100).toFixed(2).replace('.', ',')}` : `$${(paymentAmount / 100).toFixed(2)} USD`}
     </>
   )}
 </Button>
