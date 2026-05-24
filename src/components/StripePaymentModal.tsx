@@ -57,6 +57,7 @@ type CheckoutFormProps = {
   onClose: () => void;
   onPaid: (paymentIntentId?: string) => void;
   amount: number;
+  currency?: string;
   giftPageId?: string;
   appliedPromotion: {
     code: string;
@@ -69,6 +70,7 @@ function CheckoutForm({
   onClose,
   onPaid,
   amount,
+  currency = 'usd',
   giftPageId,
   appliedPromotion,
 }: CheckoutFormProps) {
