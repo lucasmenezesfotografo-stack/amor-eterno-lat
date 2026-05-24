@@ -127,9 +127,9 @@ function CheckoutForm({
   };
 
   const formatPrice = (cents: number) =>
-    new Intl.NumberFormat(language === 'en' ? "en-US" : "es-ES", {
+    new Intl.NumberFormat(language === 'en' ? 'en-US' : language === 'pt' ? 'pt-BR' : language === 'it' ? 'it-IT' : 'es-ES', {
       style: "currency",
-      currency: "USD",
+      currency: (currency || 'usd').toUpperCase(),
     }).format(cents / 100);
 
   return (
