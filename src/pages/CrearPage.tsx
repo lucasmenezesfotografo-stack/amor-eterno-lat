@@ -341,8 +341,9 @@ const CrearPage = () => {
 
       // 3. Store payment data
       setClientSecret(data.clientSecret);
-setPaymentAmount(data.amount); // 🔥 ISSO AQUI É O CORAÇÃO
-setPaymentModalOpen(true);
+      setPaymentAmount(data.amount);
+      setPaymentCurrency(data.currency || "usd");
+      setPaymentModalOpen(true);
       
 
       // 4. Open premium modal
