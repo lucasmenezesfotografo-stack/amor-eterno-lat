@@ -49,7 +49,7 @@ const generateSlug = (person1: string, person2: string) => {
 };
 
 const CrearPage = () => {
-  const { t, language } = useLanguage();
+  const { t, language, country } = useLanguage();
   const dateLocale = language === 'en' ? enUS : es;
   
   const steps = [
