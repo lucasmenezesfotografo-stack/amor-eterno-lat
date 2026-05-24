@@ -1205,6 +1205,7 @@ if (isCheckingAuth || isRestoring) {
             });
           }}
           amount={paymentAmount}
+          currency={paymentCurrency}
         />
       )}
 
