@@ -299,6 +299,7 @@ export function StripePaymentModal({
               onClose={onClose}
               onPaid={onPaid}
               amount={amount}
+              currency={currency}
               giftPageId={giftPageId}
               appliedPromotion={appliedPromotion}
             />
