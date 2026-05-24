@@ -230,6 +230,7 @@ type StripePaymentModalProps = {
   onClose: () => void;
   onPaid: (paymentIntentId?: string) => void;
   amount?: number;
+  currency?: string;
   giftPageId?: string;
   appliedPromotion?: {
     code: string;
@@ -244,6 +245,7 @@ export function StripePaymentModal({
   onClose,
   onPaid,
   amount = 500,
+  currency = 'usd',
   giftPageId,
   appliedPromotion = null,
 }: StripePaymentModalProps) {
