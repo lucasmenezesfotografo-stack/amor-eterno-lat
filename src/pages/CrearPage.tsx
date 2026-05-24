@@ -59,6 +59,7 @@ const CrearPage = () => {
   ];
   
   const [paymentAmount, setPaymentAmount] = useState<number>(300);
+  const [paymentCurrency, setPaymentCurrency] = useState<string>("usd");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const giftPageIdFromUrl = searchParams.get("gift_page_id");
