@@ -49,7 +49,7 @@ const generateSlug = (person1: string, person2: string) => {
 };
 
 const CrearPage = () => {
-  const { t, language } = useLanguage();
+  const { t, language, country } = useLanguage();
   const dateLocale = language === 'en' ? enUS : es;
   
   const steps = [
@@ -59,6 +59,7 @@ const CrearPage = () => {
   ];
   
   const [paymentAmount, setPaymentAmount] = useState<number>(300);
+  const [paymentCurrency, setPaymentCurrency] = useState<string>("usd");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const giftPageIdFromUrl = searchParams.get("gift_page_id");
@@ -330,6 +331,8 @@ const CrearPage = () => {
             giftPageId: giftPage.id,
             slug: giftPage.slug,
             email: user?.email,
+            country: country || undefined,
+            language,
           },
         }
       );
@@ -338,8 +341,9 @@ const CrearPage = () => {
 
       // 3. Store payment data
       setClientSecret(data.clientSecret);
-setPaymentAmount(data.amount); // 🔥 ISSO AQUI É O CORAÇÃO
-setPaymentModalOpen(true);
+      setPaymentAmount(data.amount);
+      setPaymentCurrency(data.currency || "usd");
+      setPaymentModalOpen(true);
       
 
       // 4. Open premium modal
@@ -969,7 +973,7 @@ if (isCheckingAuth || isRestoring) {
   ) : (
     <>
       <CreditCard className="w-5 h-5" />
-      {t('crear.payment.button')} ${(paymentAmount / 100).toFixed(2)} USD
+      {t('crear.payment.button')} {paymentCurrency === 'brl' ? `R$${(paymentAmount / 100).toFixed(2).replace('.', ',')}` : `$${(paymentAmount / 100).toFixed(2)} USD`}
     </>
   )}
 </Button>
@@ -1201,6 +1205,7 @@ if (isCheckingAuth || isRestoring) {
             });
           }}
           amount={paymentAmount}
+          currency={paymentCurrency}
         />
       )}
 

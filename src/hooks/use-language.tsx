@@ -1,20 +1,18 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type Language = 'es' | 'en';
+export type Language = 'es' | 'en' | 'pt' | 'it';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
+  country: string | null;
   t: (key: string) => string;
 }
 
 const translations: Record<Language, Record<string, string>> = {
   es: {
-    // Navigation
     'nav.example': 'Ver ejemplo',
     'nav.create': 'Crear mi regalo',
-    
-    // Hero Section
     'hero.badge': 'Un regalo romántico digital listo en minutos 💕',
     'hero.headline': '🎁 El regalo romántico que sorprenderá a tu pareja (solo $3 USD)',
     'hero.subheadline': 'Sube sus fotos, agrega sus nombres y la fecha en que comenzó su historia. Creamos una página romántica que calcula en tiempo real cuánto llevan juntos.',
@@ -24,20 +22,14 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.trust.time': 'Listo en 2 minutos',
     'hero.trust.price': 'Pago único $3 USD',
     'hero.urgency': 'Precio promocional por tiempo limitado',
-    
-    // Benefits Section
     'benefits.title': '¿Qué incluye tu regalo?',
     'benefits.1': '💞 Calcula automáticamente el tiempo que llevan juntos',
     'benefits.2': '📸 Personaliza con fotos especiales',
     'benefits.3': '💌 Agrega una carta romántica',
     'benefits.4': '🎶 Incluye una canción significativa',
-    
-    // Visual Steps
     'visual.step1': 'Entrega la tarjeta.',
     'visual.step2': 'Escanea el QR.',
     'visual.step3': 'Descubre la historia.',
-    
-    // How it works
     'how.badge': 'Simple y mágico',
     'how.title': '¿Cómo funciona?',
     'how.subtitle': 'En 3 simples pasos creas un regalo inolvidable.',
@@ -47,8 +39,6 @@ const translations: Record<Language, Record<string, string>> = {
     'how.step2.desc': 'Obtienes un código QR único y una tarjeta para imprimir.',
     'how.step3.title': 'Regala la sorpresa',
     'how.step3.desc': 'Tu pareja escanea el QR y descubre una experiencia única.',
-    
-    // Features
     'features.badge': 'Todo incluido',
     'features.title': 'Un regalo completo',
     'features.subtitle': 'Cada detalle pensado para hacer este momento especial.',
@@ -70,12 +60,8 @@ const translations: Record<Language, Record<string, string>> = {
     'features.share.desc': 'Comparte en redes sociales.',
     'features.instant.title': 'Acceso instantáneo',
     'features.instant.desc': 'Activo inmediatamente después del pago.',
-    
-    // Emotional
     'emotional.text': 'Un simple gesto. Un QR. Un recuerdo para siempre.',
     'emotional.cta': 'Crear mi regalo ahora',
-    
-    // Social Proof
     'social.badge': 'Historias reales',
     'social.title': 'Parejas que ya sorprendieron a su amor ❤️',
     'social.subtitle': 'Miles de parejas ya crearon su página romántica.',
@@ -88,8 +74,6 @@ const translations: Record<Language, Record<string, string>> = {
     'social.testimonial3.text': 'En 5 minutos tenía todo listo. Fácil, hermoso y muy especial.',
     'social.testimonial3.name': 'Lucía & Diego',
     'social.testimonial3.location': 'Argentina',
-    
-    // Trust & Security
     'trust.payment': 'Pago seguro',
     'trust.ssl': 'Conexión SSL',
     'trust.privacy': 'Privacidad',
@@ -99,8 +83,6 @@ const translations: Record<Language, Record<string, string>> = {
     'trust.item2': '🚫 Sin suscripción ni cargos ocultos',
     'trust.item3': '⚡ Creación instantánea en menos de 2 minutos',
     'trust.item4': '💳 Pago único de $3 USD',
-    
-    // FAQ
     'faq.title': 'Preguntas frecuentes',
     'faq.q1': '¿Es seguro el pago?',
     'faq.a1': 'Sí, usamos Stripe, la plataforma de pagos más segura del mundo. Tu información está completamente protegida.',
@@ -110,8 +92,6 @@ const translations: Record<Language, Record<string, string>> = {
     'faq.a3': 'Aceptamos tarjetas de débito y crédito de cualquier país. También Apple Pay y Google Pay.',
     'faq.q4': '¿Cuánto dura mi página?',
     'faq.a4': 'Tu página queda activa de forma permanente. Acceso de por vida con un solo pago.',
-    
-    // Pricing
     'pricing.badge': 'Oferta especial',
     'pricing.title': 'Todo esto por solo',
     'pricing.price': '$3 USD',
@@ -123,31 +103,21 @@ const translations: Record<Language, Record<string, string>> = {
     'pricing.benefit4': 'Carta de amor personalizada',
     'pricing.benefit5': 'Contador del tiempo juntos',
     'pricing.benefit6': 'Acceso permanente',
-    
-    // Summary
     'summary.title': 'Tu regalo incluye:',
     'summary.subtitle': '¿Qué sucede después del pago?',
     'summary.step1': 'Se genera tu código QR automáticamente',
     'summary.step2': 'Descargas tu tarjeta lista para regalar',
     'summary.step3': 'Tu página queda activa para siempre',
-    
-    // Final CTA
     'final.title': 'No esperes más para sorprender',
     'final.highlight': 'a tu pareja.',
     'final.subtitle': 'Toma menos de 2 minutos. Solo $3 USD.',
     'final.cta': 'Quiero mi página romántica 💘',
-    
-    // Footer
     'footer.terms': 'Términos',
     'footer.privacy': 'Privacidad',
     'footer.contact': 'Contacto',
     'footer.copyright': '© 2025 Memory Link. Hecho con',
     'footer.rights': 'Todos los derechos reservados.',
-    
-    // Scroll
     'scroll.discover': 'Descubre más',
-    
-    // ============ REGALO PAGE ============
     'regalo.loading': 'Cargando tu regalo...',
     'regalo.notfound.title': 'Página no encontrada',
     'regalo.notfound.desc': 'Este regalo no existe o el enlace ha expirado.',
@@ -166,22 +136,16 @@ const translations: Record<Language, Record<string, string>> = {
     'regalo.share.copied.desc': 'Ya puedes compartirlo donde quieras',
     'regalo.share.copy': 'Copiar enlace',
     'regalo.share.more': 'Más opciones',
-    
-    // Counter labels
     'counter.years': 'Años',
     'counter.months': 'Meses',
     'counter.days': 'Días',
     'counter.hours': 'Horas',
     'counter.min': 'Min',
-    
-    // Music Overlay
     'music.title': 'Este regalo tiene música',
     'music.subtitle': 'Toca el botón para escuchar la canción elegida especialmente para ti',
     'music.play': '🎵 Reproducir Música',
     'music.skip': 'Continuar sin música',
     'music.youtube': 'La música se reproduce mediante YouTube',
-    
-    // ============ DEMO PAGE ============
     'demo.banner': '¡Esta es una demostración!',
     'demo.banner.short': 'Demo',
     'demo.cta': 'Crear la mía',
@@ -193,15 +157,12 @@ const translations: Record<Language, Record<string, string>> = {
     'demo.time.badge': 'Tiempo de amor',
     'demo.time.title': 'Nuestra historia en números',
     'demo.time.subtitle': 'Cada segundo cuenta cuando estás enamorado',
-    
-    // ============ CREAR PAGE ============
     'crear.step1.title': 'Nombres',
     'crear.step1.desc': '¿Quiénes son ustedes?',
     'crear.step2.title': 'Foto y Música',
     'crear.step2.desc': 'Elige una foto y una canción',
     'crear.step3.title': 'Carta',
     'crear.step3.desc': 'Escribe o genera con IA',
-    
     'crear.form.yourname': 'Tu nombre',
     'crear.form.yourname.placeholder': 'Ej: María',
     'crear.form.partnername': 'Nombre de tu amor',
@@ -209,7 +170,6 @@ const translations: Record<Language, Record<string, string>> = {
     'crear.form.date': 'Fecha de inicio de la relación',
     'crear.form.date.placeholder': 'Selecciona la fecha especial...',
     'crear.form.date.started': 'Su historia de amor comenzó',
-    
     'crear.photo.title': 'Foto de portada',
     'crear.photo.upload': 'Haz clic para subir tu foto',
     'crear.photo.formats': 'JPG, PNG o WEBP (máx. 5MB)',
@@ -220,13 +180,11 @@ const translations: Record<Language, Record<string, string>> = {
     'crear.photo.position.top': 'Arriba',
     'crear.photo.position.center': 'Centro',
     'crear.photo.position.bottom': 'Abajo',
-    
     'crear.ai.generate': 'Generar carta mágica con IA',
     'crear.ai.generating': 'Generando carta mágica...',
     'crear.letter.title': 'Tu carta de amor',
     'crear.letter.placeholder': 'Escribe tu carta aquí o usa la IA para generar...',
     'crear.letter.chars': 'caracteres',
-    
     'crear.generate.title': 'Activa tu página de regalo',
     'crear.generate.subtitle': 'Acceso completo',
     'crear.payment.button': 'Pagar',
@@ -237,17 +195,13 @@ const translations: Record<Language, Record<string, string>> = {
     'crear.code.placeholder': 'Código de influencer',
     'crear.code.info': 'Los códigos de activación son para influencers y colaboradores.',
     'crear.cancel': 'Cancelar',
-    
     'crear.qr.generate': 'Generar QR Code',
     'crear.qr.download': 'Descargar QR Code',
     'crear.qr.view': 'Ver página',
     'crear.qr.preparing': 'Preparando...',
     'crear.qr.title': 'Tu QR Code',
-    
     'crear.nav.prev': 'Anterior',
     'crear.nav.next': 'Próximo',
-    
-    // Toasts
     'toast.photo.success.title': '¡Foto subida!',
     'toast.photo.success.desc': 'Tu foto de portada está lista.',
     'toast.photo.error.title': 'Error al subir',
@@ -272,8 +226,6 @@ const translations: Record<Language, Record<string, string>> = {
     'toast.payment.error.desc': 'No se pudo iniciar el pago. Intenta de nuevo.',
     'toast.share.error.title': 'Error',
     'toast.share.error.desc': 'No se pudo copiar el enlace',
-    
-    // ============ PAGO EXITOSO ============
     'pago.verifying': 'Verificando pago...',
     'pago.success.title': '¡Pago Exitoso!',
     'pago.success.desc': 'Tu página de regalo está activa por 1 año. ¡Comparte el amor! 💖',
@@ -281,8 +233,6 @@ const translations: Record<Language, Record<string, string>> = {
     'pago.thanks.title': '¡Gracias!',
     'pago.thanks.desc': 'Estamos procesando tu pago. Recibirás una confirmación pronto.',
     'pago.thanks.cta': 'Volver a crear',
-    
-    // ============ STRIPE MODAL ============
     'stripe.title': 'Completar pago',
     'stripe.secure': 'Pago 100% seguro',
     'stripe.processing': 'Procesando...',
@@ -294,8 +244,6 @@ const translations: Record<Language, Record<string, string>> = {
     'stripe.promo.apply': 'Aplicar',
     'stripe.promo.applied': '¡Aplicado!',
     'stripe.promo.discount': 'Descuento aplicado',
-    
-    // ============ PERSONALIZED CARD ============
     'card.header.title': 'Elige tu diseño de tarjeta',
     'card.header.subtitle': 'Personaliza y descarga tu tarjeta para imprimir',
     'card.layout.label': 'Estilo de tarjeta',
@@ -318,8 +266,6 @@ const translations: Record<Language, Record<string, string>> = {
     'card.qr.see': 'Escanea para ver nuestra historia',
     'card.signature': 'Con todo nuestro amor,',
     'card.default.message': 'Nuestros corazones están llenos de amor y gratitud. Gracias por ser parte de nuestra historia.',
-    
-    // ============ MEMORY UPLOADER ============
     'memories.title': 'Recuerdos Especiales',
     'memories.subtitle': 'Agrega hasta 4 fotos con pequeños mensajes para guardar momentos importantes de su historia.',
     'memories.add': 'Agregar recuerdo',
@@ -343,8 +289,6 @@ const translations: Record<Language, Record<string, string>> = {
     'memories.error.title': 'Error al subir',
     'memories.error.desc': 'No se pudo subir la foto. Intenta de nuevo.',
     'memories.default.title': 'Recuerdo especial',
-    
-    // ============ SOUNDTRACK SELECTOR ============
     'soundtrack.title': 'Elige tu Canción',
     'soundtrack.subtitle': 'La música se reproduce mediante YouTube',
     'soundtrack.custom.label': '¿Quieres otra canción? Pega aquí el enlace de YouTube',
@@ -354,34 +298,25 @@ const translations: Record<Language, Record<string, string>> = {
     'soundtrack.custom.priority': 'Esta canción tendrá prioridad',
   },
   en: {
-    // Navigation
     'nav.example': 'See example',
     'nav.create': 'Create my card',
-    
-    // Hero Section
     'hero.badge': 'A romantic digital gift ready in minutes 💕',
     'hero.headline': '🎁 The romantic gift that will surprise your partner (only $3 USD)',
-    'hero.subheadline': 'Upload your photos, add your names and your anniversary date. We create a romantic page that calculates in real time how long you\'ve been together.',
+    'hero.subheadline': "Upload your photos, add your names and your anniversary date. We create a romantic page that calculates in real time how long you've been together.",
     'hero.cta.primary': 'Create my romantic gift 💖',
     'hero.cta.secondary': 'See example',
     'hero.trust.secure': '🔒 Secure payment via Stripe · International cards accepted · One-time payment $3 USD',
     'hero.trust.time': 'Ready in 2 minutes',
     'hero.trust.price': 'One-time payment $3 USD',
     'hero.urgency': 'Limited-time promotional price',
-    
-    // Benefits Section
-    'benefits.title': 'What\'s included in your gift?',
+    'benefits.title': "What's included in your gift?",
     'benefits.1': '💞 Automatically calculates your time together',
     'benefits.2': '📸 Personalize with special photos',
     'benefits.3': '💌 Add a romantic letter',
     'benefits.4': '🎶 Include a meaningful song',
-    
-    // Visual Steps
     'visual.step1': 'Give the card.',
     'visual.step2': 'Scan the QR.',
     'visual.step3': 'Discover the story.',
-    
-    // How it works
     'how.badge': 'Simple and magical',
     'how.title': 'How does it work?',
     'how.subtitle': 'In 3 simple steps you create an unforgettable gift.',
@@ -391,8 +326,6 @@ const translations: Record<Language, Record<string, string>> = {
     'how.step2.desc': 'Get a unique QR code and a card to print.',
     'how.step3.title': 'Gift the surprise',
     'how.step3.desc': 'Your partner scans the QR and discovers a unique experience.',
-    
-    // Features
     'features.badge': 'All included',
     'features.title': 'A complete gift',
     'features.subtitle': 'Every detail designed to make this moment special.',
@@ -414,12 +347,8 @@ const translations: Record<Language, Record<string, string>> = {
     'features.share.desc': 'Share on social media.',
     'features.instant.title': 'Instant access',
     'features.instant.desc': 'Active immediately after payment.',
-    
-    // Emotional
     'emotional.text': 'A simple gesture. A QR. A memory forever.',
     'emotional.cta': 'Create my gift now',
-    
-    // Social Proof
     'social.badge': 'Real stories',
     'social.title': 'Couples who already surprised their partner ❤️',
     'social.subtitle': 'Thousands of couples have created their romantic page.',
@@ -432,8 +361,6 @@ const translations: Record<Language, Record<string, string>> = {
     'social.testimonial3.text': 'In 5 minutes I had everything ready. Easy, beautiful and very special.',
     'social.testimonial3.name': 'Lucía & Diego',
     'social.testimonial3.location': 'Argentina',
-    
-    // Trust & Security
     'trust.payment': 'Secure payment',
     'trust.ssl': 'SSL connection',
     'trust.privacy': 'Privacy',
@@ -443,19 +370,15 @@ const translations: Record<Language, Record<string, string>> = {
     'trust.item2': '🚫 No subscription or hidden fees',
     'trust.item3': '⚡ Instant creation in under 2 minutes',
     'trust.item4': '💳 One-time payment of $3 USD',
-    
-    // FAQ
     'faq.title': 'Frequently asked questions',
     'faq.q1': 'Is the payment secure?',
-    'faq.a1': 'Yes, we use Stripe, the world\'s most trusted payment platform. Your information is completely protected.',
+    'faq.a1': "Yes, we use Stripe, the world's most trusted payment platform. Your information is completely protected.",
     'faq.q2': 'Why is it only $3?',
-    'faq.a2': 'We want it to be accessible to everyone. It\'s a promotional price that includes everything: page, QR, photos, music and love letter.',
+    'faq.a2': "We want it to be accessible to everyone. It's a promotional price that includes everything: page, QR, photos, music and love letter.",
     'faq.q3': 'Do I need an international card?',
     'faq.a3': 'We accept debit and credit cards from any country. Also Apple Pay and Google Pay.',
     'faq.q4': 'How long does my page last?',
     'faq.a4': 'Your page stays active permanently. Lifetime access with a single payment.',
-    
-    // Pricing
     'pricing.badge': 'Special offer',
     'pricing.title': 'All this for only',
     'pricing.price': '$3 USD',
@@ -467,31 +390,21 @@ const translations: Record<Language, Record<string, string>> = {
     'pricing.benefit4': 'Personalized love letter',
     'pricing.benefit5': 'Time together counter',
     'pricing.benefit6': 'Lifetime access',
-    
-    // Summary
     'summary.title': 'Your gift includes:',
     'summary.subtitle': 'What happens after payment?',
     'summary.step1': 'Your QR code is generated instantly',
     'summary.step2': 'Download your card ready to gift',
     'summary.step3': 'Your page is activated forever',
-    
-    // Final CTA
     'final.title': "Don't wait to surprise",
     'final.highlight': 'your partner.',
     'final.subtitle': 'Takes less than 2 minutes. Only $3 USD.',
     'final.cta': 'I want my romantic page 💘',
-    
-    // Footer
     'footer.terms': 'Terms',
     'footer.privacy': 'Privacy',
     'footer.contact': 'Contact',
     'footer.copyright': '© 2025 Memory Link. Made with',
     'footer.rights': 'All rights reserved.',
-    
-    // Scroll
     'scroll.discover': 'Discover more',
-    
-    // ============ REGALO PAGE ============
     'regalo.loading': 'Loading your gift...',
     'regalo.notfound.title': 'Page not found',
     'regalo.notfound.desc': 'This gift does not exist or the link has expired.',
@@ -510,22 +423,16 @@ const translations: Record<Language, Record<string, string>> = {
     'regalo.share.copied.desc': 'You can share it anywhere',
     'regalo.share.copy': 'Copy link',
     'regalo.share.more': 'More options',
-    
-    // Counter labels
     'counter.years': 'Years',
     'counter.months': 'Months',
     'counter.days': 'Days',
     'counter.hours': 'Hours',
     'counter.min': 'Min',
-    
-    // Music Overlay
     'music.title': 'This gift has music',
     'music.subtitle': 'Tap the button to listen to the song chosen specially for you',
     'music.play': '🎵 Play Music',
     'music.skip': 'Continue without music',
     'music.youtube': 'Music plays through YouTube',
-    
-    // ============ DEMO PAGE ============
     'demo.banner': 'This is a demo!',
     'demo.banner.short': 'Demo',
     'demo.cta': 'Create mine',
@@ -537,15 +444,12 @@ const translations: Record<Language, Record<string, string>> = {
     'demo.time.badge': 'Love time',
     'demo.time.title': 'Our story in numbers',
     'demo.time.subtitle': 'Every second counts when you are in love',
-    
-    // ============ CREAR PAGE ============
     'crear.step1.title': 'Names',
     'crear.step1.desc': 'Who are you?',
     'crear.step2.title': 'Photo & Music',
     'crear.step2.desc': 'Choose a photo and a song',
     'crear.step3.title': 'Letter',
     'crear.step3.desc': 'Write or generate with AI',
-    
     'crear.form.yourname': 'Your name',
     'crear.form.yourname.placeholder': 'E.g.: Mary',
     'crear.form.partnername': "Your love's name",
@@ -553,7 +457,6 @@ const translations: Record<Language, Record<string, string>> = {
     'crear.form.date': 'Relationship start date',
     'crear.form.date.placeholder': 'Select the special date...',
     'crear.form.date.started': 'Your love story began',
-    
     'crear.photo.title': 'Cover photo',
     'crear.photo.upload': 'Click to upload your photo',
     'crear.photo.formats': 'JPG, PNG or WEBP (max. 5MB)',
@@ -564,13 +467,11 @@ const translations: Record<Language, Record<string, string>> = {
     'crear.photo.position.top': 'Top',
     'crear.photo.position.center': 'Center',
     'crear.photo.position.bottom': 'Bottom',
-    
     'crear.ai.generate': 'Generate magic letter with AI',
     'crear.ai.generating': 'Generating magic letter...',
     'crear.letter.title': 'Your love letter',
     'crear.letter.placeholder': 'Write your letter here or use AI to generate...',
     'crear.letter.chars': 'characters',
-    
     'crear.generate.title': 'Activate your gift page',
     'crear.generate.subtitle': 'Full access',
     'crear.payment.button': 'Pay',
@@ -581,17 +482,13 @@ const translations: Record<Language, Record<string, string>> = {
     'crear.code.placeholder': 'Influencer code',
     'crear.code.info': 'Activation codes are for influencers and collaborators.',
     'crear.cancel': 'Cancel',
-    
     'crear.qr.generate': 'Generate QR Code',
     'crear.qr.download': 'Download QR Code',
     'crear.qr.view': 'View page',
     'crear.qr.preparing': 'Preparing...',
     'crear.qr.title': 'Your QR Code',
-    
     'crear.nav.prev': 'Previous',
     'crear.nav.next': 'Next',
-    
-    // Toasts
     'toast.photo.success.title': 'Photo uploaded!',
     'toast.photo.success.desc': 'Your cover photo is ready.',
     'toast.photo.error.title': 'Upload error',
@@ -616,8 +513,6 @@ const translations: Record<Language, Record<string, string>> = {
     'toast.payment.error.desc': 'Could not start payment. Try again.',
     'toast.share.error.title': 'Error',
     'toast.share.error.desc': 'Could not copy the link',
-    
-    // ============ PAGO EXITOSO ============
     'pago.verifying': 'Verifying payment...',
     'pago.success.title': 'Payment Successful!',
     'pago.success.desc': 'Your gift page is active for 1 year. Share the love! 💖',
@@ -625,8 +520,6 @@ const translations: Record<Language, Record<string, string>> = {
     'pago.thanks.title': 'Thank you!',
     'pago.thanks.desc': 'We are processing your payment. You will receive a confirmation soon.',
     'pago.thanks.cta': 'Go back to create',
-    
-    // ============ STRIPE MODAL ============
     'stripe.title': 'Complete payment',
     'stripe.secure': '100% secure payment',
     'stripe.processing': 'Processing...',
@@ -638,8 +531,6 @@ const translations: Record<Language, Record<string, string>> = {
     'stripe.promo.apply': 'Apply',
     'stripe.promo.applied': 'Applied!',
     'stripe.promo.discount': 'Discount applied',
-    
-    // ============ PERSONALIZED CARD ============
     'card.header.title': 'Choose your card design',
     'card.header.subtitle': 'Customize and download your card to print',
     'card.layout.label': 'Card style',
@@ -662,8 +553,6 @@ const translations: Record<Language, Record<string, string>> = {
     'card.qr.see': 'Scan to see our story',
     'card.signature': 'With all our love,',
     'card.default.message': 'Our hearts are full of love and gratitude. Thank you for being part of our story.',
-    
-    // ============ MEMORY UPLOADER ============
     'memories.title': 'Special Memories',
     'memories.subtitle': 'Add up to 4 photos with short messages to save important moments of your story.',
     'memories.add': 'Add memory',
@@ -687,8 +576,6 @@ const translations: Record<Language, Record<string, string>> = {
     'memories.error.title': 'Upload error',
     'memories.error.desc': 'Could not upload the photo. Try again.',
     'memories.default.title': 'Special memory',
-    
-    // ============ SOUNDTRACK SELECTOR ============
     'soundtrack.title': 'Choose your Song',
     'soundtrack.subtitle': 'Music plays through YouTube',
     'soundtrack.custom.label': 'Want another song? Paste the YouTube link here',
@@ -696,34 +583,663 @@ const translations: Record<Language, Record<string, string>> = {
     'soundtrack.custom.error': 'Please enter a valid YouTube link',
     'soundtrack.custom.name': 'Custom song',
     'soundtrack.custom.priority': 'This song will have priority',
-  }
+  },
+  pt: {
+    'nav.example': 'Ver exemplo',
+    'nav.create': 'Criar meu presente',
+    'hero.badge': 'Um presente romântico digital pronto em minutos 💕',
+    'hero.headline': '🎁 O presente romântico que vai surpreender seu amor (apenas R$15)',
+    'hero.subheadline': 'Envie as fotos, adicione os nomes e a data em que começou a história de vocês. Criamos uma página romântica que calcula em tempo real há quanto tempo estão juntos.',
+    'hero.cta.primary': 'Criar meu presente agora 💖',
+    'hero.cta.secondary': 'Ver exemplo',
+    'hero.trust.secure': '🔒 Pagamento seguro com Stripe · Aceita cartões e Pix · Pagamento único',
+    'hero.trust.time': 'Pronto em 2 minutos',
+    'hero.trust.price': 'Pagamento único',
+    'hero.urgency': 'Preço promocional por tempo limitado',
+    'benefits.title': 'O que está incluso no seu presente?',
+    'benefits.1': '💞 Calcula automaticamente o tempo que vocês estão juntos',
+    'benefits.2': '📸 Personalize com fotos especiais',
+    'benefits.3': '💌 Adicione uma carta romântica',
+    'benefits.4': '🎶 Inclua uma música significativa',
+    'visual.step1': 'Entregue o cartão.',
+    'visual.step2': 'Escaneie o QR.',
+    'visual.step3': 'Descubra a história.',
+    'how.badge': 'Simples e mágico',
+    'how.title': 'Como funciona?',
+    'how.subtitle': 'Em 3 passos simples você cria um presente inesquecível.',
+    'how.step1.title': 'Personalize a página',
+    'how.step1.desc': 'Envie fotos, escolha a música e escreva uma carta de amor.',
+    'how.step2.title': 'Gere o QR',
+    'how.step2.desc': 'Receba um QR code único e um cartão para imprimir.',
+    'how.step3.title': 'Presenteie a surpresa',
+    'how.step3.desc': 'Seu amor escaneia o QR e descobre uma experiência única.',
+    'features.badge': 'Tudo incluso',
+    'features.title': 'Um presente completo',
+    'features.subtitle': 'Cada detalhe pensado para tornar este momento especial.',
+    'features.qr.title': 'QR personalizado',
+    'features.qr.desc': 'Código único que abre sua página de amor.',
+    'features.card.title': 'Cartão imprimível',
+    'features.card.desc': 'Baixe e presenteie fisicamente ou digitalmente.',
+    'features.photos.title': 'Fotos e lembranças',
+    'features.photos.desc': 'Galeria dos momentos especiais.',
+    'features.music.title': 'Música integrada',
+    'features.music.desc': 'A canção que define a história de vocês.',
+    'features.letter.title': 'Carta de amor',
+    'features.letter.desc': 'Escreva ou gere com IA.',
+    'features.counter.title': 'Contador do amor',
+    'features.counter.desc': 'Tempo juntos atualizado em tempo real.',
+    'features.private.title': 'Página privada',
+    'features.private.desc': 'Acesso apenas com o link do QR.',
+    'features.share.title': 'Compartilhável',
+    'features.share.desc': 'Compartilhe nas redes sociais.',
+    'features.instant.title': 'Acesso instantâneo',
+    'features.instant.desc': 'Ativo imediatamente após o pagamento.',
+    'emotional.text': 'Um gesto simples. Um QR. Uma lembrança para sempre.',
+    'emotional.cta': 'Criar meu presente agora',
+    'social.badge': 'Histórias reais',
+    'social.title': 'Casais que já surpreenderam o amor ❤️',
+    'social.subtitle': 'Milhares de casais já criaram sua página romântica.',
+    'social.testimonial1.text': 'Fiz para o nosso aniversário e a reação foi incrível 😭',
+    'social.testimonial1.name': 'Rafael M.',
+    'social.testimonial1.location': 'Brasil',
+    'social.testimonial2.text': 'É simples, rápido e super romântico. O melhor presente que já dei.',
+    'social.testimonial2.name': 'Beatriz S.',
+    'social.testimonial2.location': 'Portugal',
+    'social.testimonial3.text': 'Em 5 minutos estava tudo pronto. Fácil, lindo e muito especial.',
+    'social.testimonial3.name': 'Lucas & Marina',
+    'social.testimonial3.location': 'Brasil',
+    'trust.payment': 'Pagamento seguro',
+    'trust.ssl': 'Conexão SSL',
+    'trust.privacy': 'Privacidade',
+    'trust.nospam': 'Sem assinatura',
+    'trust.section.title': 'Segurança e confiança',
+    'trust.item1': '🔒 Pagamento seguro processado pela Stripe',
+    'trust.item2': '🚫 Sem assinatura nem cobranças ocultas',
+    'trust.item3': '⚡ Criação instantânea em menos de 2 minutos',
+    'trust.item4': '💳 Pagamento único',
+    'faq.title': 'Perguntas frequentes',
+    'faq.q1': 'O pagamento é seguro?',
+    'faq.a1': 'Sim, usamos a Stripe, a plataforma de pagamentos mais segura do mundo. Suas informações estão totalmente protegidas.',
+    'faq.q2': 'Por que custa tão pouco?',
+    'faq.a2': 'Queremos que seja acessível a todos. É um preço promocional que inclui tudo: página, QR, fotos, música e carta de amor.',
+    'faq.q3': 'Quais formas de pagamento aceitam?',
+    'faq.a3': 'Aceitamos cartões de débito e crédito, Pix (no Brasil), Apple Pay e Google Pay.',
+    'faq.q4': 'Quanto tempo dura minha página?',
+    'faq.a4': 'Sua página fica ativa permanentemente. Acesso vitalício com um único pagamento.',
+    'pricing.badge': 'Oferta especial',
+    'pricing.title': 'Tudo isso por apenas',
+    'pricing.price': 'R$15',
+    'pricing.forever': 'para sempre',
+    'pricing.micro': 'Pagamento único. Sem mensalidades. Acesso permanente.',
+    'pricing.benefit1': 'Cartão imprimível ou digital com QR',
+    'pricing.benefit2': 'Página privada personalizada',
+    'pricing.benefit3': 'Fotos + música integrada',
+    'pricing.benefit4': 'Carta de amor personalizada',
+    'pricing.benefit5': 'Contador do tempo juntos',
+    'pricing.benefit6': 'Acesso permanente',
+    'summary.title': 'Seu presente inclui:',
+    'summary.subtitle': 'O que acontece após o pagamento?',
+    'summary.step1': 'Seu QR code é gerado automaticamente',
+    'summary.step2': 'Você baixa seu cartão pronto para presentear',
+    'summary.step3': 'Sua página fica ativa para sempre',
+    'final.title': 'Não espere mais para surpreender',
+    'final.highlight': 'seu amor.',
+    'final.subtitle': 'Leva menos de 2 minutos.',
+    'final.cta': 'Quero minha página romântica 💘',
+    'footer.terms': 'Termos',
+    'footer.privacy': 'Privacidade',
+    'footer.contact': 'Contato',
+    'footer.copyright': '© 2025 Memory Link. Feito com',
+    'footer.rights': 'Todos os direitos reservados.',
+    'scroll.discover': 'Descubra mais',
+    'regalo.loading': 'Carregando seu presente...',
+    'regalo.notfound.title': 'Página não encontrada',
+    'regalo.notfound.desc': 'Este presente não existe ou o link expirou.',
+    'regalo.notfound.cta': 'Criar meu presente',
+    'regalo.together.since': 'Juntos desde',
+    'regalo.time.title': 'Tempo juntos',
+    'regalo.time.subtitle': 'Cada segundo conta quando se está apaixonado',
+    'regalo.letter.title': 'Carta de Amor',
+    'regalo.letter.subtitle': 'Palavras do coração',
+    'regalo.qr.title': 'Baixar o QR Code',
+    'regalo.qr.subtitle': 'Compartilhe este presente especial',
+    'regalo.qr.download': 'Baixar meu QR Code',
+    'regalo.footer': 'Feito com',
+    'regalo.share.title': 'Compartilhar nas redes',
+    'regalo.share.copied': 'Link copiado!',
+    'regalo.share.copied.desc': 'Agora pode compartilhar onde quiser',
+    'regalo.share.copy': 'Copiar link',
+    'regalo.share.more': 'Mais opções',
+    'counter.years': 'Anos',
+    'counter.months': 'Meses',
+    'counter.days': 'Dias',
+    'counter.hours': 'Horas',
+    'counter.min': 'Min',
+    'music.title': 'Este presente tem música',
+    'music.subtitle': 'Toque o botão para ouvir a música escolhida especialmente para você',
+    'music.play': '🎵 Reproduzir Música',
+    'music.skip': 'Continuar sem música',
+    'music.youtube': 'A música é reproduzida pelo YouTube',
+    'demo.banner': 'Isto é uma demonstração!',
+    'demo.banner.short': 'Demo',
+    'demo.cta': 'Criar a minha',
+    'demo.cta.short': 'Criar',
+    'demo.cta.price': 'Criar a minha por R$15',
+    'demo.share.title': 'Compartilhe o amor',
+    'demo.share.download': 'Baixar QR Code',
+    'demo.like.title': 'Gostou? Crie a sua',
+    'demo.time.badge': 'Tempo de amor',
+    'demo.time.title': 'Nossa história em números',
+    'demo.time.subtitle': 'Cada segundo conta quando se está apaixonado',
+    'crear.step1.title': 'Nomes',
+    'crear.step1.desc': 'Quem são vocês?',
+    'crear.step2.title': 'Foto e Música',
+    'crear.step2.desc': 'Escolha uma foto e uma música',
+    'crear.step3.title': 'Carta',
+    'crear.step3.desc': 'Escreva ou gere com IA',
+    'crear.form.yourname': 'Seu nome',
+    'crear.form.yourname.placeholder': 'Ex: Maria',
+    'crear.form.partnername': 'Nome do seu amor',
+    'crear.form.partnername.placeholder': 'Ex: João',
+    'crear.form.date': 'Data de início do relacionamento',
+    'crear.form.date.placeholder': 'Selecione a data especial...',
+    'crear.form.date.started': 'A história de amor de vocês começou',
+    'crear.photo.title': 'Foto de capa',
+    'crear.photo.upload': 'Clique para enviar sua foto',
+    'crear.photo.formats': 'JPG, PNG ou WEBP (máx. 5MB)',
+    'crear.photo.uploading': 'Enviando foto...',
+    'crear.photo.uploaded': 'Foto enviada',
+    'crear.photo.change': 'Trocar',
+    'crear.photo.position': 'Posição dos nomes',
+    'crear.photo.position.top': 'Topo',
+    'crear.photo.position.center': 'Centro',
+    'crear.photo.position.bottom': 'Embaixo',
+    'crear.ai.generate': 'Gerar carta mágica com IA',
+    'crear.ai.generating': 'Gerando carta mágica...',
+    'crear.letter.title': 'Sua carta de amor',
+    'crear.letter.placeholder': 'Escreva sua carta aqui ou use a IA para gerar...',
+    'crear.letter.chars': 'caracteres',
+    'crear.generate.title': 'Ative sua página de presente',
+    'crear.generate.subtitle': 'Acesso completo',
+    'crear.payment.button': 'Pagar',
+    'crear.payment.preparing': 'Preparando pagamento...',
+    'crear.payment.secure': 'Pagamento seguro com Stripe • Pix • Apple Pay • Google Pay',
+    'crear.payment.or': 'ou',
+    'crear.code.title': 'Tem um código de ativação?',
+    'crear.code.placeholder': 'Código de influenciador',
+    'crear.code.info': 'Os códigos de ativação são para influenciadores e parceiros.',
+    'crear.cancel': 'Cancelar',
+    'crear.qr.generate': 'Gerar QR Code',
+    'crear.qr.download': 'Baixar QR Code',
+    'crear.qr.view': 'Ver página',
+    'crear.qr.preparing': 'Preparando...',
+    'crear.qr.title': 'Seu QR Code',
+    'crear.nav.prev': 'Anterior',
+    'crear.nav.next': 'Próximo',
+    'toast.photo.success.title': 'Foto enviada!',
+    'toast.photo.success.desc': 'Sua foto de capa está pronta.',
+    'toast.photo.error.title': 'Erro ao enviar',
+    'toast.photo.error.desc': 'Não foi possível enviar a foto. Tente novamente.',
+    'toast.photo.invalid': 'Por favor selecione um arquivo de imagem válido.',
+    'toast.photo.size': 'A imagem deve ter menos de 5MB.',
+    'toast.fields.incomplete': 'Campos incompletos',
+    'toast.fields.incomplete.desc': 'Por favor preencha os nomes e a data.',
+    'toast.code.empty': 'Código vazio',
+    'toast.code.empty.desc': 'Por favor insira um código de ativação.',
+    'toast.code.success': 'Código ativado!',
+    'toast.code.success.desc': 'Sua página está ativa por 1 ano.',
+    'toast.code.invalid': 'Código inválido',
+    'toast.code.invalid.desc': 'O código não é válido.',
+    'toast.code.error': 'Erro',
+    'toast.code.error.desc': 'Não foi possível validar o código. Tente novamente.',
+    'toast.payment.success': 'Pagamento concluído!',
+    'toast.payment.success.desc': 'Sua página está ativa 💖',
+    'toast.payment.cancelled': 'Pagamento cancelado',
+    'toast.payment.cancelled.desc': 'Você pode tentar novamente quando quiser.',
+    'toast.payment.error': 'Erro',
+    'toast.payment.error.desc': 'Não foi possível iniciar o pagamento. Tente novamente.',
+    'toast.share.error.title': 'Erro',
+    'toast.share.error.desc': 'Não foi possível copiar o link',
+    'pago.verifying': 'Verificando pagamento...',
+    'pago.success.title': 'Pagamento Concluído!',
+    'pago.success.desc': 'Sua página de presente está ativa por 1 ano. Compartilhe o amor! 💖',
+    'pago.success.cta': 'Ver minha página',
+    'pago.thanks.title': 'Obrigado!',
+    'pago.thanks.desc': 'Estamos processando seu pagamento. Você receberá uma confirmação em breve.',
+    'pago.thanks.cta': 'Voltar para criar',
+    'stripe.title': 'Concluir pagamento',
+    'stripe.secure': 'Pagamento 100% seguro',
+    'stripe.processing': 'Processando...',
+    'stripe.pay': 'Pagar agora',
+    'stripe.methods': 'Aceitamos cartões, Pix, Apple Pay e Google Pay',
+    'stripe.powered': 'Pagamento seguro processado pela Stripe',
+    'stripe.promo.title': 'Código promocional',
+    'stripe.promo.placeholder': 'Insira seu código',
+    'stripe.promo.apply': 'Aplicar',
+    'stripe.promo.applied': 'Aplicado!',
+    'stripe.promo.discount': 'Desconto aplicado',
+    'card.header.title': 'Escolha o design do seu cartão',
+    'card.header.subtitle': 'Personalize e baixe seu cartão para imprimir',
+    'card.layout.label': 'Estilo do cartão',
+    'card.layout.classic': 'Clássico',
+    'card.layout.minimal': 'Minimalista',
+    'card.layout.horizontal': 'Horizontal',
+    'card.layout.photofocus': 'Com Foto',
+    'card.font.romantic': 'Fonte romântica',
+    'card.font.names': 'Fonte para nomes',
+    'card.accent.label': 'Cor de destaque',
+    'card.message.label': 'Mensagem personalizada (opcional)',
+    'card.message.placeholder': 'Ex: Te amo com todo meu coração...',
+    'card.toggle.photo': 'Foto',
+    'card.toggle.date': 'Data',
+    'card.selected': 'Estilo selecionado:',
+    'card.download': 'Baixar Cartão (JPG)',
+    'card.qr.scan': 'Escaneie aqui',
+    'card.qr.discover': 'Escaneie e descubra!',
+    'card.qr.story': 'Escaneie o QR code para ver nossa história de amor',
+    'card.qr.see': 'Escaneie para ver nossa história',
+    'card.signature': 'Com todo nosso amor,',
+    'card.default.message': 'Nossos corações estão cheios de amor e gratidão. Obrigado por fazer parte da nossa história.',
+    'memories.title': 'Lembranças Especiais',
+    'memories.subtitle': 'Adicione até 4 fotos com pequenas mensagens para guardar momentos importantes da história de vocês.',
+    'memories.add': 'Adicionar lembrança',
+    'memories.of': 'de',
+    'memories.photos': 'fotos',
+    'memories.empty': 'Você ainda não adicionou lembranças. Envie sua primeira foto para começar!',
+    'memories.name.label': 'Nome do momento',
+    'memories.name.placeholder': 'Ex: Nosso primeiro encontro',
+    'memories.desc.label': 'Descrição (opcional)',
+    'memories.desc.placeholder': 'Escreva uma mensagem curta...',
+    'memories.uploading': 'Enviando foto...',
+    'memories.uploaded.title': 'Foto enviada!',
+    'memories.uploaded.desc': 'Agora você pode personalizar o nome da lembrança.',
+    'memories.limit.title': 'Limite atingido',
+    'memories.limit.desc': 'Você só pode adicionar',
+    'memories.limit.suffix': 'lembranças.',
+    'memories.invalid.title': 'Arquivo inválido',
+    'memories.invalid.desc': 'Por favor selecione um arquivo de imagem.',
+    'memories.size.title': 'Arquivo muito grande',
+    'memories.size.desc': 'A imagem deve ter menos de 5MB.',
+    'memories.error.title': 'Erro ao enviar',
+    'memories.error.desc': 'Não foi possível enviar a foto. Tente novamente.',
+    'memories.default.title': 'Lembrança especial',
+    'soundtrack.title': 'Escolha sua Música',
+    'soundtrack.subtitle': 'A música é reproduzida pelo YouTube',
+    'soundtrack.custom.label': 'Quer outra música? Cole aqui o link do YouTube',
+    'soundtrack.custom.placeholder': 'https://www.youtube.com/watch?v=...',
+    'soundtrack.custom.error': 'Por favor, insira um link válido do YouTube',
+    'soundtrack.custom.name': 'Música personalizada',
+    'soundtrack.custom.priority': 'Esta música terá prioridade',
+  },
+  it: {
+    'nav.example': 'Vedi esempio',
+    'nav.create': 'Crea il mio regalo',
+    'hero.badge': 'Un regalo romantico digitale pronto in pochi minuti 💕',
+    'hero.headline': '🎁 Il regalo romantico che sorprenderà il tuo partner (solo $3 USD)',
+    'hero.subheadline': 'Carica le vostre foto, aggiungi i nomi e la data in cui è iniziata la vostra storia. Creiamo una pagina romantica che calcola in tempo reale quanto tempo siete insieme.',
+    'hero.cta.primary': 'Crea il mio regalo ora 💖',
+    'hero.cta.secondary': 'Vedi esempio',
+    'hero.trust.secure': '🔒 Pagamento sicuro con Stripe · Accetta carte internazionali · Pagamento unico $3 USD',
+    'hero.trust.time': 'Pronto in 2 minuti',
+    'hero.trust.price': 'Pagamento unico $3 USD',
+    'hero.urgency': 'Prezzo promozionale a tempo limitato',
+    'benefits.title': 'Cosa include il tuo regalo?',
+    'benefits.1': '💞 Calcola automaticamente il tempo che siete insieme',
+    'benefits.2': '📸 Personalizza con foto speciali',
+    'benefits.3': '💌 Aggiungi una lettera romantica',
+    'benefits.4': '🎶 Includi una canzone significativa',
+    'visual.step1': 'Consegna il biglietto.',
+    'visual.step2': 'Scansiona il QR.',
+    'visual.step3': 'Scopri la storia.',
+    'how.badge': 'Semplice e magico',
+    'how.title': 'Come funziona?',
+    'how.subtitle': 'In 3 semplici passi crei un regalo indimenticabile.',
+    'how.step1.title': 'Personalizza la pagina',
+    'how.step1.desc': 'Carica foto, scegli la musica e scrivi una lettera d\'amore.',
+    'how.step2.title': 'Genera il QR',
+    'how.step2.desc': 'Ottieni un codice QR unico e un biglietto da stampare.',
+    'how.step3.title': 'Regala la sorpresa',
+    'how.step3.desc': 'Il tuo partner scansiona il QR e scopre un\'esperienza unica.',
+    'features.badge': 'Tutto incluso',
+    'features.title': 'Un regalo completo',
+    'features.subtitle': 'Ogni dettaglio pensato per rendere questo momento speciale.',
+    'features.qr.title': 'QR personalizzato',
+    'features.qr.desc': 'Codice unico che apre la tua pagina d\'amore.',
+    'features.card.title': 'Biglietto stampabile',
+    'features.card.desc': 'Scarica e regala fisicamente o digitalmente.',
+    'features.photos.title': 'Foto e ricordi',
+    'features.photos.desc': 'Galleria dei momenti speciali.',
+    'features.music.title': 'Musica integrata',
+    'features.music.desc': 'La canzone che definisce la vostra storia.',
+    'features.letter.title': 'Lettera d\'amore',
+    'features.letter.desc': 'Scrivi o genera con l\'IA.',
+    'features.counter.title': 'Contatore dell\'amore',
+    'features.counter.desc': 'Tempo insieme aggiornato in tempo reale.',
+    'features.private.title': 'Pagina privata',
+    'features.private.desc': 'Accessibile solo con il link QR.',
+    'features.share.title': 'Condivisibile',
+    'features.share.desc': 'Condividi sui social.',
+    'features.instant.title': 'Accesso istantaneo',
+    'features.instant.desc': 'Attivo subito dopo il pagamento.',
+    'emotional.text': 'Un gesto semplice. Un QR. Un ricordo per sempre.',
+    'emotional.cta': 'Crea il mio regalo ora',
+    'social.badge': 'Storie vere',
+    'social.title': 'Coppie che hanno già sorpreso il proprio amore ❤️',
+    'social.subtitle': 'Migliaia di coppie hanno già creato la loro pagina romantica.',
+    'social.testimonial1.text': 'L\'ho fatto per il nostro anniversario e la reazione è stata incredibile 😭',
+    'social.testimonial1.name': 'Marco G.',
+    'social.testimonial1.location': 'Italia',
+    'social.testimonial2.text': 'Semplice, veloce e super romantico. Il miglior regalo che abbia mai fatto.',
+    'social.testimonial2.name': 'Giulia R.',
+    'social.testimonial2.location': 'Italia',
+    'social.testimonial3.text': 'In 5 minuti era tutto pronto. Facile, bello e molto speciale.',
+    'social.testimonial3.name': 'Luca & Sofia',
+    'social.testimonial3.location': 'Italia',
+    'trust.payment': 'Pagamento sicuro',
+    'trust.ssl': 'Connessione SSL',
+    'trust.privacy': 'Privacy',
+    'trust.nospam': 'Nessun abbonamento',
+    'trust.section.title': 'Sicurezza e fiducia',
+    'trust.item1': '🔒 Pagamento sicuro elaborato da Stripe',
+    'trust.item2': '🚫 Nessun abbonamento né costi nascosti',
+    'trust.item3': '⚡ Creazione istantanea in meno di 2 minuti',
+    'trust.item4': '💳 Pagamento unico di $3 USD',
+    'faq.title': 'Domande frequenti',
+    'faq.q1': 'Il pagamento è sicuro?',
+    'faq.a1': 'Sì, utilizziamo Stripe, la piattaforma di pagamento più sicura al mondo. I tuoi dati sono completamente protetti.',
+    'faq.q2': 'Perché costa solo $3?',
+    'faq.a2': 'Vogliamo che sia accessibile a tutti. È un prezzo promozionale che include tutto: pagina, QR, foto, musica e lettera d\'amore.',
+    'faq.q3': 'Mi serve una carta internazionale?',
+    'faq.a3': 'Accettiamo carte di debito e credito di qualsiasi paese. Anche Apple Pay e Google Pay.',
+    'faq.q4': 'Quanto dura la mia pagina?',
+    'faq.a4': 'La tua pagina rimane attiva in modo permanente. Accesso a vita con un solo pagamento.',
+    'pricing.badge': 'Offerta speciale',
+    'pricing.title': 'Tutto questo per soli',
+    'pricing.price': '$3 USD',
+    'pricing.forever': 'per sempre',
+    'pricing.micro': 'Pagamento unico. Nessun abbonamento. Accesso permanente.',
+    'pricing.benefit1': 'Biglietto stampabile o digitale con QR',
+    'pricing.benefit2': 'Pagina privata personalizzata',
+    'pricing.benefit3': 'Foto + musica integrata',
+    'pricing.benefit4': 'Lettera d\'amore personalizzata',
+    'pricing.benefit5': 'Contatore del tempo insieme',
+    'pricing.benefit6': 'Accesso permanente',
+    'summary.title': 'Il tuo regalo include:',
+    'summary.subtitle': 'Cosa succede dopo il pagamento?',
+    'summary.step1': 'Il tuo QR code viene generato automaticamente',
+    'summary.step2': 'Scarichi il tuo biglietto pronto da regalare',
+    'summary.step3': 'La tua pagina rimane attiva per sempre',
+    'final.title': 'Non aspettare per sorprendere',
+    'final.highlight': 'il tuo partner.',
+    'final.subtitle': 'Bastano meno di 2 minuti. Solo $3 USD.',
+    'final.cta': 'Voglio la mia pagina romantica 💘',
+    'footer.terms': 'Termini',
+    'footer.privacy': 'Privacy',
+    'footer.contact': 'Contatti',
+    'footer.copyright': '© 2025 Memory Link. Fatto con',
+    'footer.rights': 'Tutti i diritti riservati.',
+    'scroll.discover': 'Scopri di più',
+    'regalo.loading': 'Caricamento del tuo regalo...',
+    'regalo.notfound.title': 'Pagina non trovata',
+    'regalo.notfound.desc': 'Questo regalo non esiste o il link è scaduto.',
+    'regalo.notfound.cta': 'Crea il mio regalo',
+    'regalo.together.since': 'Insieme dal',
+    'regalo.time.title': 'Tempo insieme',
+    'regalo.time.subtitle': 'Ogni secondo conta quando sei innamorato',
+    'regalo.letter.title': 'Lettera d\'Amore',
+    'regalo.letter.subtitle': 'Parole dal cuore',
+    'regalo.qr.title': 'Scarica il QR Code',
+    'regalo.qr.subtitle': 'Condividi questo regalo speciale',
+    'regalo.qr.download': 'Scarica il mio QR Code',
+    'regalo.footer': 'Fatto con',
+    'regalo.share.title': 'Condividi sui social',
+    'regalo.share.copied': 'Link copiato!',
+    'regalo.share.copied.desc': 'Ora puoi condividerlo dove vuoi',
+    'regalo.share.copy': 'Copia link',
+    'regalo.share.more': 'Altre opzioni',
+    'counter.years': 'Anni',
+    'counter.months': 'Mesi',
+    'counter.days': 'Giorni',
+    'counter.hours': 'Ore',
+    'counter.min': 'Min',
+    'music.title': 'Questo regalo ha la musica',
+    'music.subtitle': 'Premi il pulsante per ascoltare la canzone scelta apposta per te',
+    'music.play': '🎵 Riproduci Musica',
+    'music.skip': 'Continua senza musica',
+    'music.youtube': 'La musica viene riprodotta tramite YouTube',
+    'demo.banner': 'Questa è una demo!',
+    'demo.banner.short': 'Demo',
+    'demo.cta': 'Crea la mia',
+    'demo.cta.short': 'Crea',
+    'demo.cta.price': 'Crea la mia per $3',
+    'demo.share.title': 'Condividi l\'amore',
+    'demo.share.download': 'Scarica QR Code',
+    'demo.like.title': 'Ti piace? Crea la tua',
+    'demo.time.badge': 'Tempo d\'amore',
+    'demo.time.title': 'La nostra storia in numeri',
+    'demo.time.subtitle': 'Ogni secondo conta quando sei innamorato',
+    'crear.step1.title': 'Nomi',
+    'crear.step1.desc': 'Chi siete?',
+    'crear.step2.title': 'Foto e Musica',
+    'crear.step2.desc': 'Scegli una foto e una canzone',
+    'crear.step3.title': 'Lettera',
+    'crear.step3.desc': 'Scrivi o genera con l\'IA',
+    'crear.form.yourname': 'Il tuo nome',
+    'crear.form.yourname.placeholder': 'Es: Maria',
+    'crear.form.partnername': 'Nome del tuo amore',
+    'crear.form.partnername.placeholder': 'Es: Marco',
+    'crear.form.date': 'Data di inizio della relazione',
+    'crear.form.date.placeholder': 'Seleziona la data speciale...',
+    'crear.form.date.started': 'La vostra storia d\'amore è iniziata',
+    'crear.photo.title': 'Foto di copertina',
+    'crear.photo.upload': 'Clicca per caricare la tua foto',
+    'crear.photo.formats': 'JPG, PNG o WEBP (max. 5MB)',
+    'crear.photo.uploading': 'Caricamento foto...',
+    'crear.photo.uploaded': 'Foto caricata',
+    'crear.photo.change': 'Cambia',
+    'crear.photo.position': 'Posizione dei nomi',
+    'crear.photo.position.top': 'Alto',
+    'crear.photo.position.center': 'Centro',
+    'crear.photo.position.bottom': 'Basso',
+    'crear.ai.generate': 'Genera lettera magica con l\'IA',
+    'crear.ai.generating': 'Generazione lettera magica...',
+    'crear.letter.title': 'La tua lettera d\'amore',
+    'crear.letter.placeholder': 'Scrivi la tua lettera qui o usa l\'IA per generare...',
+    'crear.letter.chars': 'caratteri',
+    'crear.generate.title': 'Attiva la tua pagina regalo',
+    'crear.generate.subtitle': 'Accesso completo',
+    'crear.payment.button': 'Paga',
+    'crear.payment.preparing': 'Preparazione pagamento...',
+    'crear.payment.secure': 'Pagamento sicuro con Stripe • Apple Pay • Google Pay',
+    'crear.payment.or': 'o',
+    'crear.code.title': 'Hai un codice di attivazione?',
+    'crear.code.placeholder': 'Codice influencer',
+    'crear.code.info': 'I codici di attivazione sono per influencer e collaboratori.',
+    'crear.cancel': 'Annulla',
+    'crear.qr.generate': 'Genera QR Code',
+    'crear.qr.download': 'Scarica QR Code',
+    'crear.qr.view': 'Vedi pagina',
+    'crear.qr.preparing': 'Preparazione...',
+    'crear.qr.title': 'Il tuo QR Code',
+    'crear.nav.prev': 'Indietro',
+    'crear.nav.next': 'Avanti',
+    'toast.photo.success.title': 'Foto caricata!',
+    'toast.photo.success.desc': 'La tua foto di copertina è pronta.',
+    'toast.photo.error.title': 'Errore di caricamento',
+    'toast.photo.error.desc': 'Impossibile caricare la foto. Riprova.',
+    'toast.photo.invalid': 'Seleziona un file immagine valido.',
+    'toast.photo.size': 'L\'immagine deve essere più piccola di 5MB.',
+    'toast.fields.incomplete': 'Campi incompleti',
+    'toast.fields.incomplete.desc': 'Completa i nomi e la data.',
+    'toast.code.empty': 'Codice vuoto',
+    'toast.code.empty.desc': 'Inserisci un codice di attivazione.',
+    'toast.code.success': 'Codice attivato!',
+    'toast.code.success.desc': 'La tua pagina è attiva per 1 anno.',
+    'toast.code.invalid': 'Codice non valido',
+    'toast.code.invalid.desc': 'Il codice non è valido.',
+    'toast.code.error': 'Errore',
+    'toast.code.error.desc': 'Impossibile validare il codice. Riprova.',
+    'toast.payment.success': 'Pagamento riuscito!',
+    'toast.payment.success.desc': 'La tua pagina è attiva 💖',
+    'toast.payment.cancelled': 'Pagamento annullato',
+    'toast.payment.cancelled.desc': 'Puoi riprovare quando vuoi.',
+    'toast.payment.error': 'Errore',
+    'toast.payment.error.desc': 'Impossibile avviare il pagamento. Riprova.',
+    'toast.share.error.title': 'Errore',
+    'toast.share.error.desc': 'Impossibile copiare il link',
+    'pago.verifying': 'Verifica pagamento...',
+    'pago.success.title': 'Pagamento Riuscito!',
+    'pago.success.desc': 'La tua pagina regalo è attiva per 1 anno. Condividi l\'amore! 💖',
+    'pago.success.cta': 'Vedi la mia pagina',
+    'pago.thanks.title': 'Grazie!',
+    'pago.thanks.desc': 'Stiamo elaborando il pagamento. Riceverai una conferma a breve.',
+    'pago.thanks.cta': 'Torna a creare',
+    'stripe.title': 'Completa pagamento',
+    'stripe.secure': 'Pagamento 100% sicuro',
+    'stripe.processing': 'Elaborazione...',
+    'stripe.pay': 'Paga ora',
+    'stripe.methods': 'Accettiamo carte, Apple Pay e Google Pay',
+    'stripe.powered': 'Pagamento sicuro elaborato da Stripe',
+    'stripe.promo.title': 'Codice promozionale',
+    'stripe.promo.placeholder': 'Inserisci il tuo codice',
+    'stripe.promo.apply': 'Applica',
+    'stripe.promo.applied': 'Applicato!',
+    'stripe.promo.discount': 'Sconto applicato',
+    'card.header.title': 'Scegli il design del tuo biglietto',
+    'card.header.subtitle': 'Personalizza e scarica il tuo biglietto da stampare',
+    'card.layout.label': 'Stile del biglietto',
+    'card.layout.classic': 'Classico',
+    'card.layout.minimal': 'Minimalista',
+    'card.layout.horizontal': 'Orizzontale',
+    'card.layout.photofocus': 'Con Foto',
+    'card.font.romantic': 'Font romantico',
+    'card.font.names': 'Font per i nomi',
+    'card.accent.label': 'Colore di accento',
+    'card.message.label': 'Messaggio personalizzato (opzionale)',
+    'card.message.placeholder': 'Es: Ti amo con tutto il cuore...',
+    'card.toggle.photo': 'Foto',
+    'card.toggle.date': 'Data',
+    'card.selected': 'Stile selezionato:',
+    'card.download': 'Scarica Biglietto (JPG)',
+    'card.qr.scan': 'Scansiona qui',
+    'card.qr.discover': 'Scansiona e scopri!',
+    'card.qr.story': 'Scansiona il QR code per vedere la nostra storia d\'amore',
+    'card.qr.see': 'Scansiona per vedere la nostra storia',
+    'card.signature': 'Con tutto il nostro amore,',
+    'card.default.message': 'I nostri cuori sono pieni d\'amore e gratitudine. Grazie per essere parte della nostra storia.',
+    'memories.title': 'Ricordi Speciali',
+    'memories.subtitle': 'Aggiungi fino a 4 foto con piccoli messaggi per conservare i momenti importanti della vostra storia.',
+    'memories.add': 'Aggiungi ricordo',
+    'memories.of': 'di',
+    'memories.photos': 'foto',
+    'memories.empty': 'Non hai ancora aggiunto ricordi. Carica la prima foto per iniziare!',
+    'memories.name.label': 'Nome del momento',
+    'memories.name.placeholder': 'Es: Il nostro primo appuntamento',
+    'memories.desc.label': 'Descrizione (opzionale)',
+    'memories.desc.placeholder': 'Scrivi un breve messaggio...',
+    'memories.uploading': 'Caricamento foto...',
+    'memories.uploaded.title': 'Foto caricata!',
+    'memories.uploaded.desc': 'Ora puoi personalizzare il nome del ricordo.',
+    'memories.limit.title': 'Limite raggiunto',
+    'memories.limit.desc': 'Puoi aggiungere solo',
+    'memories.limit.suffix': 'ricordi.',
+    'memories.invalid.title': 'File non valido',
+    'memories.invalid.desc': 'Seleziona un file immagine.',
+    'memories.size.title': 'File troppo grande',
+    'memories.size.desc': 'L\'immagine deve essere più piccola di 5MB.',
+    'memories.error.title': 'Errore di caricamento',
+    'memories.error.desc': 'Impossibile caricare la foto. Riprova.',
+    'memories.default.title': 'Ricordo speciale',
+    'soundtrack.title': 'Scegli la tua Canzone',
+    'soundtrack.subtitle': 'La musica viene riprodotta tramite YouTube',
+    'soundtrack.custom.label': 'Vuoi un\'altra canzone? Incolla qui il link YouTube',
+    'soundtrack.custom.placeholder': 'https://www.youtube.com/watch?v=...',
+    'soundtrack.custom.error': 'Inserisci un link YouTube valido',
+    'soundtrack.custom.name': 'Canzone personalizzata',
+    'soundtrack.custom.priority': 'Questa canzone avrà la priorità',
+  },
 };
 
 const STORAGE_KEY = 'memorylink-language';
+const COUNTRY_KEY = 'memorylink-country';
+const MANUAL_KEY = 'memorylink-language-manual';
 
-function detectLanguage(): Language {
-  // Check localStorage first for user preference
+// Country -> Language mapping
+const PT_COUNTRIES = new Set(['BR', 'PT', 'AO', 'MZ', 'CV', 'GW', 'ST', 'TL']);
+const IT_COUNTRIES = new Set(['IT', 'SM', 'VA', 'CH']);
+const EN_COUNTRIES = new Set(['US', 'GB', 'CA', 'AU', 'NZ', 'IE', 'ZA']);
+const ES_COUNTRIES = new Set([
+  'ES', 'MX', 'AR', 'CO', 'CL', 'PE', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO',
+  'HN', 'PY', 'SV', 'NI', 'CR', 'PA', 'UY', 'PR', 'GQ',
+]);
+
+function languageFromCountry(country: string | null): Language | null {
+  if (!country) return null;
+  const c = country.toUpperCase();
+  if (PT_COUNTRIES.has(c)) return 'pt';
+  if (IT_COUNTRIES.has(c)) return 'it';
+  if (EN_COUNTRIES.has(c)) return 'en';
+  if (ES_COUNTRIES.has(c)) return 'es';
+  return null;
+}
+
+function detectBrowserLanguage(): Language {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === 'es' || stored === 'en') {
+  if (stored === 'es' || stored === 'en' || stored === 'pt' || stored === 'it') {
     return stored;
   }
-  
-  // Detect from browser language
-  const browserLang = navigator.language || (navigator as any).userLanguage || '';
-  
-  // English-speaking countries detection
-  if (browserLang.startsWith('en')) {
-    return 'en';
-  }
-  
-  // Default to Spanish for LatAm
+  const browserLang = (navigator.language || (navigator as any).userLanguage || '').toLowerCase();
+  if (browserLang.startsWith('pt')) return 'pt';
+  if (browserLang.startsWith('it')) return 'it';
+  if (browserLang.startsWith('en')) return 'en';
+  if (browserLang.startsWith('es')) return 'es';
   return 'es';
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => detectLanguage());
+  const [language, setLanguageState] = useState<Language>(() => detectBrowserLanguage());
+  const [country, setCountry] = useState<string | null>(() => localStorage.getItem(COUNTRY_KEY));
+
+  // Detect country via IP and adjust language if user hasn't manually toggled
+  useEffect(() => {
+    const cachedCountry = localStorage.getItem(COUNTRY_KEY);
+    const manuallySet = localStorage.getItem(MANUAL_KEY) === '1';
+
+    const applyCountry = (c: string | null) => {
+      if (c) {
+        setCountry(c);
+        localStorage.setItem(COUNTRY_KEY, c);
+      }
+      if (!manuallySet) {
+        const lang = languageFromCountry(c);
+        if (lang) {
+          setLanguageState(lang);
+          localStorage.setItem(STORAGE_KEY, lang);
+        }
+      }
+    };
+
+    if (cachedCountry) {
+      applyCountry(cachedCountry);
+      return;
+    }
+
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+        if (!res.ok) throw new Error('geo failed');
+        const data = await res.json();
+        const c = (data?.country_code || data?.country || '').toString().toUpperCase();
+        applyCountry(c || null);
+      } catch {
+        // ignore; fall back to browser language
+      }
+    })();
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -732,14 +1248,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem(STORAGE_KEY, lang);
+    localStorage.setItem(MANUAL_KEY, '1');
   };
 
   const t = (key: string): string => {
-    return translations[language][key] || key;
+    return translations[language][key] || translations.es[key] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, country, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -754,58 +1271,59 @@ export function useLanguage() {
 }
 
 // Language Toggle Component for header
+const LANGS: { code: Language; label: string }[] = [
+  { code: 'es', label: 'ES' },
+  { code: 'en', label: 'EN' },
+  { code: 'pt', label: 'PT' },
+  { code: 'it', label: 'IT' },
+];
+
 export const LanguageToggle = () => {
   const { language, setLanguage } = useLanguage();
-  
   return (
     <div className="flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-1 py-0.5 border border-border/50">
-      <button
-        onClick={() => setLanguage('es')}
-        className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
-          language === 'es' 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-muted-foreground hover:text-foreground'
-        }`}
-      >
-        ES
-      </button>
-      <button
-        onClick={() => setLanguage('en')}
-        className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
-          language === 'en' 
-            ? 'bg-primary text-primary-foreground' 
-            : 'text-muted-foreground hover:text-foreground'
-        }`}
-      >
-        EN
-      </button>
+      {LANGS.map((l) => (
+        <button
+          key={l.code}
+          onClick={() => setLanguage(l.code)}
+          className={`px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
+            language === l.code
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          {l.label}
+        </button>
+      ))}
     </div>
   );
 };
 
 // Subtle Footer Language Toggle for /regalo/:id pages
+const FOOTER_LANGS: { code: Language; label: string }[] = [
+  { code: 'es', label: 'Español' },
+  { code: 'en', label: 'English' },
+  { code: 'pt', label: 'Português' },
+  { code: 'it', label: 'Italiano' },
+];
+
 export const FooterLanguageToggle = () => {
   const { language, setLanguage } = useLanguage();
-  
   return (
-    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground/60">
-      <button
-        onClick={() => setLanguage('es')}
-        className={`transition-colors hover:text-muted-foreground ${
-          language === 'es' ? 'text-muted-foreground' : ''
-        }`}
-      >
-        Español
-      </button>
-      <span>|</span>
-      <button
-        onClick={() => setLanguage('en')}
-        className={`transition-colors hover:text-muted-foreground ${
-          language === 'en' ? 'text-muted-foreground' : ''
-        }`}
-      >
-        English
-      </button>
+    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground/60 flex-wrap">
+      {FOOTER_LANGS.map((l, i) => (
+        <span key={l.code} className="flex items-center gap-2">
+          <button
+            onClick={() => setLanguage(l.code)}
+            className={`transition-colors hover:text-muted-foreground ${
+              language === l.code ? 'text-muted-foreground' : ''
+            }`}
+          >
+            {l.label}
+          </button>
+          {i < FOOTER_LANGS.length - 1 && <span>|</span>}
+        </span>
+      ))}
     </div>
   );
 };

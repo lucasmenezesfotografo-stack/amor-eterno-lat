@@ -57,6 +57,7 @@ type CheckoutFormProps = {
   onClose: () => void;
   onPaid: (paymentIntentId?: string) => void;
   amount: number;
+  currency?: string;
   giftPageId?: string;
   appliedPromotion: {
     code: string;
@@ -69,6 +70,7 @@ function CheckoutForm({
   onClose,
   onPaid,
   amount,
+  currency = 'usd',
   giftPageId,
   appliedPromotion,
 }: CheckoutFormProps) {
@@ -127,9 +129,9 @@ function CheckoutForm({
   };
 
   const formatPrice = (cents: number) =>
-    new Intl.NumberFormat(language === 'en' ? "en-US" : "es-ES", {
+    new Intl.NumberFormat(language === 'en' ? 'en-US' : language === 'pt' ? 'pt-BR' : language === 'it' ? 'it-IT' : 'es-ES', {
       style: "currency",
-      currency: "USD",
+      currency: (currency || 'usd').toUpperCase(),
     }).format(cents / 100);
 
   return (
@@ -228,6 +230,7 @@ type StripePaymentModalProps = {
   onClose: () => void;
   onPaid: (paymentIntentId?: string) => void;
   amount?: number;
+  currency?: string;
   giftPageId?: string;
   appliedPromotion?: {
     code: string;
@@ -242,6 +245,7 @@ export function StripePaymentModal({
   onClose,
   onPaid,
   amount = 500,
+  currency = 'usd',
   giftPageId,
   appliedPromotion = null,
 }: StripePaymentModalProps) {
@@ -261,7 +265,7 @@ export function StripePaymentModal({
   const options: StripeElementsOptions = {
     clientSecret,
     appearance,
-    locale: language === 'en' ? 'en' : 'es',
+    locale: (language === 'en' ? 'en' : language === 'pt' ? 'pt-BR' : language === 'it' ? 'it' : 'es') as any,
   };
 
   return (
@@ -295,6 +299,7 @@ export function StripePaymentModal({
               onClose={onClose}
               onPaid={onPaid}
               amount={amount}
+              currency={currency}
               giftPageId={giftPageId}
               appliedPromotion={appliedPromotion}
             />

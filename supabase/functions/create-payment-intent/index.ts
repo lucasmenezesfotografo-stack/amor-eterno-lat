@@ -8,6 +8,12 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Pricing per market
+// USD: $3.00 = 300 cents (current default)
+// BRL: R$15.00 = 1500 centavos (Brazil) — also unlocks Pix
+const USD_AMOUNT = 300;
+const BRL_AMOUNT = 1500;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -17,7 +23,8 @@ serve(async (req) => {
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY not set");
 
-    const { giftPageId, slug, email, promotionCode } = await req.json();
+    const { giftPageId, slug, email, promotionCode, country, language } =
+      await req.json();
 
     if (!giftPageId || !slug) {
       throw new Error("giftPageId and slug are required");
@@ -27,8 +34,12 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // ✅ PREÇO BASE CORRETO → US$ 5.00
-    let amountInCents = 500;
+    // Detect Brazil → charge in BRL and enable Pix
+    const countryCode = (country || "").toString().toUpperCase();
+    const isBrazil = countryCode === "BR";
+
+    let currency = isBrazil ? "brl" : "usd";
+    let amountInCents = isBrazil ? BRL_AMOUNT : USD_AMOUNT;
     let appliedPromotion = null;
 
     if (promotionCode?.trim()) {
@@ -56,15 +67,19 @@ serve(async (req) => {
       }
     }
 
+    // automatic_payment_methods will surface Pix automatically when currency=brl
+    // and Pix is enabled in the Stripe Dashboard (Payment Methods).
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInCents,
-      currency: "usd",
+      currency,
       automatic_payment_methods: { enabled: true },
       receipt_email: email ?? undefined,
       metadata: {
         giftPageId,
         slug,
         promotionCode: promotionCode ?? "",
+        country: countryCode,
+        language: language ?? "",
       },
     });
 
@@ -72,6 +87,8 @@ serve(async (req) => {
       JSON.stringify({
         clientSecret: paymentIntent.client_secret,
         amount: amountInCents,
+        currency,
+        country: countryCode,
         appliedPromotion,
       }),
       {
