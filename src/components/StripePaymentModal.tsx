@@ -261,7 +261,7 @@ export function StripePaymentModal({
   const options: StripeElementsOptions = {
     clientSecret,
     appearance,
-    locale: language === 'en' ? 'en' : 'es',
+    locale: (language === 'en' ? 'en' : language === 'pt' ? 'pt-BR' : language === 'it' ? 'it' : 'es') as any,
   };
 
   return (
