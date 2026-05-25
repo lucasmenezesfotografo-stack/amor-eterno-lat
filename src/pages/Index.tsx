@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import memoryLinkLogo from "@/assets/memory-link-logo.png";
 import demoCoupleImage from "@/assets/demo-couple.jpg";
-import { useLanguage, LanguageToggle } from "@/hooks/use-language";
+import { useLanguage } from "@/hooks/use-language";
 
 const IndexContent = () => {
   const { t, language } = useLanguage();
@@ -33,7 +33,6 @@ const IndexContent = () => {
             <span className="text-lg font-semibold tracking-tight">Memory Link</span>
           </Link>
           <div className="flex items-center gap-3">
-            <LanguageToggle />
             <Link to="/demo">
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 {t('nav.example')}
