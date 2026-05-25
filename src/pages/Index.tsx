@@ -152,12 +152,12 @@ const IndexContent = () => {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative flex justify-center"
+              className="relative flex justify-center w-full"
             >
-              <div className="relative">
+              <div className="relative scale-[0.75] sm:scale-90 md:scale-100 origin-center">
                 {/* Physical Card */}
                 <motion.div
-                  className="relative z-20 w-[280px] sm:w-[320px]"
+                  className="relative z-20 w-[260px] sm:w-[320px]"
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 >
