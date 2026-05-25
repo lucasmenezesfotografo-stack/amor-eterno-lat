@@ -17,7 +17,7 @@ import DatePickerWithYearMonth from "@/components/DatePickerWithYearMonth";
 import PersonalizedCard from "@/components/PersonalizedCard";
 import QuickRegister from "@/components/QuickRegister";
 import { format } from "date-fns";
-import { es, enUS } from "date-fns/locale";
+import { es, enUS, ptBR, it } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import { useLanguage, LanguageToggle } from "@/hooks/use-language";
