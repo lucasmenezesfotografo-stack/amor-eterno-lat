@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import memoryLinkLogo from "@/assets/memory-link-logo.png";
 import demoCoupleImage from "@/assets/demo-couple.jpg";
-import { useLanguage, LanguageToggle } from "@/hooks/use-language";
+import { useLanguage } from "@/hooks/use-language";
 
 const IndexContent = () => {
   const { t, language } = useLanguage();
