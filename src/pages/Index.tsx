@@ -92,29 +92,29 @@ const IndexContent = () => {
               </motion.div>
 
               {/* Headline — serif for emotional impact */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight leading-[1.1] font-serif">
+              <h1 className="text-[2rem] leading-[1.15] sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight font-serif break-words">
                 <span className="bg-gradient-to-r from-primary via-rose-400 to-primary bg-clip-text text-transparent">
                   {t('hero.headline')}
                 </span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
+              <p className="text-base sm:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
                 {t('hero.subheadline')}
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-5">
-                <Link to="/crear">
-                  <Button variant="romantic" size="xl" className="group min-w-[260px] h-16 text-lg shadow-[0_8px_40px_hsl(var(--primary)/0.35)]">
-                    <Gift className="w-5 h-5 mr-2" />
-                    {t('hero.cta.primary')}
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start items-stretch sm:items-center mb-5 w-full">
+                <Link to="/crear" className="w-full sm:w-auto">
+                  <Button variant="romantic" size="xl" className="group w-full sm:min-w-[260px] h-14 sm:h-16 text-base sm:text-lg px-4 shadow-[0_8px_40px_hsl(var(--primary)/0.35)]">
+                    <Gift className="w-5 h-5 mr-2 shrink-0" />
+                    <span className="truncate">{t('hero.cta.primary')}</span>
+                    <ArrowRight className="w-5 h-5 ml-2 shrink-0 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                <Link to="/demo">
-                  <Button variant="outline" size="xl" className="min-w-[180px] h-14 text-base">
-                    <Play className="w-5 h-5 mr-2" />
+                <Link to="/demo" className="w-full sm:w-auto">
+                  <Button variant="outline" size="xl" className="w-full sm:min-w-[180px] h-12 sm:h-14 text-sm sm:text-base">
+                    <Play className="w-5 h-5 mr-2 shrink-0" />
                     {t('hero.cta.secondary')}
                   </Button>
                 </Link>
@@ -152,12 +152,12 @@ const IndexContent = () => {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative flex justify-center"
+              className="relative flex justify-center w-full"
             >
-              <div className="relative">
+              <div className="relative scale-[0.75] sm:scale-90 md:scale-100 origin-center">
                 {/* Physical Card */}
                 <motion.div
-                  className="relative z-20 w-[280px] sm:w-[320px]"
+                  className="relative z-20 w-[260px] sm:w-[320px]"
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 >
