@@ -1252,6 +1252,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const t = (key: string): string => {
+    // Brazil-specific overrides for Portuguese (R$15 + Pix). Other PT countries get USD defaults.
+    if (language === 'pt' && country === 'BR') {
+      const brKey = `${key}.br`;
+      const brVal = translations.pt[brKey];
+      if (brVal) return brVal;
+    }
     return translations[language][key] || translations.es[key] || key;
   };
 
