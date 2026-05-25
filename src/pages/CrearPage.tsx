@@ -17,7 +17,7 @@ import DatePickerWithYearMonth from "@/components/DatePickerWithYearMonth";
 import PersonalizedCard from "@/components/PersonalizedCard";
 import QuickRegister from "@/components/QuickRegister";
 import { format } from "date-fns";
-import { es, enUS } from "date-fns/locale";
+import { es, enUS, ptBR, it } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import { useLanguage, LanguageToggle } from "@/hooks/use-language";
@@ -566,17 +566,49 @@ const CrearPage = () => {
 
   const handleGenerateAILetter = () => {
     setIsGeneratingLetter(true);
-    const formattedDate = formData.startDate 
-      ? format(formData.startDate, "d 'de' MMMM 'de' yyyy", { locale: es })
-      : "en que nos conocimos";
-    
-    const letterTemplates = [
-      `Mi amor ${formData.person2},\n\nDesde el día ${formattedDate}, mi vida cobró un nuevo significado.\n\nCada momento a tu lado es un regalo que guardo en el corazón. Tú me haces querer ser una mejor persona cada día, y contigo descubrí el verdadero significado del amor.\n\nGracias por elegir construir esta historia conmigo. Prometo seguir amándote con la misma intensidad de siempre.\n\nCon todo mi amor,\n${formData.person1}`,
-      `${formData.person2}, mi gran amor,\n\nLas palabras parecen pequeñas para describir lo que siento por ti. Desde ${formattedDate}, cada día es una nueva aventura.\n\nEres mi paz en medio del caos, mi sonrisa en las mañanas difíciles, y mi certeza de que el amor verdadero existe.\n\nQue podamos construir mil memorias más juntos.\n\nTe amo infinitamente,\n${formData.person1}`,
-    ];
 
+    const localeMap = { es, en: enUS, pt: ptBR, it } as const;
+    const dateFmt = {
+      es: "d 'de' MMMM 'de' yyyy",
+      en: "MMMM d, yyyy",
+      pt: "d 'de' MMMM 'de' yyyy",
+      it: "d MMMM yyyy",
+    } as const;
+    const fallbackDate = {
+      es: 'en que nos conocimos',
+      en: 'we met',
+      pt: 'em que nos conhecemos',
+      it: 'in cui ci siamo conosciuti',
+    } as const;
+
+    const lang = (language as 'es' | 'en' | 'pt' | 'it');
+    const loc = localeMap[lang] || es;
+    const formattedDate = formData.startDate
+      ? format(formData.startDate, dateFmt[lang] || dateFmt.es, { locale: loc })
+      : fallbackDate[lang] || fallbackDate.es;
+
+    const templatesByLang: Record<'es' | 'en' | 'pt' | 'it', string[]> = {
+      es: [
+        `Mi amor ${formData.person2},\n\nDesde el día ${formattedDate}, mi vida cobró un nuevo significado.\n\nCada momento a tu lado es un regalo que guardo en el corazón. Me haces querer ser una mejor persona cada día, y contigo descubrí el verdadero significado del amor.\n\nGracias por elegir construir esta historia conmigo. Prometo seguir amándote con la misma intensidad de siempre.\n\nCon todo mi amor,\n${formData.person1}`,
+        `${formData.person2}, mi gran amor,\n\nLas palabras parecen pequeñas para describir lo que siento por ti. Desde ${formattedDate}, cada día es una nueva aventura.\n\nEres mi paz en medio del caos, mi sonrisa en las mañanas difíciles, y mi certeza de que el amor verdadero existe.\n\nQue podamos construir mil memorias más juntos.\n\nTe amo infinitamente,\n${formData.person1}`,
+      ],
+      en: [
+        `My love ${formData.person2},\n\nSince ${formattedDate}, my life took on a whole new meaning.\n\nEvery moment by your side is a gift I keep close to my heart. You make me want to be a better person every day, and with you I discovered the true meaning of love.\n\nThank you for choosing to build this story with me. I promise to keep loving you with the same intensity, always.\n\nWith all my love,\n${formData.person1}`,
+        `${formData.person2}, my greatest love,\n\nWords feel too small to describe what I feel for you. Since ${formattedDate}, every day has been a new adventure.\n\nYou are my peace in the middle of the chaos, my smile on the hardest mornings, and my proof that true love exists.\n\nMay we build a thousand more memories together.\n\nI love you endlessly,\n${formData.person1}`,
+      ],
+      pt: [
+        `Meu amor ${formData.person2},\n\nDesde o dia ${formattedDate}, a minha vida ganhou um novo significado.\n\nCada momento ao seu lado é um presente que guardo no coração. Você me faz querer ser uma pessoa melhor todos os dias, e com você descobri o verdadeiro significado do amor.\n\nObrigado(a) por escolher construir esta história comigo. Prometo continuar te amando com a mesma intensidade de sempre.\n\nCom todo o meu amor,\n${formData.person1}`,
+        `${formData.person2}, meu grande amor,\n\nAs palavras parecem pequenas para descrever o que sinto por você. Desde ${formattedDate}, cada dia é uma nova aventura.\n\nVocê é a minha paz em meio ao caos, o meu sorriso nas manhãs difíceis, e a minha certeza de que o amor verdadeiro existe.\n\nQue possamos construir mil memórias a mais juntos.\n\nTe amo infinitamente,\n${formData.person1}`,
+      ],
+      it: [
+        `Amore mio ${formData.person2},\n\nDal ${formattedDate}, la mia vita ha preso un nuovo significato.\n\nOgni momento al tuo fianco è un regalo che custodisco nel cuore. Mi fai voler essere una persona migliore ogni giorno, e con te ho scoperto il vero significato dell'amore.\n\nGrazie per aver scelto di costruire questa storia con me. Prometto di continuare ad amarti con la stessa intensità di sempre.\n\nCon tutto il mio amore,\n${formData.person1}`,
+        `${formData.person2}, mio grande amore,\n\nLe parole sembrano piccole per descrivere ciò che provo per te. Dal ${formattedDate}, ogni giorno è una nuova avventura.\n\nSei la mia pace nel caos, il mio sorriso nelle mattine difficili, e la mia certezza che il vero amore esiste.\n\nChe possiamo costruire mille ricordi in più insieme.\n\nTi amo infinitamente,\n${formData.person1}`,
+      ],
+    };
+
+    const letterTemplates = templatesByLang[lang] || templatesByLang.es;
     const randomLetter = letterTemplates[Math.floor(Math.random() * letterTemplates.length)];
-    
+
     // Simulate typing effect
     let index = 0;
     const interval = setInterval(() => {
