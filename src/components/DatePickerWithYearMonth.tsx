@@ -1,7 +1,8 @@
 import * as React from "react";
 import { format, setMonth, setYear, getMonth, getYear } from "date-fns";
-import { es } from "date-fns/locale";
-import { CalendarIcon, ChevronDown } from "lucide-react";
+import { es, enUS, ptBR, it } from "date-fns/locale";
+import type { Locale } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -17,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLanguage } from "@/hooks/use-language";
 
 interface DatePickerWithYearMonthProps {
   date: Date | undefined;
@@ -27,10 +29,33 @@ interface DatePickerWithYearMonthProps {
   toYear?: number;
 }
 
-const months = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-];
+const LOCALES: Record<string, Locale> = {
+  es,
+  en: enUS,
+  pt: ptBR,
+  it,
+};
+
+const MONTH_LABEL: Record<string, string> = {
+  es: "Mes",
+  en: "Month",
+  pt: "Mês",
+  it: "Mese",
+};
+
+const YEAR_LABEL: Record<string, string> = {
+  es: "Año",
+  en: "Year",
+  pt: "Ano",
+  it: "Anno",
+};
+
+const DATE_FORMAT: Record<string, string> = {
+  es: "EEEE, d 'de' MMMM 'de' yyyy",
+  en: "EEEE, MMMM d, yyyy",
+  pt: "EEEE, d 'de' MMMM 'de' yyyy",
+  it: "EEEE, d MMMM yyyy",
+};
 
 const DatePickerWithYearMonth = ({
   date,
@@ -40,10 +65,21 @@ const DatePickerWithYearMonth = ({
   fromYear = 1990,
   toYear = new Date().getFullYear(),
 }: DatePickerWithYearMonthProps) => {
+  const { language } = useLanguage();
+  const locale = LOCALES[language] || es;
+
   const [calendarDate, setCalendarDate] = React.useState<Date>(date || new Date());
   const [isOpen, setIsOpen] = React.useState(false);
 
-  // Generate years array
+  // Localized months derived from current locale
+  const months = React.useMemo(() => {
+    const base = new Date(2024, 0, 1);
+    return Array.from({ length: 12 }, (_, i) => {
+      const name = format(setMonth(base, i), "LLLL", { locale });
+      return name.charAt(0).toUpperCase() + name.slice(1);
+    });
+  }, [locale]);
+
   const years = React.useMemo(() => {
     const yearsArray = [];
     for (let year = toYear; year >= fromYear; year--) {
@@ -53,13 +89,11 @@ const DatePickerWithYearMonth = ({
   }, [fromYear, toYear]);
 
   const handleMonthChange = (monthIndex: string) => {
-    const newDate = setMonth(calendarDate, parseInt(monthIndex));
-    setCalendarDate(newDate);
+    setCalendarDate(setMonth(calendarDate, parseInt(monthIndex)));
   };
 
   const handleYearChange = (year: string) => {
-    const newDate = setYear(calendarDate, parseInt(year));
-    setCalendarDate(newDate);
+    setCalendarDate(setYear(calendarDate, parseInt(year)));
   };
 
   const handleSelect = (selectedDate: Date | undefined) => {
@@ -83,7 +117,7 @@ const DatePickerWithYearMonth = ({
           <CalendarIcon className="mr-3 h-5 w-5 text-primary" />
           {date ? (
             <span className="text-foreground">
-              {format(date, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
+              {format(date, DATE_FORMAT[language] || DATE_FORMAT.es, { locale })}
             </span>
           ) : (
             <span>{placeholder}</span>
@@ -93,13 +127,12 @@ const DatePickerWithYearMonth = ({
       <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
         <div className="p-3 border-b border-border">
           <div className="flex gap-2">
-            {/* Month Selector */}
             <Select
               value={getMonth(calendarDate).toString()}
               onValueChange={handleMonthChange}
             >
               <SelectTrigger className="flex-1 h-10 bg-secondary border-border">
-                <SelectValue placeholder="Mes" />
+                <SelectValue placeholder={MONTH_LABEL[language] || "Mes"} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border max-h-[200px]">
                 {months.map((month, index) => (
@@ -110,13 +143,12 @@ const DatePickerWithYearMonth = ({
               </SelectContent>
             </Select>
 
-            {/* Year Selector */}
             <Select
               value={getYear(calendarDate).toString()}
               onValueChange={handleYearChange}
             >
               <SelectTrigger className="w-24 h-10 bg-secondary border-border">
-                <SelectValue placeholder="Año" />
+                <SelectValue placeholder={YEAR_LABEL[language] || "Año"} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border max-h-[200px]">
                 {years.map((year) => (
@@ -128,7 +160,7 @@ const DatePickerWithYearMonth = ({
             </Select>
           </div>
         </div>
-        
+
         <Calendar
           mode="single"
           selected={date}
@@ -137,8 +169,8 @@ const DatePickerWithYearMonth = ({
           onMonthChange={setCalendarDate}
           disabled={disabled}
           initialFocus
-          locale={es}
-          className="rounded-xl"
+          locale={locale}
+          className="rounded-xl pointer-events-auto"
         />
       </PopoverContent>
     </Popover>
