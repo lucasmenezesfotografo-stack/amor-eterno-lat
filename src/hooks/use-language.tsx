@@ -1306,6 +1306,22 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = language;
+    const title = translations[language]['site.title'];
+    const desc = translations[language]['site.description'];
+    if (title) document.title = title;
+    const setMeta = (selector: string, content: string) => {
+      const el = document.querySelector(selector) as HTMLMetaElement | null;
+      if (el) el.setAttribute('content', content);
+    };
+    if (desc) {
+      setMeta('meta[name="description"]', desc);
+      setMeta('meta[property="og:description"]', desc);
+      setMeta('meta[name="twitter:description"]', desc);
+    }
+    if (title) {
+      setMeta('meta[property="og:title"]', title);
+      setMeta('meta[name="twitter:title"]', title);
+    }
   }, [language]);
 
   const setLanguage = (lang: Language) => {
