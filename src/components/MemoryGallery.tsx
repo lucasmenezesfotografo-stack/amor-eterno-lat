@@ -40,7 +40,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
   const renderMinimalGallery = () => (
     <div className="space-y-8">
       <div className="text-center">
-        <p className="text-2xl font-serif text-primary mb-2">Recuerdos</p>
+        <p className="text-2xl font-serif text-primary mb-2">{t('gallery.section')}</p>
         <div className="w-16 h-px bg-primary/30 mx-auto" />
       </div>
       <div className="grid grid-cols-2 gap-6">
