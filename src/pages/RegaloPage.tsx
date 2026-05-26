@@ -223,7 +223,7 @@ const RegaloPage = () => {
       {/* Music Activation Overlay - shown on first load for pages with YouTube video */}
       {showMusicOverlay && pageData.youtube_video_id && (
         <MusicActivationOverlay 
-          trackName={currentTrack?.name || pageData.soundtrack_name || (language === 'en' ? "Our Song" : "Nuestra Canción")}
+          trackName={currentTrack?.name || pageData.soundtrack_name || songLabel}
           artistName={currentTrack?.artist}
           albumCover={albumCover}
           onActivate={handleMusicActivate}
