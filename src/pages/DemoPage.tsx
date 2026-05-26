@@ -19,33 +19,20 @@ const DemoPage = () => {
   const [musicActivated, setMusicActivated] = useState(false);
   const [showMusicOverlay, setShowMusicOverlay] = useState(true);
 
+  const loveLetters: Record<string, string> = {
+    en: `My dear Miguel,\n\nEvery day by your side is a gift that I treasure with all my heart. Since that June 15th when our paths crossed, I knew my life had changed forever.\n\nYou are my best friend, my confidant, my adventure partner. With you I learned that true love is not perfect, but real.\n\nThank you for choosing me every day, for loving me as I am, for making our story so beautiful.\n\nI love you beyond words,\nSofía ❤️`,
+    es: `Mi querido Miguel,\n\nCada día a tu lado es un regalo que atesoro con todo mi corazón. Desde aquel 15 de junio cuando nuestros caminos se cruzaron, supe que mi vida había cambiado para siempre.\n\nEres mi mejor amigo, mi confidente, mi compañero de aventuras. Contigo he aprendido que el amor verdadero no es perfecto, sino real.\n\nGracias por elegirme cada día, por amarme como soy, por hacer de nuestra historia algo tan hermoso.\n\nTe amo más allá de las palabras,\nSofía ❤️`,
+    pt: `Meu querido Miguel,\n\nCada dia ao seu lado é um presente que guardo com todo o meu coração. Desde aquele 15 de junho em que nossos caminhos se cruzaram, soube que minha vida havia mudado para sempre.\n\nVocê é meu melhor amigo, meu confidente, meu parceiro de aventuras. Com você aprendi que o amor verdadeiro não é perfeito, mas real.\n\nObrigada por me escolher todos os dias, por me amar como sou, por tornar nossa história tão linda.\n\nAmo você além das palavras,\nSofía ❤️`,
+    it: `Mio caro Miguel,\n\nOgni giorno al tuo fianco è un regalo che custodisco con tutto il cuore. Da quel 15 giugno in cui le nostre strade si sono incrociate, ho capito che la mia vita era cambiata per sempre.\n\nSei il mio migliore amico, il mio confidente, il mio compagno di avventure. Con te ho imparato che il vero amore non è perfetto, ma reale.\n\nGrazie per scegliermi ogni giorno, per amarmi come sono, per rendere la nostra storia così bella.\n\nTi amo oltre le parole,\nSofía ❤️`,
+  };
+
   // Demo couple data
   const demoData = {
     person1: "Sofía",
     person2: "Miguel",
     startDate: new Date("2021-06-15"),
     coverPhoto: demoCoupleImage,
-    loveLetter: language === 'en' 
-      ? `My dear Miguel,
-
-Every day by your side is a gift that I treasure with all my heart. Since that June 15th when our paths crossed, I knew my life had changed forever.
-
-You are my best friend, my confidant, my adventure partner. With you I learned that true love is not perfect, but real. It's laughing together until it hurts, it's supporting each other on difficult days, it's building shared dreams.
-
-Thank you for choosing me every day, for loving me as I am, for making our story so beautiful.
-
-I love you beyond words,
-Sofía ❤️`
-      : `Mi querido Miguel,
-
-Cada día a tu lado es un regalo que atesoro con todo mi corazón. Desde aquel 15 de junio cuando nuestros caminos se cruzaron, supe que mi vida había cambiado para siempre.
-
-Eres mi mejor amigo, mi confidente, mi compañero de aventuras. Contigo he aprendido que el amor verdadero no es perfecto, sino real. Es reír juntos hasta que nos duela, es apoyarnos en los días difíciles, es construir sueños compartidos.
-
-Gracias por elegirme cada día, por amarme como soy, por hacer de nuestra historia algo tan hermoso.
-
-Te amo más allá de las palabras,
-Sofía ❤️`
+    loveLetter: loveLetters[language] || loveLetters.es,
   };
 
   // Use first romantic track for demo
