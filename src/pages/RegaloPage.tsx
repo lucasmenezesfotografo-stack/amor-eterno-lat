@@ -1,5 +1,5 @@
 import { parseISO, format } from "date-fns";
-import { es, enUS } from "date-fns/locale";
+import { es, enUS, ptBR, it as itLocale } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { Heart, Download, Loader2, Calendar, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
