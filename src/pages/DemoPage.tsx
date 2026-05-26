@@ -86,19 +86,15 @@ const DemoPage = () => {
 
   // Format date according to language
   const formatDate = (date: Date) => {
-    if (language === 'en') {
-      return date.toLocaleDateString("en-US", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      });
-    }
-    return date.toLocaleDateString("es-ES", {
+    const localeTag = language === 'en' ? 'en-US' : language === 'pt' ? 'pt-BR' : language === 'it' ? 'it-IT' : 'es-ES';
+    return date.toLocaleDateString(localeTag, {
       day: "numeric",
       month: "long",
       year: "numeric"
     });
   };
+
+  const shareDesc = language === 'en' ? "Check out our love page ❤️" : language === 'pt' ? "Veja nossa página de amor ❤️" : language === 'it' ? "Guarda la nostra pagina d'amore ❤️" : "Mira nuestra página de amor ❤️";
 
   return (
     <main className="min-h-screen bg-background">
