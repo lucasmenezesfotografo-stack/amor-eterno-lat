@@ -124,7 +124,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             )}>
               <img
                 src={memory.imageUrl}
-                alt={memory.title || `Recuerdo ${index + 1}`}
+                alt={memory.title || `${t('gallery.memory')} ${index + 1}`}
                 className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
               />
               {/* Elegant overlay on hover */}
