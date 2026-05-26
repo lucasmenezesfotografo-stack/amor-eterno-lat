@@ -234,7 +234,7 @@ const RegaloPage = () => {
       {pageData.youtube_video_id && musicActivated && (
         <YouTubeMusicPlayer 
           videoId={pageData.youtube_video_id}
-          trackName={currentTrack?.name || pageData.soundtrack_name || (language === 'en' ? "Our Song" : "Nuestra Canción")}
+          trackName={currentTrack?.name || pageData.soundtrack_name || songLabel}
           artistName={currentTrack?.artist}
           albumCover={albumCover}
           autoPlay={true}
