@@ -9,6 +9,7 @@ interface LoveLetterProps {
 }
 
 const LoveLetter = ({ content, author, className = "" }: LoveLetterProps) => {
+  const { t } = useLanguage();
   return (
     <motion.div
       className={`relative ${className}`}
