@@ -312,7 +312,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             >
               <img
                 src={memories[selectedIndex].imageUrl}
-                alt={memories[selectedIndex].title || `Recuerdo ${selectedIndex + 1}`}
+                alt={memories[selectedIndex].title || `${t('gallery.memory')} ${selectedIndex + 1}`}
                 className="max-h-[70vh] w-auto object-contain rounded-lg shadow-2xl"
               />
               
