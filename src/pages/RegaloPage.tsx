@@ -212,10 +212,10 @@ const RegaloPage = () => {
   // Format date according to language
   const formatDateString = (dateStr: string) => {
     const date = parseISO(dateStr);
-    if (language === 'en') {
-      return format(date, "MMMM d, yyyy", { locale: enUS });
-    }
-    return format(date, "d 'de' MMMM yyyy", { locale: es });
+    const fmt = language === 'en' ? "MMMM d, yyyy"
+      : language === 'it' ? "d MMMM yyyy"
+      : "d 'de' MMMM 'de' yyyy";
+    return format(date, fmt, { locale: dateLocale });
   };
 
   return (
