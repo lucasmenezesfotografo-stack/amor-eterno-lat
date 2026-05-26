@@ -94,7 +94,7 @@ const LoveLetter = ({ content, author, className = "" }: LoveLetterProps) => {
             transition={{ delay: 0.8, duration: 0.6 }}
           >
             <span className="text-lg md:text-xl font-serif italic text-gradient-romantic">
-              Con todo mi amor,
+              {t('letter.signature')}
             </span>
             <p className="text-2xl md:text-3xl font-serif font-semibold text-foreground mt-2">
               {author}
