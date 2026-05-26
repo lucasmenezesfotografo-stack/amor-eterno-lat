@@ -180,7 +180,7 @@ const CrearPage = () => {
       // 2️⃣ busca a gift page REAL
       const { data: giftPage, error } = await supabase
         .from("gift_pages")
-        .select("*")
+        .select("id, slug, your_name, partner_name, start_date, cover_photo_url, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active")
         .eq("id", giftPageIdFromUrl)
         .single();
 
