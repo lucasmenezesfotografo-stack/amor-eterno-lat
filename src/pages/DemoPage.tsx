@@ -221,7 +221,7 @@ const DemoPage = () => {
           <ShareButtons 
             url={String(currentUrl)} 
             title={`${demoData.person1} & ${demoData.person2} - Memory Link`} 
-            description={language === 'en' ? "Check out our love page ❤️" : "Mira nuestra página de amor ❤️"} 
+            description={shareDesc} 
           />
         </div>
       </section>
