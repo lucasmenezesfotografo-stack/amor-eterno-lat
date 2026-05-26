@@ -1,5 +1,5 @@
 import { parseISO, format } from "date-fns";
-import { es, enUS } from "date-fns/locale";
+import { es, enUS, ptBR, it as itLocale } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { Heart, Download, Loader2, Calendar, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -82,7 +82,10 @@ const RegaloPage = () => {
   const [musicActivated, setMusicActivated] = useState(false);
   const [showMusicOverlay, setShowMusicOverlay] = useState(false);
 
-  const dateLocale = language === 'en' ? enUS : es;
+  const localeMap = { es, en: enUS, pt: ptBR, it: itLocale } as const;
+  const dateLocale = localeMap[language] || es;
+  const songLabel = language === 'en' ? "Our Song" : language === 'pt' ? "Nossa Música" : language === 'it' ? "La Nostra Canzone" : "Nuestra Canción";
+  const shareDesc = language === 'en' ? "Check out our love page ❤️" : language === 'pt' ? "Veja nossa página de amor ❤️" : language === 'it' ? "Guarda la nostra pagina d'amore ❤️" : "Mira nuestra página de amor ❤️";
 
   useEffect(() => {
     const fetchGiftPage = async () => {
@@ -209,10 +212,10 @@ const RegaloPage = () => {
   // Format date according to language
   const formatDateString = (dateStr: string) => {
     const date = parseISO(dateStr);
-    if (language === 'en') {
-      return format(date, "MMMM d, yyyy", { locale: enUS });
-    }
-    return format(date, "d 'de' MMMM yyyy", { locale: es });
+    const fmt = language === 'en' ? "MMMM d, yyyy"
+      : language === 'it' ? "d MMMM yyyy"
+      : "d 'de' MMMM 'de' yyyy";
+    return format(date, fmt, { locale: dateLocale });
   };
 
   return (
@@ -220,7 +223,7 @@ const RegaloPage = () => {
       {/* Music Activation Overlay - shown on first load for pages with YouTube video */}
       {showMusicOverlay && pageData.youtube_video_id && (
         <MusicActivationOverlay 
-          trackName={currentTrack?.name || pageData.soundtrack_name || (language === 'en' ? "Our Song" : "Nuestra Canción")}
+          trackName={currentTrack?.name || pageData.soundtrack_name || songLabel}
           artistName={currentTrack?.artist}
           albumCover={albumCover}
           onActivate={handleMusicActivate}
@@ -231,7 +234,7 @@ const RegaloPage = () => {
       {pageData.youtube_video_id && musicActivated && (
         <YouTubeMusicPlayer 
           videoId={pageData.youtube_video_id}
-          trackName={currentTrack?.name || pageData.soundtrack_name || (language === 'en' ? "Our Song" : "Nuestra Canción")}
+          trackName={currentTrack?.name || pageData.soundtrack_name || songLabel}
           artistName={currentTrack?.artist}
           albumCover={albumCover}
           autoPlay={true}
@@ -418,7 +421,7 @@ const RegaloPage = () => {
             <ShareButtons
               url={window.location.href}
               title={`${pageData.your_name} & ${pageData.partner_name} - Memory Link`}
-              description={language === 'en' ? "Check out our love page ❤️" : "Mira nuestra página de amor ❤️"}
+              description={shareDesc}
             />
           </motion.div>
         </div>
