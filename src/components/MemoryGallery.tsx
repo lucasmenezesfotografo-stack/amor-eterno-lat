@@ -204,9 +204,9 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          Recuerdos especiales
+          {t('gallery.special')}
         </h3>
-        <span className="text-sm text-muted-foreground">{memories.length} fotos</span>
+        <span className="text-sm text-muted-foreground">{memories.length} {t('gallery.photos')}</span>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
         {memories.map((memory, index) => (
