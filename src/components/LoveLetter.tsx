@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 interface LoveLetterProps {
   content: string;
