@@ -289,6 +289,19 @@ const translations: Record<Language, Record<string, string>> = {
     'memories.error.title': 'Error al subir',
     'memories.error.desc': 'No se pudo subir la foto. Intenta de nuevo.',
     'memories.default.title': 'Recuerdo especial',
+    'gallery.title': 'Nuestros Recuerdos',
+    'gallery.subtitle': 'Momentos que guardamos en el corazón',
+    'gallery.section': 'Recuerdos',
+    'gallery.special': 'Recuerdos especiales',
+    'gallery.photos': 'fotos',
+    'gallery.memory': 'Recuerdo',
+    'gallery.close': 'Cerrar',
+    'gallery.prev': 'Anterior',
+    'gallery.next': 'Siguiente',
+    'gallery.view': 'Ver recuerdo',
+    'letter.signature': 'Con todo mi amor,',
+    'site.title': 'Memory Link – Eterniza tu historia de amor',
+    'site.description': 'Memory Link – Eterniza tu historia de amor con páginas digitales personalizadas. Contador en tiempo real, música y mucho más.',
     'soundtrack.title': 'Elige tu Canción',
     'soundtrack.subtitle': 'La música se reproduce mediante YouTube',
     'soundtrack.custom.label': '¿Quieres otra canción? Pega aquí el enlace de YouTube',
@@ -576,6 +589,19 @@ const translations: Record<Language, Record<string, string>> = {
     'memories.error.title': 'Upload error',
     'memories.error.desc': 'Could not upload the photo. Try again.',
     'memories.default.title': 'Special memory',
+    'gallery.title': 'Our Memories',
+    'gallery.subtitle': 'Moments we keep in our hearts',
+    'gallery.section': 'Memories',
+    'gallery.special': 'Special memories',
+    'gallery.photos': 'photos',
+    'gallery.memory': 'Memory',
+    'gallery.close': 'Close',
+    'gallery.prev': 'Previous',
+    'gallery.next': 'Next',
+    'gallery.view': 'View memory',
+    'letter.signature': 'With all my love,',
+    'site.title': 'Memory Link – Immortalize your love story',
+    'site.description': 'Memory Link – Immortalize your love story with personalized digital pages. Real-time counter, music and much more.',
     'soundtrack.title': 'Choose your Song',
     'soundtrack.subtitle': 'Music plays through YouTube',
     'soundtrack.custom.label': 'Want another song? Paste the YouTube link here',
@@ -874,6 +900,19 @@ const translations: Record<Language, Record<string, string>> = {
     'memories.error.title': 'Erro ao enviar',
     'memories.error.desc': 'Não foi possível enviar a foto. Tente novamente.',
     'memories.default.title': 'Lembrança especial',
+    'gallery.title': 'Nossas Lembranças',
+    'gallery.subtitle': 'Momentos que guardamos no coração',
+    'gallery.section': 'Lembranças',
+    'gallery.special': 'Lembranças especiais',
+    'gallery.photos': 'fotos',
+    'gallery.memory': 'Lembrança',
+    'gallery.close': 'Fechar',
+    'gallery.prev': 'Anterior',
+    'gallery.next': 'Próximo',
+    'gallery.view': 'Ver lembrança',
+    'letter.signature': 'Com todo o meu amor,',
+    'site.title': 'Memory Link – Eternize sua história de amor',
+    'site.description': 'Memory Link – Eternize sua história de amor com páginas digitais personalizadas. Contador em tempo real, música e muito mais.',
     'soundtrack.title': 'Escolha sua Música',
     'soundtrack.subtitle': 'A música é reproduzida pelo YouTube',
     'soundtrack.custom.label': 'Quer outra música? Cole aqui o link do YouTube',
@@ -1161,6 +1200,19 @@ const translations: Record<Language, Record<string, string>> = {
     'memories.error.title': 'Errore di caricamento',
     'memories.error.desc': 'Impossibile caricare la foto. Riprova.',
     'memories.default.title': 'Ricordo speciale',
+    'gallery.title': 'I Nostri Ricordi',
+    'gallery.subtitle': 'Momenti che custodiamo nel cuore',
+    'gallery.section': 'Ricordi',
+    'gallery.special': 'Ricordi speciali',
+    'gallery.photos': 'foto',
+    'gallery.memory': 'Ricordo',
+    'gallery.close': 'Chiudi',
+    'gallery.prev': 'Precedente',
+    'gallery.next': 'Successivo',
+    'gallery.view': 'Vedi ricordo',
+    'letter.signature': 'Con tutto il mio amore,',
+    'site.title': 'Memory Link – Eterna la tua storia d\'amore',
+    'site.description': 'Memory Link – Eterna la tua storia d\'amore con pagine digitali personalizzate. Contatore in tempo reale, musica e molto altro.',
     'soundtrack.title': 'Scegli la tua Canzone',
     'soundtrack.subtitle': 'La musica viene riprodotta tramite YouTube',
     'soundtrack.custom.label': 'Vuoi un\'altra canzone? Incolla qui il link YouTube',
@@ -1254,6 +1306,22 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = language;
+    const title = translations[language]['site.title'];
+    const desc = translations[language]['site.description'];
+    if (title) document.title = title;
+    const setMeta = (selector: string, content: string) => {
+      const el = document.querySelector(selector) as HTMLMetaElement | null;
+      if (el) el.setAttribute('content', content);
+    };
+    if (desc) {
+      setMeta('meta[name="description"]', desc);
+      setMeta('meta[property="og:description"]', desc);
+      setMeta('meta[name="twitter:description"]', desc);
+    }
+    if (title) {
+      setMeta('meta[property="og:title"]', title);
+      setMeta('meta[name="twitter:title"]', title);
+    }
   }, [language]);
 
   const setLanguage = (lang: Language) => {

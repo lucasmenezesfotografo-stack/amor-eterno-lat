@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Sparkles, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/use-language";
 
 export interface Memory {
   imageUrl: string;
@@ -17,9 +18,11 @@ interface MemoryGalleryProps {
 }
 
 const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps) => {
+  const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   if (!memories || memories.length === 0) return null;
+
 
   const handlePrev = () => {
     if (selectedIndex !== null) {
@@ -37,7 +40,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
   const renderMinimalGallery = () => (
     <div className="space-y-8">
       <div className="text-center">
-        <p className="text-2xl font-serif text-primary mb-2">Recuerdos</p>
+        <p className="text-2xl font-serif text-primary mb-2">{t('gallery.section')}</p>
         <div className="w-16 h-px bg-primary/30 mx-auto" />
       </div>
       <div className="grid grid-cols-2 gap-6">
@@ -54,7 +57,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <div className="aspect-square rounded-lg overflow-hidden bg-muted shadow-sm">
               <img
                 src={memory.imageUrl}
-                alt={memory.title || `Recuerdo ${index + 1}`}
+                alt={memory.title || `${t('gallery.memory')} ${index + 1}`}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             </div>
@@ -87,10 +90,10 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <Heart className="w-5 h-5 text-primary fill-primary" />
           </div>
           <h3 className="text-2xl md:text-3xl font-serif text-foreground mb-2">
-            Nuestros Recuerdos
+            {t('gallery.title')}
           </h3>
           <p className="text-sm text-muted-foreground">
-            Momentos que guardamos en el corazón
+            {t('gallery.subtitle')}
           </p>
         </motion.div>
       </div>
@@ -121,7 +124,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             )}>
               <img
                 src={memory.imageUrl}
-                alt={memory.title || `Recuerdo ${index + 1}`}
+                alt={memory.title || `${t('gallery.memory')} ${index + 1}`}
                 className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
               />
               {/* Elegant overlay on hover */}
@@ -157,7 +160,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
         <div className="flex-1 h-px bg-border" />
         <span className="text-xl font-serif text-foreground flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
-          Recuerdos
+          {t('gallery.section')}
         </span>
         <div className="flex-1 h-px bg-border" />
       </div>
@@ -175,7 +178,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <div className="aspect-square rounded-xl overflow-hidden border border-border bg-card shadow-sm">
               <img
                 src={memory.imageUrl}
-                alt={memory.title || `Recuerdo ${index + 1}`}
+                alt={memory.title || `${t('gallery.memory')} ${index + 1}`}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
             </div>
@@ -201,9 +204,9 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          Recuerdos especiales
+          {t('gallery.special')}
         </h3>
-        <span className="text-sm text-muted-foreground">{memories.length} fotos</span>
+        <span className="text-sm text-muted-foreground">{memories.length} {t('gallery.photos')}</span>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
         {memories.map((memory, index) => (
@@ -219,7 +222,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <div className="aspect-[4/5] rounded-xl overflow-hidden bg-secondary border border-border shadow-md">
               <img
                 src={memory.imageUrl}
-                alt={memory.title || `Recuerdo ${index + 1}`}
+                alt={memory.title || `${t('gallery.memory')} ${index + 1}`}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
             </div>
@@ -272,7 +275,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <button
               onClick={() => setSelectedIndex(null)}
               className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
-              aria-label="Cerrar"
+              aria-label={t('gallery.close')}
             >
               <X className="w-6 h-6" />
             </button>
@@ -283,14 +286,14 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
                 <button
                   onClick={(e) => { e.stopPropagation(); handlePrev(); }}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
-                  aria-label="Anterior"
+                  aria-label={t('gallery.prev')}
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNext(); }}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
-                  aria-label="Siguiente"
+                  aria-label={t('gallery.next')}
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
@@ -309,7 +312,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             >
               <img
                 src={memories[selectedIndex].imageUrl}
-                alt={memories[selectedIndex].title || `Recuerdo ${selectedIndex + 1}`}
+                alt={memories[selectedIndex].title || `${t('gallery.memory')} ${selectedIndex + 1}`}
                 className="max-h-[70vh] w-auto object-contain rounded-lg shadow-2xl"
               />
               
@@ -343,7 +346,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
                         "h-2 rounded-full transition-all",
                         i === selectedIndex ? "bg-white w-8" : "bg-white/40 w-2 hover:bg-white/60"
                       )}
-                      aria-label={`Ver recuerdo ${i + 1}`}
+                      aria-label={`${t('gallery.view')} ${i + 1}`}
                     />
                   ))}
                 </div>
