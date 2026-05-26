@@ -346,7 +346,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
                         "h-2 rounded-full transition-all",
                         i === selectedIndex ? "bg-white w-8" : "bg-white/40 w-2 hover:bg-white/60"
                       )}
-                      aria-label={`Ver recuerdo ${i + 1}`}
+                      aria-label={`${t('gallery.view')} ${i + 1}`}
                     />
                   ))}
                 </div>
