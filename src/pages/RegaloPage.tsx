@@ -421,7 +421,7 @@ const RegaloPage = () => {
             <ShareButtons
               url={window.location.href}
               title={`${pageData.your_name} & ${pageData.partner_name} - Memory Link`}
-              description={language === 'en' ? "Check out our love page ❤️" : "Mira nuestra página de amor ❤️"}
+              description={shareDesc}
             />
           </motion.div>
         </div>
