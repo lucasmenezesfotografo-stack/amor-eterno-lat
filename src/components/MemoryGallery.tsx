@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Sparkles, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/use-language";
 
 export interface Memory {
   imageUrl: string;
@@ -17,9 +18,11 @@ interface MemoryGalleryProps {
 }
 
 const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps) => {
+  const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   if (!memories || memories.length === 0) return null;
+
 
   const handlePrev = () => {
     if (selectedIndex !== null) {
