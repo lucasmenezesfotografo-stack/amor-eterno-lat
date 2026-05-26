@@ -90,10 +90,10 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <Heart className="w-5 h-5 text-primary fill-primary" />
           </div>
           <h3 className="text-2xl md:text-3xl font-serif text-foreground mb-2">
-            Nuestros Recuerdos
+            {t('gallery.title')}
           </h3>
           <p className="text-sm text-muted-foreground">
-            Momentos que guardamos en el corazón
+            {t('gallery.subtitle')}
           </p>
         </motion.div>
       </div>
