@@ -178,7 +178,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <div className="aspect-square rounded-xl overflow-hidden border border-border bg-card shadow-sm">
               <img
                 src={memory.imageUrl}
-                alt={memory.title || `Recuerdo ${index + 1}`}
+                alt={memory.title || `${t('gallery.memory')} ${index + 1}`}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
             </div>
