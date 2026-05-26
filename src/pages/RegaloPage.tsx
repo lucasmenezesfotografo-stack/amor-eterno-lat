@@ -82,7 +82,10 @@ const RegaloPage = () => {
   const [musicActivated, setMusicActivated] = useState(false);
   const [showMusicOverlay, setShowMusicOverlay] = useState(false);
 
-  const dateLocale = language === 'en' ? enUS : es;
+  const localeMap = { es, en: enUS, pt: ptBR, it: itLocale } as const;
+  const dateLocale = localeMap[language] || es;
+  const songLabel = language === 'en' ? "Our Song" : language === 'pt' ? "Nossa Música" : language === 'it' ? "La Nostra Canzone" : "Nuestra Canción";
+  const shareDesc = language === 'en' ? "Check out our love page ❤️" : language === 'pt' ? "Veja nossa página de amor ❤️" : language === 'it' ? "Guarda la nostra pagina d'amore ❤️" : "Mira nuestra página de amor ❤️";
 
   useEffect(() => {
     const fetchGiftPage = async () => {
