@@ -160,7 +160,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
         <div className="flex-1 h-px bg-border" />
         <span className="text-xl font-serif text-foreground flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
-          Recuerdos
+          {t('gallery.section')}
         </span>
         <div className="flex-1 h-px bg-border" />
       </div>
