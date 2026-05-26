@@ -101,7 +101,7 @@ const RegaloPage = () => {
         return;
       }
       try {
-        const { data, error } = await supabase.from("gift_pages").select("*").eq("slug", id).maybeSingle();
+        const { data, error } = await supabase.from("gift_pages").select("id, slug, your_name, partner_name, start_date, cover_photo_url, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active, created_at, expires_at").eq("slug", id).maybeSingle();
         if (error) throw error;
         if (!data) {
           setNotFound(true);
