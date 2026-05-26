@@ -275,7 +275,7 @@ const MemoryGallery = ({ memories, designStyle = "classic" }: MemoryGalleryProps
             <button
               onClick={() => setSelectedIndex(null)}
               className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
-              aria-label="Cerrar"
+              aria-label={t('gallery.close')}
             >
               <X className="w-6 h-6" />
             </button>
