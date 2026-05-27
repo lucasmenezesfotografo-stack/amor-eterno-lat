@@ -220,24 +220,13 @@ const RegaloPage = () => {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Music Activation Overlay - shown on first load for pages with YouTube video */}
-      {showMusicOverlay && pageData.youtube_video_id && (
-        <MusicActivationOverlay 
-          trackName={currentTrack?.name || pageData.soundtrack_name || songLabel}
-          artistName={currentTrack?.artist}
-          albumCover={albumCover}
-          onActivate={handleMusicActivate}
-        />
-      )}
-
-      {/* YouTube Music Player - only after activation */}
-      {pageData.youtube_video_id && musicActivated && (
-        <YouTubeMusicPlayer 
+      {/* YouTube Music Player — handles its own activation overlay (iOS compatible) */}
+      {pageData.youtube_video_id && (
+        <YouTubeMusicPlayer
           videoId={pageData.youtube_video_id}
           trackName={currentTrack?.name || pageData.soundtrack_name || songLabel}
           artistName={currentTrack?.artist}
           albumCover={albumCover}
-          autoPlay={true}
         />
       )}
 
