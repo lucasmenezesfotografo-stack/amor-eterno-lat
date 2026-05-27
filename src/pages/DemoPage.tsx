@@ -98,15 +98,7 @@ const DemoPage = () => {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Music Activation Overlay */}
-      {showMusicOverlay && (
-        <MusicActivationOverlay 
-          trackName={demoTrack.name} 
-          artistName={demoTrack.artist} 
-          albumCover={demoTrack.albumCover} 
-          onActivate={handleMusicActivate} 
-        />
-      )}
+      {/* Music player handles its own activation overlay (iOS gesture-compatible) */}
 
       {/* Demo Banner */}
       <motion.div 
@@ -135,13 +127,12 @@ const DemoPage = () => {
       </motion.div>
 
       {/* YouTube Music Player */}
-      {musicActivated && demoTrack?.youtubeVideoId && (
-        <YouTubeMusicPlayer 
-          videoId={String(demoTrack.youtubeVideoId)} 
-          trackName={demoTrack.name} 
-          artistName={demoTrack.artist} 
-          albumCover={demoTrack.albumCover} 
-          autoPlay={true} 
+      {demoTrack?.youtubeVideoId && (
+        <YouTubeMusicPlayer
+          videoId={String(demoTrack.youtubeVideoId)}
+          trackName={demoTrack.name}
+          artistName={demoTrack.artist}
+          albumCover={demoTrack.albumCover}
         />
       )}
 
