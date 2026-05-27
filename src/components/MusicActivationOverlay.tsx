@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Youtube, Play } from "lucide-react";
+import { Heart, Youtube, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
 
