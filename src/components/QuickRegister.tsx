@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/hooks/use-language";
 
 interface QuickRegisterProps {
   onSuccess: () => void;
@@ -20,6 +21,7 @@ const generateEmail = (name: string) => {
 };
 
 const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,8 +35,8 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
     
     if (!formData.name.trim()) {
       toast({
-        title: "Nombre requerido",
-        description: "Por favor ingresa tu nombre.",
+        title: t('register.toast.name.title'),
+        description: t('register.toast.name.desc'),
         variant: "destructive",
       });
       return;
@@ -42,8 +44,8 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
 
     if (formData.password.length < 6) {
       toast({
-        title: "Contraseña muy corta",
-        description: "La contraseña debe tener al menos 6 caracteres.",
+        title: t('register.toast.password.title'),
+        description: t('register.toast.password.desc'),
         variant: "destructive",
       });
       return;
@@ -53,8 +55,6 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
 
     try {
       const email = generateEmail(formData.name);
-      
-      console.log("Attempting signup with email:", email);
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -67,41 +67,25 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
         },
       });
 
-      console.log("Signup response:", { 
-        userId: data?.user?.id, 
-        hasSession: !!data?.session,
-        error: error?.message 
-      });
-
       if (error) {
         throw error;
       }
 
-      // With auto-confirm enabled, session should be available immediately
       if (data.session) {
         toast({
-          title: "¡Cuenta creada!",
-          description: "Ahora puedes crear tu página de amor.",
+          title: t('register.toast.success.title'),
+          description: t('register.toast.success.desc'),
         });
         onSuccess();
         return;
       }
 
-      // If user was created but no session (auto-confirm might have race condition)
       if (data.user) {
-        // Wait a bit for Supabase to process
         await new Promise(resolve => setTimeout(resolve, 800));
-        
-        console.log("Attempting sign in after signup...");
         
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password: formData.password,
-        });
-
-        console.log("Sign in response:", { 
-          hasSession: !!signInData?.session,
-          error: signInError?.message 
         });
 
         if (signInError) {
@@ -110,35 +94,34 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
 
         if (signInData.session) {
           toast({
-            title: "¡Cuenta creada!",
-            description: "Ahora puedes crear tu página de amor.",
+            title: t('register.toast.success.title'),
+            description: t('register.toast.success.desc'),
           });
           onSuccess();
           return;
         }
       }
 
-      // Fallback - shouldn't reach here with auto-confirm
       toast({
-        title: "Error inesperado",
-        description: "Por favor, intenta de nuevo.",
+        title: t('register.toast.unexpected.title'),
+        description: t('register.toast.unexpected.desc'),
         variant: "destructive",
       });
     } catch (error: any) {
       console.error("Error creating account:", error);
       
-      let errorMessage = "No se pudo crear la cuenta. Intenta de nuevo.";
+      let errorMessage = t('register.error.generic');
       
       if (error.message?.includes("already registered")) {
-        errorMessage = "Este nombre ya está en uso. Prueba con otro nombre.";
+        errorMessage = t('register.error.taken');
       } else if (error.message?.includes("password")) {
-        errorMessage = "La contraseña debe tener al menos 6 caracteres.";
+        errorMessage = t('register.error.password');
       } else if (error.message) {
         errorMessage = error.message;
       }
       
       toast({
-        title: "Error",
+        title: t('register.toast.error.title'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -164,11 +147,11 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
         </motion.div>
         
         <h1 className="text-2xl md:text-3xl font-semibold mb-3">
-          Crear tu página de amor ❤️
+          {t('register.title')}
         </h1>
         
         <p className="text-muted-foreground">
-          Crea una cuenta rápida para guardar y acceder a tu página cuando quieras.
+          {t('register.desc')}
         </p>
       </div>
 
@@ -176,13 +159,13 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Tu nombre
+              {t('register.name.label')}
             </label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Ej: María"
+                placeholder={t('register.name.placeholder')}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="input-premium pl-12"
@@ -194,13 +177,13 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Contraseña
+              {t('register.password.label')}
             </label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type={showPassword ? "text" : "password"}
-                placeholder="Mínimo 6 caracteres"
+                placeholder={t('register.password.placeholder')}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="input-premium pl-12 pr-12"
@@ -215,7 +198,7 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
               </button>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              Usa esta contraseña para acceder a tu página después.
+              {t('register.password.hint')}
             </p>
           </div>
 
@@ -229,11 +212,11 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
             {isLoading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Creando cuenta...
+                {t('register.loading')}
               </>
             ) : (
               <>
-                Continuar
+                {t('register.submit')}
                 <Heart className="w-5 h-5 fill-current" />
               </>
             )}
@@ -242,7 +225,7 @@ const QuickRegister = ({ onSuccess }: QuickRegisterProps) => {
       </div>
 
       <p className="text-center text-xs text-muted-foreground mt-6">
-        Solo necesitas esto una vez. Proceso rápido y seguro.
+        {t('register.footer')}
       </p>
     </motion.div>
   );
