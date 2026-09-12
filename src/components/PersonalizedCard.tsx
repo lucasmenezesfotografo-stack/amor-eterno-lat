@@ -286,7 +286,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             src={photoUrl} 
             alt="Foto de pareja" 
             className="w-full h-full object-cover"
-            style={{ objectPosition: "center center" }}
+            style={{ objectPosition: "center 30%" }}
             crossOrigin="anonymous" 
           />
         </div>
