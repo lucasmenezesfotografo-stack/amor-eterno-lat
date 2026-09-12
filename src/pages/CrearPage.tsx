@@ -738,14 +738,14 @@ if (isCheckingAuth || isRestoring) {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="relative rounded-2xl overflow-hidden aspect-video bg-secondary"
+                  className="relative rounded-2xl overflow-hidden bg-secondary aspect-[3/4] sm:aspect-[4/5] md:aspect-video max-h-[70vh]"
                 >
                   <img
                     src={formData.photoUrl}
                     alt="Cover photo"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-[center_30%]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                   
                   {/* Names Position Preview */}
                   <div className={cn(
