@@ -108,7 +108,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             src={photoUrl} 
             alt="Foto de pareja" 
             className="w-full h-full object-cover"
-            style={{ objectPosition: "center center" }}
+            style={{ objectPosition: "center 30%" }}
             crossOrigin="anonymous" 
           />
         </div>
@@ -286,7 +286,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             src={photoUrl} 
             alt="Foto de pareja" 
             className="w-full h-full object-cover"
-            style={{ objectPosition: "center center" }}
+            style={{ objectPosition: "center 30%" }}
             crossOrigin="anonymous" 
           />
         </div>
@@ -381,7 +381,7 @@ const PersonalizedCard = ({ person1, person2, qrUrl, photoUrl, startDate }: Pers
             src={photoUrl} 
             alt="Foto" 
             className="w-full h-full object-cover"
-            style={{ objectPosition: "center center" }}
+            style={{ objectPosition: "center 30%" }}
             crossOrigin="anonymous" 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />

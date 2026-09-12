@@ -231,10 +231,14 @@ const RegaloPage = () => {
       )}
 
       {/* Hero Section with Cover Photo */}
-      <section className="relative min-h-[80vh] sm:min-h-screen flex overflow-hidden">
+      <section className="relative min-h-[85vh] sm:min-h-screen flex overflow-hidden">
         {/* Cover Photo */}
         <div className="absolute inset-0">
-          <img src={pageData.cover_photo_url || defaultCoverPhoto} alt="Cover" className="w-full h-full object-cover" />
+          <img
+            src={pageData.cover_photo_url || defaultCoverPhoto}
+            alt="Cover"
+            className="w-full h-full object-cover object-[center_30%]"
+          />
           {/* Overlay - lighter for better visibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-background" />
         </div>
