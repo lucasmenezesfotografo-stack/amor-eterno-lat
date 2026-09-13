@@ -12,7 +12,7 @@ import MemoryGallery from "@/components/MemoryGallery";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/original-client";
 import { romanticTracks } from "@/components/SoundtrackSelector";
 import { cn } from "@/lib/utils";
 import { useLanguage, FooterLanguageToggle } from "@/hooks/use-language";

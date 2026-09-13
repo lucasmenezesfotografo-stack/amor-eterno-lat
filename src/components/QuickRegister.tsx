@@ -4,7 +4,7 @@ import { Heart, Loader2, User, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/original-client";
 import { useLanguage } from "@/hooks/use-language";
 
 interface QuickRegisterProps {
