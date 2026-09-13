@@ -18,6 +18,7 @@ import {
   CreditCard,
 } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import { ORIGINAL_SUPABASE_URL } from "@/integrations/supabase/original-client";
 
 /* =========================
    STRIPE INIT
@@ -106,7 +107,7 @@ function CheckoutForm({
       if (giftPageId) {
         try {
           const verifyRes = await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment-intent`,
+            `${ORIGINAL_SUPABASE_URL}/functions/v1/verify-payment-intent`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

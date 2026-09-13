@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { CheckCircle, Loader2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/original-client";
 import { useLanguage, LanguageToggle } from "@/hooks/use-language";
 
 export default function PagoExitosoPage() {

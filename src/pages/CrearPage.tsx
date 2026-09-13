@@ -18,7 +18,7 @@ import PersonalizedCard from "@/components/PersonalizedCard";
 import QuickRegister from "@/components/QuickRegister";
 import { format } from "date-fns";
 import { es, enUS, ptBR, it } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/original-client";
 import type { User, Session } from "@supabase/supabase-js";
 import { useLanguage, LanguageToggle } from "@/hooks/use-language";
 
@@ -181,7 +181,7 @@ const CrearPage = () => {
       // 2️⃣ busca a gift page REAL
       const { data: giftPage, error } = await supabase
         .from("gift_pages")
-        .select("id, slug, your_name, partner_name, start_date, cover_photo_url, cover_photo_position, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active")
+        .select("id, slug, your_name, partner_name, start_date, cover_photo_url, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active")
         .eq("id", giftPageIdFromUrl)
         .single();
 
@@ -199,10 +199,7 @@ const CrearPage = () => {
           : undefined,
         photoUrl: giftPage.cover_photo_url || "",
         photoFile: null,
-        photoPosition: (() => {
-          const match = giftPage.cover_photo_position?.match(/center\s+(\d+(?:\.\d+)?)%/);
-          return match ? Number(match[1]) : 30;
-        })(),
+        photoPosition: 30,
         selectedSong: null,
         spotifyUrl: giftPage.spotify_link || "",
         loveLetter: giftPage.love_letter || "",
@@ -264,11 +261,6 @@ const CrearPage = () => {
   const saveGiftPage = async (): Promise<{ id: string; slug: string } | null> => {
   // 🔒 SE JÁ EXISTE, NÃO CRIA DE NOVO
   if (savedGiftPageId && savedSlug) {
-    const { error } = await supabase
-      .from("gift_pages")
-      .update({ cover_photo_position: `center ${formData.photoPosition}%` })
-      .eq("id", savedGiftPageId);
-    if (error) throw error;
     return { id: savedGiftPageId, slug: savedSlug };
   }
 
@@ -300,7 +292,6 @@ const CrearPage = () => {
       partner_name: formData.person2,
       start_date: format(formData.startDate, "yyyy-MM-dd"),
       cover_photo_url: formData.photoUrl || null,
-      cover_photo_position: `center ${formData.photoPosition}%`,
       love_letter: formData.loveLetter || null,
       soundtrack_name: formData.soundtrackName || selectedTrack?.name || null,
       youtube_video_id: finalYoutubeVideoId || null,

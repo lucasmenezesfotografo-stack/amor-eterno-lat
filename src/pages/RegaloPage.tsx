@@ -12,7 +12,7 @@ import MemoryGallery from "@/components/MemoryGallery";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/original-client";
 import { romanticTracks } from "@/components/SoundtrackSelector";
 import { cn } from "@/lib/utils";
 import { useLanguage, FooterLanguageToggle } from "@/hooks/use-language";
@@ -104,7 +104,7 @@ const RegaloPage = () => {
         return;
       }
       try {
-        const { data, error } = await supabase.from("gift_pages").select("id, slug, your_name, partner_name, start_date, cover_photo_url, cover_photo_position, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active, created_at, expires_at").eq("slug", id).maybeSingle();
+        const { data, error } = await supabase.from("gift_pages").select("id, slug, your_name, partner_name, start_date, cover_photo_url, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active, created_at, expires_at").eq("slug", id).maybeSingle();
         if (error) throw error;
         if (!data) {
           setNotFound(true);
