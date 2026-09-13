@@ -242,7 +242,7 @@ const CrearPage = () => {
 
   const spotifyValidation = useMemo(() => validateSpotifyUrl(formData.spotifyUrl), [formData.spotifyUrl]);
 
-  const regaloUrl = savedSlug ? `${window.location.origin}/regalo/${savedSlug}` : "";
+  const regaloUrl = savedSlug ? `https://memoryl.ink/regalo/${encodeURIComponent(savedSlug)}` : "";
 
   const handleAuthSuccess = () => {
     // User just registered, auth state change will update the user
@@ -1125,11 +1125,11 @@ if (isCheckingAuth || isRestoring) {
                           <Download className="w-5 h-5" />
                           {t('crear.qr.download')}
                         </Button>
-                        <Link to={`/regalo/${savedSlug}`}>
+                        <a href={regaloUrl}>
                           <Button variant="outline" size="lg">
                             {t('crear.qr.view')}
                           </Button>
-                        </Link>
+                        </a>
                       </>
                     ) : null}
                   </div>
