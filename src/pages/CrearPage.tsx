@@ -86,6 +86,7 @@ const CrearPage = () => {
     soundtrackAlbumCover: null as string | null,
     customYoutubeUrl: "",
     namesPosition: "center" as "top" | "center" | "bottom",
+    photoPositionY: 30 as number,
     memories: [] as Memory[],
   });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -208,6 +209,11 @@ const CrearPage = () => {
         soundtrackAlbumCover: null,
         customYoutubeUrl: "",
         namesPosition: (giftPage.names_position as "top" | "center" | "bottom") || "center",
+        photoPositionY: (() => {
+          const pos = (giftPage as Record<string, unknown>).cover_photo_position as string | null;
+          const match = pos?.match(/(\d+)%/);
+          return match ? Math.min(100, Math.max(0, parseInt(match[1], 10))) : 30;
+        })(),
         memories: (Array.isArray(giftPage.memories) ? giftPage.memories : []) as unknown as Memory[],
       });
 
@@ -296,6 +302,7 @@ const CrearPage = () => {
       spotify_link: formData.spotifyUrl || null,
       user_id: user?.id || null,
       names_position: formData.namesPosition,
+      cover_photo_position: `center ${formData.photoPositionY}%`,
       memories: formData.memories.length > 0
         ? JSON.parse(JSON.stringify(formData.memories))
         : null,
