@@ -1,1 +1,0 @@
-ALTER TABLE public.gift_pages ADD COLUMN IF NOT EXISTS cover_photo_position text DEFAULT 'center 30%';

@@ -129,7 +129,6 @@ export type Database = {
       }
       gift_pages: {
         Row: {
-          cover_photo_position: string | null
           cover_photo_url: string | null
           created_at: string
           expires_at: string | null
@@ -151,7 +150,6 @@ export type Database = {
           youtube_video_id: string | null
         }
         Insert: {
-          cover_photo_position?: string | null
           cover_photo_url?: string | null
           created_at?: string
           expires_at?: string | null
@@ -173,7 +171,6 @@ export type Database = {
           youtube_video_id?: string | null
         }
         Update: {
-          cover_photo_position?: string | null
           cover_photo_url?: string | null
           created_at?: string
           expires_at?: string | null
