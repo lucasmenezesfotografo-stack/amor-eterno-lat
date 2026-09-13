@@ -29,6 +29,7 @@ interface GiftPageData {
   partner_name: string;
   start_date: string;
   cover_photo_url: string | null;
+  cover_photo_position?: string | null;
   love_letter: string | null;
   soundtrack_name: string | null;
   soundtrack_url: string | null;
@@ -48,6 +49,7 @@ const demoData: GiftPageData = {
   partner_name: "Juan",
   start_date: "2022-02-14",
   cover_photo_url: demoCoupleImage,
+  cover_photo_position: "center 30%",
   soundtrack_name: "Perfect",
   soundtrack_url: null,
   youtube_video_id: "2Vv-BfVoq4g",
@@ -101,7 +103,7 @@ const RegaloPage = () => {
         return;
       }
       try {
-        const { data, error } = await supabase.from("gift_pages").select("id, slug, your_name, partner_name, start_date, cover_photo_url, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active, created_at, expires_at").eq("slug", id).maybeSingle();
+        const { data, error } = await supabase.from("gift_pages").select("id, slug, your_name, partner_name, start_date, cover_photo_url, cover_photo_position, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active, created_at, expires_at").eq("slug", id).maybeSingle();
         if (error) throw error;
         if (!data) {
           setNotFound(true);
@@ -237,7 +239,8 @@ const RegaloPage = () => {
           <img
             src={pageData.cover_photo_url || defaultCoverPhoto}
             alt="Cover"
-            className="w-full h-full object-cover object-[center_30%]"
+            className="w-full h-full object-cover"
+            style={{ objectPosition: pageData.cover_photo_position || "center 30%" }}
           />
           {/* Overlay - lighter for better visibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-background" />
