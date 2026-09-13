@@ -76,6 +76,7 @@ const CrearPage = () => {
     startDate: undefined as Date | undefined,
     photoUrl: "",
     photoFile: null as File | null,
+    photoPosition: 30,
     selectedSong: null as number | null,
     spotifyUrl: "",
     loveLetter: "",
@@ -180,7 +181,7 @@ const CrearPage = () => {
       // 2️⃣ busca a gift page REAL
       const { data: giftPage, error } = await supabase
         .from("gift_pages")
-        .select("id, slug, your_name, partner_name, start_date, cover_photo_url, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active")
+        .select("id, slug, your_name, partner_name, start_date, cover_photo_url, cover_photo_position, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active")
         .eq("id", giftPageIdFromUrl)
         .single();
 
@@ -198,6 +199,10 @@ const CrearPage = () => {
           : undefined,
         photoUrl: giftPage.cover_photo_url || "",
         photoFile: null,
+        photoPosition: (() => {
+          const match = giftPage.cover_photo_position?.match(/center\s+(\d+(?:\.\d+)?)%/);
+          return match ? Number(match[1]) : 30;
+        })(),
         selectedSong: null,
         spotifyUrl: giftPage.spotify_link || "",
         loveLetter: giftPage.love_letter || "",
@@ -259,6 +264,11 @@ const CrearPage = () => {
   const saveGiftPage = async (): Promise<{ id: string; slug: string } | null> => {
   // 🔒 SE JÁ EXISTE, NÃO CRIA DE NOVO
   if (savedGiftPageId && savedSlug) {
+    const { error } = await supabase
+      .from("gift_pages")
+      .update({ cover_photo_position: `center ${formData.photoPosition}%` })
+      .eq("id", savedGiftPageId);
+    if (error) throw error;
     return { id: savedGiftPageId, slug: savedSlug };
   }
 
@@ -290,6 +300,7 @@ const CrearPage = () => {
       partner_name: formData.person2,
       start_date: format(formData.startDate, "yyyy-MM-dd"),
       cover_photo_url: formData.photoUrl || null,
+      cover_photo_position: `center ${formData.photoPosition}%`,
       love_letter: formData.loveLetter || null,
       soundtrack_name: formData.soundtrackName || selectedTrack?.name || null,
       youtube_video_id: finalYoutubeVideoId || null,
@@ -499,6 +510,7 @@ const CrearPage = () => {
         ...prev,
         photoUrl: urlData.publicUrl,
         photoFile: file,
+        photoPosition: 30,
       }));
 
       toast({
@@ -522,6 +534,7 @@ const CrearPage = () => {
       ...prev,
       photoUrl: "",
       photoFile: null,
+      photoPosition: 30,
     }));
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -738,30 +751,57 @@ if (isCheckingAuth || isRestoring) {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="relative rounded-2xl overflow-hidden bg-secondary aspect-[3/4] sm:aspect-[4/5] md:aspect-video max-h-[70vh]"
+                  className="space-y-4"
                 >
-                  <img
-                    src={formData.photoUrl}
-                    alt="Cover photo"
-                    className="w-full h-full object-cover object-[center_30%]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
-                  
-                  {/* Names Position Preview */}
-                  <div className={cn(
-                    "absolute inset-0 flex flex-col px-4",
-                    formData.namesPosition === "top" ? "justify-start pt-4" :
-                    formData.namesPosition === "bottom" ? "justify-end pb-12" :
-                    "justify-center"
-                  )}>
-                    <div className="text-center">
-                      <p className="text-lg sm:text-xl font-display font-semibold text-white drop-shadow-lg">
-                        {formData.person1 || (language === 'en' ? "You" : "Tu")} & {formData.person2 || (language === 'en' ? "Your love" : "Tu amor")}
-                      </p>
+                  <div className="rounded-xl bg-secondary/50 border border-border p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <MoveVertical className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium text-foreground">{t('crear.photo.framing')}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">{t('crear.photo.framing.desc')}</p>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={formData.photoPosition}
+                      onChange={(event) => setFormData((prev) => ({ ...prev, photoPosition: Number(event.target.value) }))}
+                      className="w-full accent-primary cursor-pointer"
+                      aria-label={t('crear.photo.framing')}
+                    />
+                    <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+                      <span>{t('crear.photo.framing.top')}</span>
+                      <span>{t('crear.photo.framing.center')}</span>
+                      <span>{t('crear.photo.framing.bottom')}</span>
                     </div>
                   </div>
 
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                  <div className="relative mx-auto aspect-[9/16] w-full max-w-[260px] overflow-hidden rounded-2xl bg-secondary shadow-xl">
+                    <img
+                      src={formData.photoUrl}
+                      alt={t('crear.photo.preview')}
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: `center ${formData.photoPosition}%` }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-background" />
+
+                    {/* Names Position Preview */}
+                    <div className={cn(
+                      "absolute inset-0 flex flex-col px-4 py-8",
+                      formData.namesPosition === "top" ? "justify-start pt-12" :
+                      formData.namesPosition === "bottom" ? "justify-end pb-12" :
+                      "justify-center"
+                    )}>
+                      <div className="text-center">
+                        <p className="text-lg font-display font-semibold text-white drop-shadow-lg">
+                          {formData.person1 || (language === 'en' ? "You" : "Tu")} & {formData.person2 || (language === 'en' ? "Your love" : "Tu amor")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-center text-sm text-muted-foreground">{t('crear.photo.preview')}</p>
+
+                  <div className="flex items-center justify-between gap-3 rounded-xl bg-secondary/50 border border-border p-3">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
