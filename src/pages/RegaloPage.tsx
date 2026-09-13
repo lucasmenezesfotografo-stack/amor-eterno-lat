@@ -88,6 +88,7 @@ const RegaloPage = () => {
   const dateLocale = localeMap[language] || es;
   const songLabel = language === 'en' ? "Our Song" : language === 'pt' ? "Nossa Música" : language === 'it' ? "La Nostra Canzone" : "Nuestra Canción";
   const shareDesc = language === 'en' ? "Check out our love page ❤️" : language === 'pt' ? "Veja nossa página de amor ❤️" : language === 'it' ? "Guarda la nostra pagina d'amore ❤️" : "Mira nuestra página de amor ❤️";
+  const regaloUrl = pageData ? `https://memoryl.ink/regalo/${encodeURIComponent(pageData.slug)}` : "";
 
   useEffect(() => {
     const fetchGiftPage = async () => {
@@ -405,7 +406,7 @@ const RegaloPage = () => {
               ref={qrRef}
               className="w-40 h-40 sm:w-48 sm:h-48 mx-auto bg-card border border-border rounded-2xl flex items-center justify-center mb-4 sm:mb-6 p-3 sm:p-4"
             >
-              <QRCodeSVG value={window.location.href} size={140} level="H" fgColor="#e11d48" bgColor="transparent" />
+              <QRCodeSVG value={regaloUrl} size={140} level="H" fgColor="#e11d48" bgColor="transparent" />
             </div>
 
             <Button variant="default" size="lg" onClick={handleDownloadQR} className="mb-6 w-full sm:w-auto">
@@ -415,7 +416,7 @@ const RegaloPage = () => {
 
             {/* Share Buttons */}
             <ShareButtons
-              url={window.location.href}
+              url={regaloUrl}
               title={`${pageData.your_name} & ${pageData.partner_name} - Memory Link`}
               description={shareDesc}
             />
