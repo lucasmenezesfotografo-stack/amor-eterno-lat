@@ -86,6 +86,7 @@ const CrearPage = () => {
     soundtrackAlbumCover: null as string | null,
     customYoutubeUrl: "",
     namesPosition: "center" as "top" | "center" | "bottom",
+    photoPositionY: 30 as number,
     memories: [] as Memory[],
   });
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
@@ -180,7 +181,7 @@ const CrearPage = () => {
       // 2️⃣ busca a gift page REAL
       const { data: giftPage, error } = await supabase
         .from("gift_pages")
-        .select("id, slug, your_name, partner_name, start_date, cover_photo_url, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active")
+        .select("id, slug, your_name, partner_name, start_date, cover_photo_url, cover_photo_position, love_letter, soundtrack_name, soundtrack_url, youtube_video_id, spotify_link, names_position, memories, is_active")
         .eq("id", giftPageIdFromUrl)
         .single();
 
@@ -208,6 +209,11 @@ const CrearPage = () => {
         soundtrackAlbumCover: null,
         customYoutubeUrl: "",
         namesPosition: (giftPage.names_position as "top" | "center" | "bottom") || "center",
+        photoPositionY: (() => {
+          const pos = (giftPage as Record<string, unknown>).cover_photo_position as string | null;
+          const match = pos?.match(/(\d+)%/);
+          return match ? Math.min(100, Math.max(0, parseInt(match[1], 10))) : 30;
+        })(),
         memories: (Array.isArray(giftPage.memories) ? giftPage.memories : []) as unknown as Memory[],
       });
 
@@ -296,6 +302,7 @@ const CrearPage = () => {
       spotify_link: formData.spotifyUrl || null,
       user_id: user?.id || null,
       names_position: formData.namesPosition,
+      cover_photo_position: `center ${formData.photoPositionY}%`,
       memories: formData.memories.length > 0
         ? JSON.parse(JSON.stringify(formData.memories))
         : null,
@@ -743,7 +750,8 @@ if (isCheckingAuth || isRestoring) {
                   <img
                     src={formData.photoUrl}
                     alt="Cover photo"
-                    className="w-full h-full object-cover object-[center_30%]"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: `center ${formData.photoPositionY}%` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                   
@@ -817,6 +825,67 @@ if (isCheckingAuth || isRestoring) {
                 onChange={handlePhotoSelect}
                 className="hidden"
               />
+
+              {/* Photo Focus Adjustment + Mobile Preview */}
+              {formData.photoUrl && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 rounded-xl bg-secondary/50 border border-border"
+                >
+                  <div className="flex flex-col sm:flex-row gap-5">
+                    {/* Slider control */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <MoveVertical className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium text-foreground">{t('crear.photo.adjust')}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-4">
+                        {t('crear.photo.adjust.hint')}
+                      </p>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={formData.photoPositionY}
+                        onChange={(e) => setFormData({ ...formData, photoPositionY: Number(e.target.value) })}
+                        className="w-full accent-primary"
+                        aria-label={t('crear.photo.adjust')}
+                      />
+                      <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                        <span>{t('crear.photo.position.top')}</span>
+                        <span>{t('crear.photo.position.center')}</span>
+                        <span>{t('crear.photo.position.bottom')}</span>
+                      </div>
+                    </div>
+
+                    {/* Mobile phone preview */}
+                    <div className="flex flex-col items-center gap-2">
+                      <div
+                        className="relative rounded-[1.4rem] border-2 border-border bg-secondary overflow-hidden w-[110px] h-[220px] shadow-lg"
+                      >
+                        <img
+                          src={formData.photoUrl}
+                          alt="Mobile preview"
+                          className="w-full h-full object-cover"
+                          style={{ objectPosition: `center ${formData.photoPositionY}%` }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
+                        <div className="absolute inset-0 flex items-center justify-center px-2">
+                          <p className="text-[9px] font-display font-semibold text-white text-center drop-shadow-lg leading-tight">
+                            {formData.person1 || "…"} & {formData.person2 || "…"}
+                          </p>
+                        </div>
+                        {/* Notch */}
+                        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-10 h-1.5 rounded-full bg-black/60" />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground text-center max-w-[130px]">
+                        {t('crear.photo.preview.mobile')}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
               {/* Names Position Selector */}
               {formData.photoUrl && (
