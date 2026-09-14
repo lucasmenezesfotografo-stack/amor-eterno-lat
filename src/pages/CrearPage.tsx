@@ -8,7 +8,6 @@ import MemoryUploader, { Memory } from "@/components/MemoryUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
@@ -47,6 +46,17 @@ const generateSlug = (person1: string, person2: string) => {
   const timestamp = Date.now().toString(36);
   const random = Math.random().toString(36).substring(2, 6);
   return `${names}-${timestamp}-${random}`;
+};
+
+const readPhotoPosition = (url: string | null | undefined) => {
+  const match = url?.match(/#photo-position=(\d{1,3})$/);
+  const position = match ? Number(match[1]) : 30;
+  return Math.min(100, Math.max(0, position));
+};
+
+const withPhotoPosition = (url: string, position: number) => {
+  const cleanUrl = url.replace(/#photo-position=\d{1,3}$/, "");
+  return `${cleanUrl}#photo-position=${Math.round(position)}`;
 };
 
 const CrearPage = () => {
@@ -200,7 +210,7 @@ const CrearPage = () => {
           : undefined,
         photoUrl: giftPage.cover_photo_url || "",
         photoFile: null,
-        photoPosition: 30,
+        photoPosition: readPhotoPosition(giftPage.cover_photo_url),
         selectedSong: null,
         spotifyUrl: giftPage.spotify_link || "",
         loveLetter: giftPage.love_letter || "",
@@ -292,7 +302,9 @@ const CrearPage = () => {
       your_name: formData.person1,
       partner_name: formData.person2,
       start_date: format(formData.startDate, "yyyy-MM-dd"),
-      cover_photo_url: formData.photoUrl || null,
+      cover_photo_url: formData.photoUrl
+        ? withPhotoPosition(formData.photoUrl, formData.photoPosition)
+        : null,
       love_letter: formData.loveLetter || null,
       soundtrack_name: formData.soundtrackName || selectedTrack?.name || null,
       youtube_video_id: finalYoutubeVideoId || null,
@@ -751,22 +763,47 @@ if (isCheckingAuth || isRestoring) {
                       <span className="text-sm font-medium text-foreground">{t('crear.photo.framing')}</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">{t('crear.photo.framing.desc')}</p>
-                    <Slider
-                      min={0}
-                      max={100}
-                      step={1}
-                      value={[formData.photoPosition]}
-                      onValueChange={([position]) => {
-                        if (typeof position !== "number") return;
-                        setFormData((prev) => ({ ...prev, photoPosition: position }));
-                      }}
-                      className="h-11 w-full cursor-pointer touch-none [&_[role=slider]]:h-7 [&_[role=slider]]:w-7"
+                    <div
+                      role="slider"
+                      tabIndex={0}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={formData.photoPosition}
                       aria-label={t('crear.photo.framing')}
-                    />
+                      className="relative flex h-11 w-full touch-none cursor-pointer items-center select-none"
+                      onPointerDown={(event) => {
+                        event.currentTarget.setPointerCapture(event.pointerId);
+                        const rect = event.currentTarget.getBoundingClientRect();
+                        const position = Math.round(((event.clientX - rect.left) / rect.width) * 100);
+                        setFormData((prev) => ({ ...prev, photoPosition: Math.min(100, Math.max(0, position)) }));
+                      }}
+                      onPointerMove={(event) => {
+                        if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+                        const rect = event.currentTarget.getBoundingClientRect();
+                        const position = Math.round(((event.clientX - rect.left) / rect.width) * 100);
+                        setFormData((prev) => ({ ...prev, photoPosition: Math.min(100, Math.max(0, position)) }));
+                      }}
+                      onKeyDown={(event) => {
+                        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+                        event.preventDefault();
+                        const position = event.key === "Home" ? 0
+                          : event.key === "End" ? 100
+                          : formData.photoPosition + (event.key === "ArrowRight" ? 1 : -1);
+                        setFormData((prev) => ({ ...prev, photoPosition: Math.min(100, Math.max(0, position)) }));
+                      }}
+                    >
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                        <div className="h-full bg-primary" style={{ width: `${formData.photoPosition}%` }} />
+                      </div>
+                      <div
+                        className="absolute h-7 w-7 -translate-x-1/2 rounded-full border-2 border-primary bg-background shadow-md"
+                        style={{ left: `${formData.photoPosition}%` }}
+                      />
+                    </div>
                     <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                      <span>{t('crear.photo.framing.top')}</span>
-                      <span>{t('crear.photo.framing.center')}</span>
-                      <span>{t('crear.photo.framing.bottom')}</span>
+                      <span className="cursor-pointer" onClick={() => setFormData((prev) => ({ ...prev, photoPosition: 0 }))}>{t('crear.photo.framing.top')}</span>
+                      <span className="cursor-pointer" onClick={() => setFormData((prev) => ({ ...prev, photoPosition: 50 }))}>{t('crear.photo.framing.center')}</span>
+                      <span className="cursor-pointer" onClick={() => setFormData((prev) => ({ ...prev, photoPosition: 100 }))}>{t('crear.photo.framing.bottom')}</span>
                     </div>
                   </div>
 
@@ -775,7 +812,10 @@ if (isCheckingAuth || isRestoring) {
                       src={formData.photoUrl}
                       alt={t('crear.photo.preview')}
                       className="w-full h-full object-cover"
-                      style={{ objectPosition: `center ${formData.photoPosition}%` }}
+                      style={{
+                        objectPosition: "center center",
+                        transform: `translateY(${(50 - formData.photoPosition) * 0.18}%) scale(1.18)`,
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-background" />
 
