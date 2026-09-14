@@ -8,6 +8,7 @@ import MemoryUploader, { Memory } from "@/components/MemoryUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
@@ -750,14 +751,16 @@ if (isCheckingAuth || isRestoring) {
                       <span className="text-sm font-medium text-foreground">{t('crear.photo.framing')}</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">{t('crear.photo.framing.desc')}</p>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="1"
-                      value={formData.photoPosition}
-                      onChange={(event) => setFormData((prev) => ({ ...prev, photoPosition: Number(event.target.value) }))}
-                      className="w-full accent-primary cursor-pointer"
+                    <Slider
+                      min={0}
+                      max={100}
+                      step={1}
+                      value={[formData.photoPosition]}
+                      onValueChange={([position]) => {
+                        if (typeof position !== "number") return;
+                        setFormData((prev) => ({ ...prev, photoPosition: position }));
+                      }}
+                      className="h-11 w-full cursor-pointer touch-none [&_[role=slider]]:h-7 [&_[role=slider]]:w-7"
                       aria-label={t('crear.photo.framing')}
                     />
                     <div className="mt-2 flex justify-between text-xs text-muted-foreground">
