@@ -39,6 +39,12 @@ interface GiftPageData {
   memories?: Memory[] | null;
 }
 
+const readPhotoPosition = (url: string | null | undefined) => {
+  const match = url?.match(/#photo-position=(\d{1,3})$/);
+  const position = match ? Number(match[1]) : 30;
+  return Math.min(100, Math.max(0, position));
+};
+
 import demoCoupleImage from "@/assets/demo-couple.jpg";
 
 // Demo data for /regalo/demo route
@@ -241,7 +247,10 @@ const RegaloPage = () => {
             src={pageData.cover_photo_url || defaultCoverPhoto}
             alt="Cover"
             className="w-full h-full object-cover"
-            style={{ objectPosition: pageData.cover_photo_position || "center 30%" }}
+            style={{
+              objectPosition: "center center",
+              transform: `translateY(${(50 - readPhotoPosition(pageData.cover_photo_url)) * 0.18}%) scale(1.18)`,
+            }}
           />
           {/* Overlay - lighter for better visibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-background" />
